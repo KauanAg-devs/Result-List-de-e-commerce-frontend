@@ -2,6 +2,7 @@ import { PagesNavigationProps } from '@/types/pages-navigation'
 import Link from 'next/link'
 import Image from "next/image"
 import React from 'react'
+
 export default function PagesNavigation({ title, pages, setPages }: PagesNavigationProps) {
   return (
     <nav id='nav' className='bg-[url(/navigation.svg)] bg-black/30 relative h-42 md:h-96 sm:h-22 justify-center items-center flex flex-col w-full p-4 md:p-6 lg:p-8'>

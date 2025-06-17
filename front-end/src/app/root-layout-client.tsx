@@ -4,6 +4,7 @@ import Header from '@/components/header/header'
 import Menu from '@/components/header/menu'
 import MobileMenu from '@/components/header/mobile-menu'
 import PagesNavigation from '@/components/pages-navigation/pages-navigation'
+import Footer from '@/components/footer/footer'
 import {useState} from 'react'
 
 export default function RootLayoutClient({ children }: { children: React.ReactNode }){
@@ -36,7 +37,9 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
       
       {children}
 
-      {/*Footer*/}
+      <Footer>
+
+      </Footer>
     </>
   )
 }
