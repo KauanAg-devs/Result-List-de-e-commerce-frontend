@@ -52,6 +52,7 @@ Content-Type: application/json
 POST /product HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthdWFuYmFyY2Vsb3M3N0BnbWFpbC5jb20iLCJpZCI6ImNtYnh3Mmx2ZjAwMDAzZ2VkZmp4dzYzMjciLCJpYXQiOjE3NTAwMDY0NjgsImV4cCI6MTc1MDAwNzM2OH0.szRSggIh3N9o2HBcpXdYPzu-c8Gt3A1SjD6UWHjAmlo
 
 {
     "name": "Camisa Amarela",
@@ -59,7 +60,7 @@ Content-Type: application/json
     "price": 80,
     "description": "uma camisa amarela",
     "discount": 10,
-    "image": "https://kauan-result-list-de-e-commerce.s3.us-east-1.amazonaws.com/eleva-camisa-amarelo-claro-1_640x640.webp",
+    "image": "https://cdn.awsli.com.br/600x1000/1960/1960866/produto/246078677/whatsapp-image-2023-12-15-at-09-17-08-jpeg-psuqwhkd22.png",
     "categoryName": "Roupas",
     "tags": ["camisa", "amarela"]
 }
@@ -69,6 +70,7 @@ Content-Type: application/json
 POST /product HTTP/1.1
 Host: localhost:3000
 Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImthdWFuYmFyY2Vsb3M3N0BnbWFpbC5jb20iLCJpZCI6ImNtYnh3Mmx2ZjAwMDAzZ2VkZmp4dzYzMjciLCJpYXQiOjE3NTAwMDY0NjgsImV4cCI6MTc1MDAwNzM2OH0.szRSggIh3N9o2HBcpXdYPzu-c8Gt3A1SjD6UWHjAmlo
 
 {
     "name": "Respira",
@@ -76,7 +78,7 @@ Content-Type: application/json
     "price": 1000000,
     "description": "a right-sized respira",
     "discount": 50000,
-    "image": "https://kauan-result-list-de-e-commerce.s3.amazonaws.com/image+1.svg",
+    "image": "https://respira-live.com/wp-content/uploads/2024/01/Slika-6-1024x724.png",
     "categoryName": "respira",
     "tags": ["respira", "azul"]
 }
