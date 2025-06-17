@@ -1,9 +1,11 @@
-
+import ProductsLister from '@/components/home/products-lister'
 
 export default function Home() {
   return (
-    <>
-     {/*ProductsLister*/}
-    </>
+    <main>
+      <ProductsLister>
+
+      </ProductsLister>
+    </main>
   );
 }

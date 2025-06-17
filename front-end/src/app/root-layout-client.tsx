@@ -37,9 +37,7 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
       
       {children}
 
-      <Footer>
-
-      </Footer>
+      <Footer/>
     </>
   )
 }
