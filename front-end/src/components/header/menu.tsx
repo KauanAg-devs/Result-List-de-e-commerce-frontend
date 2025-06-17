@@ -1,7 +1,7 @@
 import Image from "next/image";
 
 
-export default function Menu({setShowCompanyProducts, showCompanyProducts}: MenuProps){
+export default function Menu({setShowCompanyProducts, showCompanyProducts, setShowMobileMenu}: MenuProps){
     return (
         <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
           <div className="flex lg:flex-1">
@@ -11,7 +11,7 @@ export default function Menu({setShowCompanyProducts, showCompanyProducts}: Menu
             </a>
           </div>
           <div className="flex lg:hidden">
-            <button type="button" className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
+            <button type="button" onClick={() => setShowMobileMenu(prev => !prev)} className="-m-2.5 inline-flex items-center justify-center rounded-md p-2.5 text-gray-700">
               <span className="sr-only">Open main menu</span>
               <svg className="size-6" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" aria-hidden="true" data-slot="icon">
                 <path strokeLinecap="round" strokeLinejoin="round" d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25h16.5" />
