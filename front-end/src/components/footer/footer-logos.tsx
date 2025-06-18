@@ -2,7 +2,7 @@ import Image from 'next/image'
 
 export default function FooterLogos(){
     return (
-        <div className='w-full max-w-6xl mx-auto mb-8 md:mb-12'>
+        <div className='w-full max-w-6xl mx-auto mb-8 md:mb-12 bg-gray-5'>
         <div className='flex flex-col items-center md:items-start space-y-4 md:h-32 md:justify-between mb-6 md:mb-10'>
             <Image src='/logo-img.svg' alt='logo' width={50} height={50}/>
             <p className='text-zinc-700 text-center md:text-left text-sm md:text-base max-w-xs'>

@@ -1,9 +1,10 @@
 import NewsletterSubscribe from '@/components/footer/newsletter-subscribe'
+import FooterSection from '@/components/footer/footer-section'
 import Link from 'next/link'
 
 export default function FooterContent(){
     return (
-      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 w-full max-w-6xl mx-auto'>
+      <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 md:gap-12 lg:gap-16 w-full max-w-6xl mx-auto bg-gray-5'>
         <section className="flex flex-col text-gray-600 text-center md:text-left">
           <p className="text-base font-semibold text-gray-800 mb-3 md:hidden">Location</p>
           <div className="space-y-1">
@@ -14,22 +15,41 @@ export default function FooterContent(){
           <p className="text-sm mt-4 font-medium">2024 Compass UOL</p>
         </section>
 
-        <section className="flex flex-col space-y-3 text-gray-600 text-center md:text-left">
-          <p className="text-base font-bold text-gray-800 mb-1">Links</p>
-          <Link href="#" className="text-sm hover:text-black transition-colors">Home</Link>
-          <Link href="#" className="text-sm hover:text-black transition-colors">Shop</Link>
-          <Link href="#" className="text-sm hover:text-black transition-colors">About</Link>
-          <Link href="#" className="text-sm hover:text-black transition-colors">Contact</Link>
-        </section>
-            
-        <section className="flex flex-col space-y-3 text-gray-600 text-center md:text-left">
-          <p className="text-base font-bold text-gray-800 mb-1">Help</p>
-          <Link href="#" className="text-sm hover:text-black transition-colors">Payment Options</Link>
-          <Link href="#" className="text-sm hover:text-black transition-colors">Returns</Link>
-          <Link href="#" className="text-sm hover:text-black transition-colors">Privacy Policies</Link>
-        </section>
+        <FooterSection title="Links" sectionKey="links">
+          <Link href='#' className="block text-sm hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded px-2 py-1 -mx-2">
+            Home
+          </Link>
+          <Link href='#' className="block text-sm hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded px-2 py-1 -mx-2">
+            Shop
+          </Link>
+          <Link href='#' className="block text-sm hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded px-2 py-1 -mx-2">
+            About
+          </Link>
+          <Link href='#' className="block text-sm hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded px-2 py-1 -mx-2">
+            Contact
+          </Link>
+        </FooterSection>
+
+        <FooterSection title="Help" sectionKey="help">
+          <Link href='#' className="block text-sm hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded px-2 py-1 -mx-2">
+            Payment Options
+          </Link>
+          <Link href='#' className="block text-sm hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded px-2 py-1 -mx-2">
+            Returns
+          </Link>
+          <Link href='#' className="block text-sm hover:text-black transition-colors focus:outline-none focus:ring-2 focus:ring-zinc-300 rounded px-2 py-1 -mx-2">
+            Privacy Policies
+          </Link>
+        </FooterSection>
 
         <NewsletterSubscribe/>
+
+        <div className='w-full col-span-full flex justify-center flex-col'>
+         <div className="w-full border-b"></div>
+            <p className='py-4 mx-auto px-4 w-full text-zinc-400'>
+            2023 Compass. All Rights Reserved.
+          </p>
+         </div>
       </div>
     )
 }
