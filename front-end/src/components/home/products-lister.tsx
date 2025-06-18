@@ -1,74 +1,60 @@
-export default function ProductsLister(){
+import Product from '@/components/home/product';
+import { ProductProps } from '@/types/product';
+
+interface Props {
+  filteredProducts: ProductProps[];
+  currentPage: number;
+  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
+  productsPerPage: number; 
+}
+
+export default function ProductsLister({ filteredProducts, currentPage, setCurrentPage, productsPerPage }: Props) {
+  const indexOfLastProduct = currentPage * productsPerPage;
+  const indexOfFirstProduct = indexOfLastProduct - productsPerPage;
+  const currentProducts = filteredProducts.slice(indexOfFirstProduct, indexOfLastProduct);
+  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+
+  function handlePrev() {
+    setCurrentPage((prev) => Math.max(prev - 1, 1));
+  }
+
+  function handleNext() {
+    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+  }
+
   return (
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div className="mt-6 grid grid-cols-1 gap-x-6 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          <div className="group relative">
-            <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg" alt="Front of men&#039;s Basic Tee in black." className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80" />
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="text-sm text-gray-700">
-                  <a href="#">
-                    <span aria-hidden="true" className="absolute inset-0"></span>
-                    Basic Tee
-                  </a>
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">Black</p>
-              </div>
-              <p className="text-sm font-medium text-gray-900">$35</p>
-            </div>
-          </div>
-
-          <div className="group relative">
-            <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg" alt="Front of men&#039;s Basic Tee in black." className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80" />
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="text-sm text-gray-700">
-                  <a href="#">
-                    <span aria-hidden="true" className="absolute inset-0"></span>
-                    Basic Tee
-                  </a>
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">Black</p>
-              </div>
-              <p className="text-sm font-medium text-gray-900">$35</p>
-            </div>
-          </div>
-
-          <div className="group relative">
-            <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg" alt="Front of men&#039;s Basic Tee in black." className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80" />
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="text-sm text-gray-700">
-                  <a href="#">
-                    <span aria-hidden="true" className="absolute inset-0"></span>
-                    Basic Tee
-                  </a>
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">Black</p>
-              </div>
-              <p className="text-sm font-medium text-gray-900">$35</p>
-            </div>
-          </div>
-
-          <div className="group relative">
-            <img src="https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-01.jpg" alt="Front of men&#039;s Basic Tee in black." className="aspect-square w-full rounded-md bg-gray-200 object-cover group-hover:opacity-75 lg:aspect-auto lg:h-80" />
-            <div className="mt-4 flex justify-between">
-              <div>
-                <h3 className="text-sm text-gray-700">
-                  <a href="#">
-                    <span aria-hidden="true" className="absolute inset-0"></span>
-                    Basic Tee
-                  </a>
-                </h3>
-                <p className="mt-1 text-sm text-gray-500">Black</p>
-              </div>
-              <p className="text-sm font-medium text-gray-900">$35</p>
-            </div>
-          </div>
-  
+          {currentProducts.map((product, i) => (
+            <Product
+              key={`${product.sku}-${i}`}
+              colors={product.colors}
+              name={product.name}
+              sku={product.sku}
+            />
+          ))}
         </div>
       </div>
+
+      <p className='w-full text-center text-zinc-500 pb-1 font-bold'>Page {currentPage} of {totalPages}</p>
+
+      <div className="flex justify-center w-full pb-10 space-x-4">
+        <button
+          onClick={handlePrev}
+          disabled={currentPage === 1}
+          className="bg-gray-300 hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed text-gray-800 font-bold py-2 px-4 rounded-l h-10 w-24 md:h-10"
+        >
+          Prev
+        </button>
+        <button
+          onClick={handleNext}
+          disabled={currentPage === totalPages}
+          className="bg-gray-300 hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed text-gray-800 font-bold py-2 px-4 rounded-r h-10 w-24 md:h-10"
+        >
+          Next
+        </button>
+      </div>
     </div>
-  )
+  );
 }

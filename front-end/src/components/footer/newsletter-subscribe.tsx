@@ -34,7 +34,7 @@ export default function NewsletterSubscribe(){
             <p className="text-xs text-red-500 mt-1">Invalid email</p>
           )}
           {showEmailValidationResult && validateEmailResult && (
-            <p className="text-xs text-blue-500 mt-1">Verification sent to your email</p>
+            <p className="text-xs text-blue-500 mt-1">Code verification sent to your email</p>
           )}
         </section>
     )
