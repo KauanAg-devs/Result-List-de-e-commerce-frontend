@@ -3,4 +3,7 @@ export type ProductProps = {
     color: string[]
     price: number
     sku: string
+    showProductDetails: string
+    setShowProductDetails: React.Dispatch<React.SetStateAction<string>>
+    showColorsOnCard?: boolean;
 }

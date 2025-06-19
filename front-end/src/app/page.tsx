@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import ProductsLister from '@/components/home/products-lister'
+import {fetchMockedProducts} from '@/app/api/fetch-products'
 import { ProductProps } from '@/types/product'
 
 export default function Home() {
@@ -23,16 +24,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const fetchMockedProducts: ProductProps[] = [
-      { name: 'Black T-Shirt', sku: 'CMP-1', colors: ['black', 'yellow', 'red', 'white'] },
-      { name: 'Blue Hoodie', sku: 'CMP-2', colors: ['blue', 'gray'] },
-      { name: 'White Sneakers', sku: 'CMP-3', colors: ['white', 'black'] },
-      { name: 'Green Hat', sku: 'CMP-4', colors: ['green', 'darkgreen'] },
-      { name: 'Red Jacket', sku: 'CMP-5', colors: ['red', 'black'] },
-      { name: 'Yellow Shorts', sku: 'CMP-6', colors: ['yellow'] },
-      { name: 'Purple Scarf', sku: 'CMP-7', colors: ['purple'] },
-      { name: 'Orange Socks', sku: 'CMP-8', colors: ['orange', 'white'] },
-    ];
+    fetchMockedProducts
     setAllProducts(fetchMockedProducts);
     setFilteredProducts(fetchMockedProducts);
   }, []);
