@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import RootLayoutClient from '@/app/root-layout-client'
 import "./globals.css";
 import type { Metadata } from "next";
+import ReduxProvider from "./store/redux-provider";
 
 export const homeMetadata: Metadata = {
   title: "Compass Shop",
@@ -34,9 +35,11 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <RootLayoutClient>
-          {children}
-        </RootLayoutClient>
+        <ReduxProvider>
+          <RootLayoutClient>
+            {children}
+          </RootLayoutClient>
+        </ReduxProvider>
       </body>
     </html>
   );

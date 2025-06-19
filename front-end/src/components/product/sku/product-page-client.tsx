@@ -2,6 +2,8 @@
 
 import { useEffect, useState } from 'react'
 import { ProductProps } from '@/types/home/product'
+import { useDispatch } from 'react-redux'
+import { addToCart } from '@/app/store/cart-slice'
 
 export default function ProductPageClient({ sku }: { sku: string }) {
   const [product, setProduct] = useState<ProductProps | null>(null)
@@ -9,7 +11,8 @@ export default function ProductPageClient({ sku }: { sku: string }) {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
   const [quantity, setQuantity] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
-  
+  const dispatch = useDispatch();
+ 
   useEffect(() => {
     const loadProduct = async () => {
       setIsLoading(true)
@@ -52,6 +55,7 @@ export default function ProductPageClient({ sku }: { sku: string }) {
       image: product.images[selectedImage],
     }
 
+  dispatch(addToCart(cartItem));
     console.log('Added to cart:', cartItem)
   }
   
