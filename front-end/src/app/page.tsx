@@ -10,8 +10,8 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilterInput, setShowFilterInput] = useState(false);
 
-  const [productsPerPageInput, setProductsPerPageInput] = useState('4');
-  const [productsPerPage, setProductsPerPage] = useState(4);
+  const [productsPerPageInput, setProductsPerPageInput] = useState('8');
+  const [productsPerPage, setProductsPerPage] = useState(8);
 
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -58,7 +58,7 @@ export default function Home() {
   };
 
   return (
-    <main className='bg-white flex flex-col mt-5'>
+    <main className='bg-white flex flex-col pt-5'>
       <div className="flex px-4 py-3 rounded-md border-2 border-zinc-500 overflow-hidden w-96 md:max-w-md mx-auto">
         <input 
           type="text" 
@@ -83,7 +83,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className={`transition-all duration-300 ease-in-out mx-auto max-w-md w-96 mt-3 ${showFilterInput ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
+     <div className='mx-auto relative flex z-1 justify-center'>
+      <div className={`absolute transition-all duration-300 ease-in-out mx-auto max-w-md w-96 mt-3 ${showFilterInput ? 'opacity-100 translate-y-0' : 'opacity-0 -translate-y-2 pointer-events-none'}`}>
         <div className="bg-white rounded-lg shadow-lg border border-gray-200 p-4">
           <div className="flex items-center justify-between mb-3">
             <label className="text-sm font-medium text-gray-700 flex items-center gap-2">
@@ -109,7 +110,6 @@ export default function Home() {
               <option value="8">8 items</option>
             </select>
             
-            {/* Custom dropdown arrow */}
             <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
               <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -117,7 +117,6 @@ export default function Home() {
             </div>
           </div>
           
-          {/* Visual indicator of current selection */}
           <div className="mt-3 flex items-center gap-2">
             <div className="flex-1 bg-gray-200 rounded-full h-1.5">
               <div 
@@ -130,7 +129,6 @@ export default function Home() {
             </span>
           </div>
           
-          {/* Quick selection buttons */}
           <div className="mt-3 flex gap-1">
             {[2, 4, 6, 8].map((num) => (
               <button
@@ -150,8 +148,8 @@ export default function Home() {
             ))}
           </div>
         </div>
-      </div>
-
+      </div> 
+     </div>
       {filteredProducts.length === 0 && searchTerm && (
         <div className="text-center text-gray-500 mt-8">
           No products found matching "{searchTerm}"
