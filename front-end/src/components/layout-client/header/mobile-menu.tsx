@@ -1,7 +1,6 @@
 'use client'
 
-import {MobileMenuProps} from '@/types/menu-props'
-import {useState} from 'react'
+import {MobileMenuProps} from '@/types/layout-client/menu-props'
 
 export default function MobileMenu({setShowMobileProducts, showMobileProducts, showMobileMenu, setShowMobileMenu}: MobileMenuProps){
 

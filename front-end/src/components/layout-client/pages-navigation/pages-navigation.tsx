@@ -1,9 +1,10 @@
-import { PagesNavigationProps } from '@/types/pages-navigation'
+import { PagesNavigationProps } from '@/types/layout-client/pages-navigation'
 import Link from 'next/link'
 import Image from "next/image"
 import React from 'react'
 
-export default function PagesNavigation({ title, pages, setPages }: PagesNavigationProps) {
+export default function PagesNavigation({ title, pages }: PagesNavigationProps) {
+  
   return (
     <nav id='nav' className='bg-[url(/navigation.svg)] bg-black/30 drop-shadow-lg relative h-42 md:h-96 sm:h-22 justify-center items-center flex flex-col w-full p-4 md:p-6 lg:p-8'>
       <p className='cursor-pointer z-10 text-2xl text-zinc-100 md:text-3xl lg:text-4xl font-medium mb-4 lg:mb-8'>
@@ -14,7 +15,7 @@ export default function PagesNavigation({ title, pages, setPages }: PagesNavigat
           <React.Fragment key={index}>
             <Link
               href={page.link}
-              className='cursor-pointer w-full text-lg text-center text-zinc-100 md:text-xl font-light hover:text-zinc-300 transition-colors duration-300'
+              className='cursor-pointer w-full text-lg text-center text-zinc-100 md:text-xl font-light hover:text-zinc-300 transition-colors duration-300 whitespace-nowrap'
             >
               {page.title}
             </Link>

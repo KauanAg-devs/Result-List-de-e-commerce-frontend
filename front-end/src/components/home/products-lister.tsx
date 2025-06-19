@@ -32,12 +32,14 @@ export default function ProductsLister({
     <div className="bg-white">
       <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
         <div className="grid gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {paginatedProducts.map((product) => (
+          {paginatedProducts.map((product, index) => (
             <Product
               key={product.sku}
-              {...product}
+              product={product}
               showProductDetails={showProductDetails}
               setShowProductDetails={setShowProductDetails}
+              showColorsOnCard={true}
+              lazy={index >= 4 || currentPage > 1}
             />
           ))}
         </div>

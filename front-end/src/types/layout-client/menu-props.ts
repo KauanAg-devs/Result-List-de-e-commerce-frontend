@@ -3,7 +3,7 @@ export type MenuProps = {
     setShowCompanyProducts: React.Dispatch<React.SetStateAction<boolean>>
     setShowMobileMenu: React.Dispatch<React.SetStateAction<boolean>>
 }
-export type MenuProps = {
+export type MobileMenuProps = {
     showMobileProducts: boolean
     setShowMobileProducts: React.Dispatch<React.SetStateAction<boolean>>
     showMobileMenu: boolean

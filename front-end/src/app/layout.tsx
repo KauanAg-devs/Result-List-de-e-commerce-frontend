@@ -22,9 +22,10 @@ const geistMono = Geist_Mono({
 
 
 export default function RootLayout({
-  children,
+  children, params
 }: Readonly<{
   children: React.ReactNode;
+  params: {params: string}
 }>) {
  
 

@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import ProductsLister from '@/components/home/products-lister'
 import {fetchMockedProducts} from '@/app/api/fetch-products'
-import { ProductProps } from '@/types/product'
+import { ProductProps } from '@/types/home/product'
 
 export default function Home() {
   const [allProducts, setAllProducts] = useState<ProductProps[]>([]);
@@ -48,7 +48,7 @@ export default function Home() {
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearchTerm(e.target.value);
   };
-
+  
   return (
     <main className='bg-white flex flex-col pt-5'>
       <div className="flex px-4 py-3 rounded-md border-2 border-zinc-500 overflow-hidden w-96 md:max-w-md mx-auto">

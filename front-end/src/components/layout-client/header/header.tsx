@@ -1,4 +1,4 @@
-import { HeaderProps } from '@/types/header'
+import { HeaderProps } from '@/types/layout-client/header'
 
 export default  function Header({ children }: HeaderProps){
   return (

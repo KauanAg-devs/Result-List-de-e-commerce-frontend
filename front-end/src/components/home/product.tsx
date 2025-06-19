@@ -1,42 +1,156 @@
 'use client'
-import { ProductProps } from '@/types/product'
-import { useState } from 'react'
+
+import { ProductProps, Option } from '@/types/home/product'
+import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
 
+interface ProductComponentProps {
+  product: ProductProps
+  showProductDetails?: string
+  setShowProductDetails?: (sku: string) => void
+  showColorsOnCard?: boolean
+  lazy?: boolean
+}
+
+// Skeleton component that matches the product card dimensions
+const ProductSkeleton = () => {
+  return (
+    <div className="group relative overflow-hidden">
+      <div className="relative bg-white rounded-2xl shadow-lg">
+        {/* Image skeleton */}
+        <div className="relative overflow-hidden rounded-t-2xl">
+          <div className="w-full aspect-square bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
+        </div>
+
+        <div className="p-6">
+          {/* Header skeleton */}
+          <div className="flex justify-between items-start mb-4">
+            <div className="flex-1">
+              <div className="h-6 bg-gray-200 rounded animate-pulse mb-2 w-3/4" />
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2" />
+            </div>
+            <div className="text-right">
+              <div className="h-8 bg-gray-200 rounded animate-pulse w-16 mb-1" />
+              <div className="h-4 bg-gray-200 rounded animate-pulse w-20" />
+            </div>
+          </div>
+
+          {/* Options skeleton */}
+          <div className="mb-4">
+            <div className="h-4 bg-gray-200 rounded animate-pulse w-24 mb-3" />
+            <div className="flex gap-3">
+              {[1, 2, 3].map((i) => (
+                <div key={i} className="h-5 w-5 bg-gray-200 rounded-full animate-pulse" />
+              ))}
+            </div>
+          </div>
+
+          {/* Specs skeleton */}
+          <div className="mt-4">
+            {[1, 2].map((i) => (
+              <div key={i} className="h-4 bg-gray-200 rounded animate-pulse mb-2 w-full" />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function Product({
-  name,
-  sku,
-  price,
-  images,
-  options = [],
-  specs = [],
+  product,
   showProductDetails,
   setShowProductDetails,
-  showColorsOnCard
-}: ProductProps) {
-  const colorOption = options.find((opt) => opt.type === 'color')
+  showColorsOnCard,
+  lazy = false
+}: ProductComponentProps) {
+  
+  const [isVisible, setIsVisible] = useState(!lazy)
+  const [isLoaded, setIsLoaded] = useState(!lazy)
+  const elementRef = useRef<HTMLDivElement>(null)
+  
+  const colorOption = product.options?.find((opt) => opt.type === 'color') as Option | undefined
   const defaultColor = colorOption?.values?.[0]
 
-  const [selectedOptions, setSelectedOptions] = useState(
-    options.reduce((acc, opt) => {
-      acc[opt.label] = opt.values[0].color || opt.values[0]
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(
+    (product.options ?? []).reduce((acc, opt) => {
+      const firstValue = opt.values[0]
+      acc[opt.label] = 'color' in firstValue ? firstValue.color : (firstValue as any)
       return acc
     }, {} as Record<string, string>)
   )
 
-  const [activeImageIndex, setActiveImageIndex] = useState(
+  const [activeImageIndex, setActiveImageIndex] = useState<number>(
     defaultColor?.relativeImage ?? 0
   )
 
   const [isImageLoaded, setIsImageLoaded] = useState(false)
-  const isExpanded = showProductDetails === sku
+  const isExpanded = showProductDetails === product.sku
+
+  // Intersection Observer for lazy loading
+  useEffect(() => {
+    if (!lazy) return
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            setIsVisible(true)
+            // Add a small delay to simulate loading time and show the skeleton briefly
+            setTimeout(() => {
+              setIsLoaded(true)
+            }, 300)
+            observer.unobserve(entry.target)
+          }
+        })
+      },
+      {
+        rootMargin: '50px', // Start loading when element is 50px away from viewport
+        threshold: 0.1
+      }
+    )
+
+    if (elementRef.current) {
+      observer.observe(elementRef.current)
+    }
+
+    return () => {
+      if (elementRef.current) {
+        observer.unobserve(elementRef.current)
+      }
+    }
+  }, [lazy])
 
   const handleToggleDetails = () => {
-    setShowProductDetails(isExpanded ? '' : sku)
+    if (setShowProductDetails) {
+      setShowProductDetails(isExpanded ? '' : product.sku)
+    }
+  }
+
+  const memorizeProductDetails = () => {
+    localStorage.setItem(
+      `product_${product.sku}`, 
+      JSON.stringify({
+        name: product.name,
+        sku: product.sku,
+        price: product.price,
+        images: product.images,
+        stock: product.stock
+      })
+    )
+  }
+
+  // Show skeleton while loading
+  if (lazy && (!isVisible || !isLoaded)) {
+    return (
+      <div ref={elementRef}>
+        <ProductSkeleton />
+      </div>
+    )
   }
 
   return (
-    <div className="group relative overflow-hidden">
+    <div className="group relative overflow-hidden" ref={elementRef}>
       <div
         className={`
           relative bg-white rounded-2xl shadow-lg hover:shadow-2xl 
@@ -51,14 +165,15 @@ export default function Product({
           )}
 
           <img
-            src={images[activeImageIndex]}
-            alt={`${name}`}
+            src={product.images[activeImageIndex]}
+            alt={`${product.name}`}
             className={`
               w-full aspect-square object-cover transition-all duration-700
               ${isImageLoaded ? 'opacity-100' : 'opacity-0'}
               ${!isExpanded ? 'group-hover:scale-110' : ''}
             `}
             onLoad={() => setIsImageLoaded(true)}
+            loading={lazy ? "lazy" : "eager"}
           />
         </div>
 
@@ -66,35 +181,24 @@ export default function Product({
           <div className="flex justify-between items-start mb-4">
             <div className="flex-1">
               <h3 className="text-lg font-semibold text-gray-900 mb-2 overflow-hidden text-ellipsis">
-                {name}
+                {product.name}
               </h3>
               <p className="text-sm text-gray-500 uppercase tracking-wide font-medium">
-                SKU: {sku}
+                SKU: {product.sku}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-gray-900">${price}</p>
-              <p className="text-sm text-green-600 font-medium">In Stock</p>
+              <p className="text-2xl font-bold text-gray-900">${product.price}</p>
+              <p
+                className="text-sm font-medium"
+                style={{ color: product.stock > 0 ? 'green' : 'red' }}
+              >
+                {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+              </p>
             </div>
           </div>
 
-          {showColorsOnCard && colorOption && (
-            <div className="mb-4 flex gap-2">
-              {colorOption.values.map(({ color }, i) => (
-                <div
-                  key={i}
-                  title={color}
-                  style={{
-                    backgroundColor: color,
-                    border: color === 'white' ? '1px solid #ccc' : undefined,
-                  }}
-                  className="w-5 h-5 rounded-full"
-                />
-              ))}
-            </div>
-          )}
-
-          {options.map((opt) => (
+          {(product.options ?? []).map((opt) => (
             <div className="mb-4" key={opt.label}>
               <p className="text-sm font-medium text-gray-700 mb-3">
                 {opt.label}:{' '}
@@ -102,18 +206,19 @@ export default function Product({
               </p>
               <div className="flex gap-3">
                 {opt.values.map((value, i) => {
-                  const isSelected = selectedOptions[opt.label] === value.color
+                  const colorValue = 'color' in value ? value.color : String(value)
+                  const isSelected = selectedOptions[opt.label] === colorValue
                   return (
                     <button
                       key={i}
-                      title={value.color}
+                      title={colorValue}
                       onClick={(e) => {
                         e.stopPropagation()
                         setSelectedOptions((prev) => ({
                           ...prev,
-                          [opt.label]: value.color
+                          [opt.label]: colorValue
                         }))
-                        if (typeof value.relativeImage === 'number') {
+                        if ('relativeImage' in value && typeof value.relativeImage === 'number') {
                           setActiveImageIndex(value.relativeImage)
                         }
                       }}
@@ -126,17 +231,17 @@ export default function Product({
                       style={
                         opt.type === 'color'
                           ? {
-                              backgroundColor: value.color,
+                              backgroundColor: colorValue,
                               color: 'transparent',
                               border:
-                                value.color === 'white'
+                                colorValue === 'white'
                                   ? '2px solid #e5e7eb'
                                   : undefined
                             }
                           : {}
                       }
                     >
-                      {opt.type !== 'color' && value.color}
+                      {opt.type !== 'color' && colorValue}
                     </button>
                   )
                 })}
@@ -144,9 +249,9 @@ export default function Product({
             </div>
           ))}
 
-          {specs.length > 0 && (
+          {(product.specs ?? []).length > 0 && (
             <div className="mt-4 text-sm text-gray-600">
-              {specs.map(({ label, value }) => (
+              {product.specs?.map(({ label, value }) => (
                 <p key={label}>
                   <strong>{label}:</strong> {value}
                 </p>
@@ -156,12 +261,16 @@ export default function Product({
 
           {isExpanded && (
             <div className="mt-6 border-t border-gray-200 pt-4 text-gray-700 flex justify-center">
-              <button
-                className="cursor-pointer text-lg font-semibold mb-3 border rounded-md p-3 relative flex"
-                onClick={(e) => e.stopPropagation()}
+              <Link
+                href={`/product/${product.sku}`}
+                onClick={(e) => {
+                  e.stopPropagation()
+                  memorizeProductDetails()
+                }}
+                className="text-lg font-semibold mb-3 border rounded-md p-3 relative flex cursor-pointer"
               >
-                <Link href={`/product/${sku}`}>Detalhes do Produto</Link>
-              </button>
+                Product Details
+              </Link>
             </div>
           )}
         </div>

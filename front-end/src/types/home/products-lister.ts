@@ -1,5 +1,4 @@
 import { ProductProps } from '@/types/home/product';
-import { React } from 'react'
 
 export type ProductsListerProps = {
   filteredProducts: ProductProps[];
