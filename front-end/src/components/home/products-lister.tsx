@@ -1,16 +1,11 @@
 'use client'
 import Product from '@/components/home/product';
-import { ProductProps } from '@/types/product';
+import { ProductsListerProps } from '@/types/home/products-lister'
 import {useMemo} from 'react'
 
-interface Props {
-  filteredProducts: ProductProps[];
-  currentPage: number;
-  setCurrentPage: React.Dispatch<React.SetStateAction<number>>;
-  productsPerPage: number; 
-}
 
-export default function ProductsLister({ filteredProducts, currentPage, setCurrentPage, productsPerPage }: Props) {
+
+export default function ProductsLister({ filteredProducts, currentPage, setCurrentPage, productsPerPage }: ProductsListerProps) {
   
   const paginated = useMemo(()=>{
     const indexOfLastProduct = currentPage * productsPerPage;

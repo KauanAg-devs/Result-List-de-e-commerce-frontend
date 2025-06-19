@@ -1,6 +1,6 @@
-import { FooterProps } from '@/types/footer'
-import FooterLogos from '@/components/footer/footer-logos'
-import FooterContent from '@/components/footer/footer-content'
+import { FooterProps } from '@/types/layout-client/footer'
+import FooterLogos from '@/components/layout-client/footer/footer-logos'
+import FooterContent from '@/components/layout-client/footer/footer-content'
 
 export default function Footer(){
   return (

@@ -5,7 +5,7 @@ import React from 'react'
 
 export default function PagesNavigation({ title, pages, setPages }: PagesNavigationProps) {
   return (
-    <nav id='nav' className='bg-[url(/navigation.svg)] bg-black/30 relative h-42 md:h-96 sm:h-22 justify-center items-center flex flex-col w-full p-4 md:p-6 lg:p-8'>
+    <nav id='nav' className='bg-[url(/navigation.svg)] bg-black/30 drop-shadow-lg relative h-42 md:h-96 sm:h-22 justify-center items-center flex flex-col w-full p-4 md:p-6 lg:p-8'>
       <p className='cursor-pointer z-10 text-2xl text-zinc-100 md:text-3xl lg:text-4xl font-medium mb-4 lg:mb-8'>
         {title}
       </p>

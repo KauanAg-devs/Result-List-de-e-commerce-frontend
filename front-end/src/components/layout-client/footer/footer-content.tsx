@@ -1,5 +1,5 @@
-import NewsletterSubscribe from '@/components/footer/newsletter-subscribe'
-import FooterSection from '@/components/footer/footer-section'
+import NewsletterSubscribe from '@/components/layout-client/footer/newsletter-subscribe'
+import FooterSection from '@/components/layout-client/footer/footer-section'
 import Link from 'next/link'
 
 export default function FooterContent(){

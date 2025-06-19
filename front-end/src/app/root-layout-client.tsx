@@ -1,10 +1,10 @@
 'use client'
 
-import Header from '@/components/header/header'
-import Menu from '@/components/header/menu'
-import MobileMenu from '@/components/header/mobile-menu'
-import PagesNavigation from '@/components/pages-navigation/pages-navigation'
-import Footer from '@/components/footer/footer'
+import Header from '@/components/layout-client/header/header'
+import Menu from '@/components/layout-client/header/menu'
+import MobileMenu from '@/components/layout-client/header/mobile-menu'
+import PagesNavigation from '@/components/layout-client/pages-navigation/pages-navigation'
+import Footer from '@/components/layout-client/footer/footer'
 import {useState} from 'react'
 
 export default function RootLayoutClient({ children }: { children: React.ReactNode }){
