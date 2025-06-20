@@ -60,7 +60,7 @@ export default function ShoppingCart() {
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           <h2 className="text-xl font-semibold text-gray-900">Your Cart</h2>
           <button
-            onClick={closeCart} // <-- aqui também
+            onClick={closeCart}
             className="text-gray-400 hover:text-gray-600 transition"
             aria-label="Close cart"
           >
@@ -155,7 +155,7 @@ export default function ShoppingCart() {
                 </div>
               ))}
 
-              <div className="mt-6 space-y-2 border-t pt-4">
+              <div className="mt-6 space-y-2 border-t pt-4 flex flex-col">
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Subtotal</span>
                   <span>${subtotal.toFixed(2)}</span>
@@ -173,7 +173,7 @@ export default function ShoppingCart() {
                   <span>${total.toFixed(2)}</span>
                 </div>
 
-                <Link href={'/checkout'} className="w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition">
+                <Link href={'/checkout'} className="text-center font-bold w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition">
                   Checkout
                 </Link>
               </div>

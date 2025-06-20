@@ -91,16 +91,14 @@ export default function ProductsLister({
           return (
             <div key={group.sku} className="hover:shadow-lg transition-shadow duration-200">
               <Product
-                product={selectedVariant}
+                variant={selectedVariant}
                 group={group}
-                onVariantChange={(variantSku) => handleVariantChange(group.sku, variantSku)}
               />
             </div>
           )
         })}
       </div>
 
-      {/* Pagination */}
       {totalPages > 1 && (
         <div className="flex flex-col items-center space-y-3">
           <div className="text-sm text-gray-600">

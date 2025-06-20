@@ -30,7 +30,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
   const [showTooltip, setShowTooltip] = useState<string | null>(null)
   const [isAnimating, setIsAnimating] = useState(false)
 
-  // Memoizar o cálculo de variante selecionada
   const findMatchingVariant = useCallback(() => {
     return group.variants.find((v) =>
       Object.entries(selectedOptions).every(([key, val]) => v.options[key] === val)
@@ -71,7 +70,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
     }
   }, [lazy])
 
-  // Melhor handling de mudança de opções
   const handleOptionChange = useCallback((optionLabel: string, value: string) => {
     setIsAnimating(true)
     setIsImageLoading(true)
@@ -79,11 +77,9 @@ export default function Product({ group, variant = null, lazy = false }: Product
     
     setSelectedOptions((prev) => ({ ...prev, [optionLabel]: value }))
     
-    // Reset animation state
     setTimeout(() => setIsAnimating(false), 200)
   }, [])
 
-  // Melhor handling de expansão
   const handleExpand = useCallback(() => {
     if (!isAnimating) {
       setIsExpanded(true)
@@ -94,18 +90,14 @@ export default function Product({ group, variant = null, lazy = false }: Product
     setIsExpanded(false)
   }, [])
 
-  // Melhor handling de clique no backdrop
   const handleBackdropClick = useCallback((e: React.MouseEvent) => {
     if (e.target === e.currentTarget) {
       handleCollapse()
     }
   }, [handleCollapse])
 
-  // Função para salvar produto (removendo localStorage)
   const handleSaveProduct = useCallback(() => {
-    // Usar state interno ou context ao invés de localStorage
     console.log('Produto salvo:', selectedVariant)
-    // Aqui você pode implementar uma função de callback ou usar context
   }, [selectedVariant])
 
   const imageToShow = selectedVariant?.image || group.images[0] || ''
@@ -131,14 +123,12 @@ export default function Product({ group, variant = null, lazy = false }: Product
         }}
       >
         <div className="relative bg-white rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 ease-out cursor-pointer overflow-hidden">
-          {/* Indicador de loading melhorado */}
           {isImageLoading && (
             <div className="absolute top-2 right-2 z-10">
               <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
             </div>
           )}
           
-          {/* Badge de status */}
           {isOutOfStock && (
             <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
               Esgotado
@@ -146,7 +136,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
           )}
 
           <div className="relative overflow-hidden rounded-t-2xl">
-            {/* Skeleton loader melhorado */}
             {!isImageLoaded && (
               <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse">
                 <div className="w-full h-full flex items-center justify-center">
@@ -173,7 +162,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
               loading={lazy ? 'lazy' : 'eager'}
             />
             
-            {/* Overlay de hover */}
             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
           </div>
 
@@ -205,7 +193,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
               </div>
             </div>
 
-            {/* Opções com melhor UX */}
             {group.options.map((opt) => (
               <div className="mb-4" key={opt.label}>
                 <p className="text-sm font-medium text-gray-700 mb-3">
@@ -254,7 +241,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
                           )}
                         </button>
                         
-                        {/* Tooltip melhorado */}
                         {showTooltip === `${opt.label}-${valStr}` && (
                           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap z-30">
                             {valStr}
@@ -268,7 +254,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
               </div>
             ))}
 
-            {/* Especificações com melhor layout */}
             {(group.specs ?? []).length > 0 && (
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                 <h4 className="text-sm font-medium text-gray-700 mb-2">Especificações:</h4>
@@ -283,7 +268,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
               </div>
             )}
 
-            {/* Seção expandida com melhor UX */}
             {isExpanded && (
               <div className="mt-6 border-t border-gray-200 pt-4 space-y-3">
                 <div className="flex gap-3">
@@ -293,7 +277,7 @@ export default function Product({ group, variant = null, lazy = false }: Product
                     onClick={handleSaveProduct}
                   >
                     <button 
-                      className="w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
+                      className={`${!isOutOfStock && 'cursor-pointer'} w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2`}
                       disabled={isOutOfStock}
                     >
                       {isOutOfStock ? 'Produto Esgotado' : 'Ver Detalhes'}
@@ -316,7 +300,6 @@ export default function Product({ group, variant = null, lazy = false }: Product
         </div>
       </div>
 
-      {/* Backdrop melhorado */}
       {isExpanded && (
         <div
           className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10 transition-opacity duration-300"

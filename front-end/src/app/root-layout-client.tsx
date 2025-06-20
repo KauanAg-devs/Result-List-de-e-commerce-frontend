@@ -15,7 +15,7 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
   const [showMobileProducts, setShowMobileProducts] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
 
-  const { isOpen } = useCartDrawer() // <- pega do contexto
+  const { isOpen } = useCartDrawer()
 
   const pathname = usePathname()
   const segments = pathname.split('/').filter(Boolean)
@@ -53,7 +53,7 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
 
       {children}
 
-      {isOpen && <ShoppingCart />} {/* <- aqui renderiza condicionalmente */}
+      {isOpen && <ShoppingCart />} 
 
       <Footer />
     </>

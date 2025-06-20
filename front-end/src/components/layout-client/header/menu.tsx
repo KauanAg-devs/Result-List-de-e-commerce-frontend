@@ -19,7 +19,7 @@ export default function Menu({ setShowCompanyProducts, showCompanyProducts, setS
 
       <div className="flex lg:hidden">
         <button
-          onClick={openCart} // abre o carrinho no mobile
+          onClick={openCart} 
           className="p-2 rounded hover:bg-gray-100"
           aria-label="Toggle Shopping Cart"
         >
@@ -76,7 +76,6 @@ export default function Menu({ setShowCompanyProducts, showCompanyProducts, setS
           {showCompanyProducts && (
             <div className="absolute top-full -left-8 z-50 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5">
               <div className="p-4">
-                {/* conteúdo do dropdown */}
               </div>
             </div>
           )}
@@ -95,7 +94,7 @@ export default function Menu({ setShowCompanyProducts, showCompanyProducts, setS
 
       <div className="hidden lg:flex lg:flex-1 lg:justify-end items-center gap-4">
         <button
-          onClick={openCart} // abre o carrinho no desktop
+          onClick={openCart} 
           className="p-2 rounded hover:bg-gray-100"
           aria-label="Toggle Shopping Cart"
         >
