@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { ProductProps } from '@/types/home/product';
 
 export interface CartItem extends Omit<ProductProps, 'images' | 'options'> {
+  name: string
   quantity: number;
   image: string;
   options: Record<string, string>;

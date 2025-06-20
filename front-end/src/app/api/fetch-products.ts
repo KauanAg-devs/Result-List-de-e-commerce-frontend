@@ -39,7 +39,7 @@ export const fetchMockedProducts = [
     ]
   },
   {
-    name: "Blue Hoodie",
+    name: "Hoodie",
     sku: "HOODIE-BLU",
     images: [
       "https://studios-tc.com/wp-content/uploads/2021/10/oversize-hoodie-royal-blue-front-900x1021.jpg",
@@ -78,7 +78,7 @@ export const fetchMockedProducts = [
     ]
   },
   {
-    name: "White Sneakers",
+    name: "Sneakers",
     sku: "SNKR-WHT",
     images: [
       "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSovWjFUTlsyEtXH3hP3TV93EjrClbcY_J9Xw&s",
@@ -117,7 +117,7 @@ export const fetchMockedProducts = [
     ]
   },
   {
-    name: "Green Hat",
+    name: "Hat",
     sku: "HAT-GRN",
     images: [
       "https://static.caphunters.com/41026-large_default/new-era-green-logo-a-frame-league-essential-los-angeles-dodgers-mlb-green-and-white-trucker-hat.webp",
@@ -156,7 +156,7 @@ export const fetchMockedProducts = [
     ]
   },
   {
-    name: "Red Jacket",
+    name: "Jacket",
     sku: "JKT-RED",
     images: [
       "https://images.unsplash.com/photo-1512436991641-6745cdb1723f?auto=format&fit=crop&w=500&q=60",
@@ -195,7 +195,7 @@ export const fetchMockedProducts = [
     ]
   },
   {
-    name: "Yellow Shorts",
+    name: "Shorts",
     sku: "SHRT-YLW",
     images: [
       "https://images.unsplash.com/photo-1503342217505-b0a15ec3261c?auto=format&fit=crop&w=500&q=60",
@@ -224,7 +224,7 @@ export const fetchMockedProducts = [
     ]
   },
   {
-    name: "Purple Scarf",
+    name: "Scarf",
     sku: "SCARF-PRP",
     images: [
       "https://images.unsplash.com/photo-1503424886301-9c47d62ad46d?auto=format&fit=crop&w=500&q=60"
@@ -252,7 +252,7 @@ export const fetchMockedProducts = [
     ]
   },
   {
-    name: "Orange Socks",
+    name: "Socks",
     sku: "SOCKS-ORG",
     images: [
       "https://images.unsplash.com/photo-1491553895911-0055eca6402d?auto=format&fit=crop&w=500&q=60"
@@ -289,9 +289,8 @@ export const fetchMockedProducts = [
       }
     ]
   },
-  // 10 itens já, vamos aumentar até 20:
   {
-    name: "Gray Jacket",
+    name: "Jacket",
     sku: "JKT-GRY",
     images: [
       "https://images.unsplash.com/photo-1503341455253-b2e723bb3dbb?auto=format&fit=crop&w=500&q=60"

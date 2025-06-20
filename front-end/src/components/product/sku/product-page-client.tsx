@@ -100,6 +100,7 @@ export default function ProductPageClient({ sku }: { sku: string }) {
     if (!variant || variant.stock === 0) return
 
     const cartItem: CartItem = {
+      name: product.name,
       sku: variant.sku,
       price: variant.price,
       options: selectedOptions,
@@ -196,7 +197,7 @@ export default function ProductPageClient({ sku }: { sku: string }) {
                   return (
                     <button
                       key={idx}
-                      onClick={() => handleOptionChange(opt.label, value)}
+                      onClick={() => handleOptionChange(opt.label, value!)}
                       className={`px-4 py-2 rounded-lg text-sm border transition-all ${
                         isSelected ? 'bg-gray-900 text-white' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-900'
                       }`}

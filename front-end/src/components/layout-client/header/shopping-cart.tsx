@@ -6,6 +6,7 @@ import { Trash2, Plus, Minus, ShoppingBag, X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import { removeFromCart } from "@/app/store/cart-slice";
+import Link from "next/link";
 
 export default function ShoppingCart() {
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -172,9 +173,9 @@ export default function ShoppingCart() {
                   <span>${total.toFixed(2)}</span>
                 </div>
 
-                <button className="w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition">
+                <Link href={'/checkout'} className="w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition">
                   Checkout
-                </button>
+                </Link>
               </div>
             </>
           )}
