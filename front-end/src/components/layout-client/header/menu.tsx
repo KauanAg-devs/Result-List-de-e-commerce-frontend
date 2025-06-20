@@ -3,7 +3,7 @@
 import { MenuProps } from '@/types/layout-client/menu-props';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useCartDrawer } from '@/app/contexts/cart-drawer-context'; 
+import { useCartDrawer } from '@/app/(main)/contexts/cart-drawer-context'; 
 
 export default function Menu({ setShowCompanyProducts, showCompanyProducts, setShowMobileMenu }: MenuProps) {
   const { openCart } = useCartDrawer();

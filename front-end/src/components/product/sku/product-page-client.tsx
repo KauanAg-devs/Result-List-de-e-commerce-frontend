@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { ProductGrouped } from '@/types/home/product'
 import { useAppDispatch } from '@/app/store'
 import { addToCartWithValidation, CartItem } from '@/app/store/cart-slice'
-import { useCartDrawer } from '@/app/contexts/cart-drawer-context'
+import { useCartDrawer } from '@/app/(main)/contexts/cart-drawer-context'
 import { toast, ToastContainer } from 'react-toastify'
 import { fetchMockedProducts } from '@/app/api/fetch-products'
 

@@ -4,7 +4,7 @@ import { RootState } from "@/app/store";
 import { useDispatch, useSelector } from "react-redux";
 import { Trash2, Plus, Minus, ShoppingBag, X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
-import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
+import { useCartDrawer } from "@/app/(main)/contexts/cart-drawer-context";
 import { removeFromCart } from "@/app/store/cart-slice";
 import Link from "next/link";
 

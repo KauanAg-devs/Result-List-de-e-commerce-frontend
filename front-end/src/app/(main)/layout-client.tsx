@@ -10,7 +10,7 @@ import { usePathname } from 'next/navigation'
 import { useCartDrawer } from './contexts/cart-drawer-context'
 import ShoppingCart from '@/components/layout-client/header/shopping-cart'
 
-export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
+export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const [showCompanyProducts, setShowCompanyProducts] = useState(false)
   const [showMobileProducts, setShowMobileProducts] = useState(false)
   const [showMobileMenu, setShowMobileMenu] = useState(false)
