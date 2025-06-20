@@ -35,7 +35,7 @@ export default function CheckoutPage({isAuthenticated}: {isAuthenticated: boolea
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-          if(!isAuthenticated) router.push('/Login');
+          if(!isAuthenticated) router.push('/login');
           console.log('Checkout data:', { formData, cartItems, total})
         }
 
