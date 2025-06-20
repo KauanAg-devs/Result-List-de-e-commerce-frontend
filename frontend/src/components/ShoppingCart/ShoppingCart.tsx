@@ -14,10 +14,11 @@ type ShoppingCartProps = {
 export function ShoppingCart({ setShowShoppingCart }: ShoppingCartProps): JSX.Element {
     const { products } = useSelector((state: RootState) => state.shoppingCart);
     const dispatch = useDispatch();
+
     const handleRemoveProduct = (sku: string) => {
         dispatch(removeProduct(sku));
     };
-
+    
     return (
         <div className="z-50 fixed right-0 top-0 w-screen h-screen bg-gray-400 bg-opacity-50 flex justify-end">
             <div className="absolute inset-0 bg-gray-400 bg-opacity-50 pointer-events-none" />

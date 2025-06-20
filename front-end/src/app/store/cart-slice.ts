@@ -5,7 +5,11 @@ export interface CartItem extends Omit<ProductProps, 'images' | 'options'> {
   quantity: number;
   image: string;
   options: Record<string, string>;
+  sku: string; 
+  stock: number;
+  price: number;
 }
+
 
 interface CartState {
   items: CartItem[];
@@ -23,16 +27,41 @@ export const addToCartWithValidation = createAsyncThunk<
   'cart/addToCartWithValidation',
   (item, { getState, rejectWithValue }) => {
     const state: any = getState();
-    const existingItem = state.cart.items.find((i: CartItem) => i.sku === item.sku);
+
+    const existingItem = state.cart.items.find((i: CartItem) => {
+      const matchedVariant = i.group.variants.find(v =>
+        Object.entries(i.options).every(([key, value]) => v.options[key] === value)
+      );
+
+      const newVariant = item.group.variants.find(v =>
+        Object.entries(item.options).every(([key, value]) => v.options[key] === value)
+      );
+
+      return matchedVariant?.sku === newVariant?.sku;
+    });
 
     const currentQuantity = existingItem ? existingItem.quantity : 0;
-    if (currentQuantity + item.quantity > item.stock) {
-      return rejectWithValue('Quantity exceeds the avaliable stock');
+    const variant = item.group.variants.find(v =>
+      Object.entries(item.options).every(([key, value]) => v.options[key] === value)
+    );
+
+    if (!variant) {
+      return rejectWithValue('Variant not found');
     }
 
-    return item;
+    if (currentQuantity + item.quantity > variant.stock) {
+      return rejectWithValue('Quantity exceeds available stock');
+    }
+
+    return {
+      ...item,
+      sku: variant.sku,
+      stock: variant.stock,
+      price: variant.price
+    };
   }
 );
+
 
 export const cartSlice = createSlice({
   name: 'cart',

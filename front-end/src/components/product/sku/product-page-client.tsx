@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { ProductGrouped } from '@/types/home/product'
 import { useAppDispatch } from '@/app/store'
-import { addToCartWithValidation } from '@/app/store/cart-slice'
+import { addToCartWithValidation, CartItem } from '@/app/store/cart-slice'
 import { useCartDrawer } from '@/app/contexts/cart-drawer-context'
 import { toast, ToastContainer } from 'react-toastify'
 import { fetchMockedProducts } from '@/app/api/fetch-products'
@@ -99,14 +99,15 @@ export default function ProductPageClient({ sku }: { sku: string }) {
     const variant = findVariant(product, selectedOptions)
     if (!variant || variant.stock === 0) return
 
-    const cartItem = {
+    const cartItem: CartItem = {
       sku: variant.sku,
-      name: product.name,
       price: variant.price,
       options: selectedOptions,
       quantity,
       image: variant.image,
-      stock: variant.stock
+      stock: variant.stock,
+      group: product,
+      lazy: false
     }
 
     try {
@@ -114,6 +115,8 @@ export default function ProductPageClient({ sku }: { sku: string }) {
       openCart()
       toast.success('Product added to shopping cart!')
     } catch (error) {
+      console.log(error);
+      
       toast.error(typeof error === 'string' ? error : 'Error adding to cart')
     }
   }
@@ -135,7 +138,7 @@ export default function ProductPageClient({ sku }: { sku: string }) {
   const price = variant?.price ?? 0
   const isOutOfStock = stock === 0
   const isLowStock = stock > 0 && stock <= 5
-
+  
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
       <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
@@ -194,7 +197,6 @@ export default function ProductPageClient({ sku }: { sku: string }) {
                     <button
                       key={idx}
                       onClick={() => handleOptionChange(opt.label, value)}
-                      disabled={isOutOfStock}
                       className={`px-4 py-2 rounded-lg text-sm border transition-all ${
                         isSelected ? 'bg-gray-900 text-white' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-900'
                       }`}
