@@ -29,7 +29,5 @@ export interface ProductGrouped {
 
 export interface ProductProps {
   group: ProductGrouped;
-  variant: ProductVariant;
-  showProductDetails: boolean,
-  setShowProductDetails: React.Dispatch<React.SetStateAction<boolean>>,
+  lazy: boolean
 }

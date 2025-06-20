@@ -1,5 +1,5 @@
-import { useState,  } from 'react'
-import { ProductGrouped} from '@/types/home/product'
+import { useState, useEffect } from 'react'
+import { ProductGrouped } from '@/types/home/product'
 import Product from './product'
 
 interface ProductsListerProps {
@@ -20,13 +20,23 @@ export default function ProductsLister({
   const end = start + productsPerPage
   const paginatedGroups = productsGrouped.slice(start, end)
 
-  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>(() => {
-    const initial: Record<string, string> = {}
-    productsGrouped.forEach((group) => {
-      if (group.variants.length > 0) initial[group.sku] = group.variants[0].sku
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    setSelectedVariants((prev) => {
+      const next = { ...prev }
+      let changed = false
+
+      paginatedGroups.forEach((group) => {
+        if (!next[group.sku] && group.variants.length > 0) {
+          next[group.sku] = group.variants[0].sku
+          changed = true
+        }
+      })
+
+      return changed ? next : prev
     })
-    return initial
-  })
+  }, [paginatedGroups])
 
   const handleVariantChange = (groupSku: string, variantSku: string) => {
     setSelectedVariants((prev) => ({
@@ -34,57 +44,102 @@ export default function ProductsLister({
       [groupSku]: variantSku,
     }))
   }
-  console.log(productsGrouped);
-  
+
+  const handlePageChange = (newPage: number) => {
+    if (newPage < 1 || newPage > totalPages) return
+    setCurrentPage(newPage)
+    window.scrollTo({ top: 0, behavior: 'smooth' })
+  }
+
+  const getVisiblePages = () => {
+    const pages = []
+    const maxVisible = 5
+    
+    if (totalPages <= maxVisible) {
+      for (let i = 1; i <= totalPages; i++) {
+        pages.push(i)
+      }
+    } else {
+      const start = Math.max(1, currentPage - 2)
+      const end = Math.min(totalPages, start + maxVisible - 1)
+      
+      for (let i = start; i <= end; i++) {
+        pages.push(i)
+      }
+    }
+    
+    return pages
+  }
+
+  if (productsGrouped.length === 0) {
+    return (
+      <div className="text-center py-12 text-gray-500">
+        <p className="text-lg">Nenhum produto encontrado</p>
+      </div>
+    )
+  }
+
   return (
-    <div>
-      <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
+    <div className="space-y-6 py-6 px-6">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
         {paginatedGroups.map((group) => {
           const selectedSku = selectedVariants[group.sku]
           const selectedVariant = group.variants.find((v) => v.sku === selectedSku)
+
           if (!selectedVariant) return null
 
           return (
-            <div key={group.sku} className="border rounded p-2">
-              <Product product={selectedVariant} options={group.options} />
-              <div className="flex gap-2 mt-2">
-                {group.variants.map((variant) => (
-                  <button
-                    key={variant.sku}
-                    onClick={() => handleVariantChange(group.sku, variant.sku)}
-                    className={`h-6 w-6 rounded-full border-2 ${
-                      selectedSku === variant.sku ? 'border-black' : 'border-gray-300'
-                    }`}
-                    style={{
-                      backgroundColor: variant.options['Color'],
-                      border:
-                        variant.options['Color'] === 'white' ? '2px solid #e5e7eb' : undefined,
-                    }}
-                    title={variant.options['Color']}
-                  />
-                ))}
-              </div>
+            <div key={group.sku} className="hover:shadow-lg transition-shadow duration-200">
+              <Product
+                product={selectedVariant}
+                group={group}
+                onVariantChange={(variantSku) => handleVariantChange(group.sku, variantSku)}
+              />
             </div>
           )
         })}
       </div>
 
-      <div className="flex justify-center mt-6 space-x-4">
-        <button
-          disabled={currentPage === 1}
-          onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-        >
-          Prev
-        </button>
-        <button
-          disabled={currentPage === totalPages}
-          onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
-          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
-        >
-          Next
-        </button>
-      </div>
+      {/* Pagination */}
+      {totalPages > 1 && (
+        <div className="flex flex-col items-center space-y-3">
+          <div className="text-sm text-gray-600">
+            {start + 1}-{Math.min(end, productsGrouped.length)} de {productsGrouped.length} produtos
+          </div>
+          
+          <div className="flex items-center space-x-1">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="px-3 py-2 text-sm border rounded-l hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              ‹ Anterior
+            </button>
+
+            {getVisiblePages().map((page) => (
+              <button
+                key={page}
+                onClick={() => handlePageChange(page)}
+                className={`px-3 py-2 text-sm border ${
+                  currentPage === page
+                    ? 'bg-blue-600 text-white border-blue-600'
+                    : 'hover:bg-gray-50'
+                }`}
+              >
+                {page}
+              </button>
+            ))}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="px-3 py-2 text-sm border rounded-r hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              Próxima ›
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1,3 +1,3 @@
 export type SearchProductsProps = {
-    setShowFilterInput(): React.Dispatch<boolean>
+    setShowFilterInput(): React.Dispatch<React.SetStateAction<boolean>>
 }
