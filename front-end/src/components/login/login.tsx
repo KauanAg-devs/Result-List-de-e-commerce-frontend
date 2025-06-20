@@ -1,6 +1,7 @@
 'use client'
 import { useState } from "react";
 import { Eye, EyeOff, Mail, Lock, ArrowRight } from "lucide-react";
+import Image from "next/image"
 
 export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
@@ -20,9 +21,7 @@ export default function Login() {
             <div className="w-full max-w-md">
                 {/* Header */}
                 <div className="text-center mb-10">
-                    <div className="inline-flex items-center justify-center w-12 h-12 bg-gray-900 rounded-xl mb-6">
-                        <div className="w-6 h-6 bg-white rounded-md"></div>
-                    </div>
+                    <Image src='logo-img.svg' width={70} height={70} className="mx-auto m-5" alt='logo'/>
                     <h1 className="text-2xl font-bold text-gray-900 mb-2">Sign in to your account</h1>
                     <p className="text-gray-600">Welcome back! Please enter your details.</p>
                 </div>
