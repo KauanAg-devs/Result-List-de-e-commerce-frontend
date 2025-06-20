@@ -7,10 +7,16 @@ import PagesNavigation from '@/components/layout-client/pages-navigation/pages-n
 import Footer from '@/components/layout-client/footer/footer'
 import { useState } from 'react'
 import { usePathname } from 'next/navigation'
+import { useCartDrawer } from './contexts/cart-drawer-context'
+import ShoppingCart from '@/components/layout-client/header/shopping-cart'
 
 export default function RootLayoutClient({ children }: { children: React.ReactNode }) {
   const [showCompanyProducts, setShowCompanyProducts] = useState(false)
   const [showMobileProducts, setShowMobileProducts] = useState(false)
+  const [showMobileMenu, setShowMobileMenu] = useState(false)
+
+  const { isOpen } = useCartDrawer() // <- pega do contexto
+
   const pathname = usePathname()
   const segments = pathname.split('/').filter(Boolean)
   const page = segments.length > 0 ? segments[segments.length - 1] : null
@@ -21,8 +27,6 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
   ]
 
   const pages = page ? [...basePages, { title: page, link: pathname }] : basePages
-  
-  const [showMobileMenu, setShowMobileMenu] = useState(false)
   const title = 'Compass'
 
   return (
@@ -48,6 +52,8 @@ export default function RootLayoutClient({ children }: { children: React.ReactNo
       />
 
       {children}
+
+      {isOpen && <ShoppingCart />} {/* <- aqui renderiza condicionalmente */}
 
       <Footer />
     </>

@@ -1,29 +1,35 @@
 export interface OptionValue {
-  color: string
-  relativeImage?: number
+  color?: string;
+  label?: string;
+  relativeImage?: number; 
 }
 
 export interface Option {
-  label: string
-  type: string
-  values: OptionValue[]
+  label: string; 
+  type: string; 
+  values: OptionValue[];
 }
 
-export interface Spec {
-  label: string
-  value: string | number
+export interface ProductVariant {
+  sku: string;
+  price: number;
+  stock: number;
+  image: string; 
+  options: Record<string, string>; 
+}
+
+export interface ProductGrouped {
+  name: string;
+  sku: string;
+  images: string[]; 
+  options: Option[];
+  specs?: { label: string; value: string }[];
+  variants: ProductVariant[];
 }
 
 export interface ProductProps {
-  name: string
-  sku: string
-  price: number
-  images: string[]
-  colors?: string[] 
-  options?: Option[]
-  stock: number
-  specs?: { label: string; value: string }[]
-  showProductDetails?: string
-  setShowProductDetails?: (sku: string) => void
-  showColorsOnCard?: boolean
+  group: ProductGrouped;
+  variant: ProductVariant;
+  showProductDetails: boolean,
+  setShowProductDetails: React.Dispatch<React.SetStateAction<boolean>>,
 }

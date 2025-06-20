@@ -3,11 +3,12 @@
 import { useState, useEffect } from 'react'
 import ProductsLister from '@/components/home/products-lister'
 import {fetchMockedProducts} from '@/app/api/fetch-products'
-import { ProductProps } from '@/types/home/product'
+import { ProductGrouped, ProductVariant } from '@/types/home/product';
 
 export default function Home() {
-  const [allProducts, setAllProducts] = useState<ProductProps[]>([]);
-  const [filteredProducts, setFilteredProducts] = useState<ProductProps[]>([]);
+  const [allProducts, setAllProducts] = useState<ProductGrouped[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductGrouped[]>([]);
+
   const [searchTerm, setSearchTerm] = useState('');
   const [showFilterInput, setShowFilterInput] = useState(false);
 
@@ -149,7 +150,7 @@ export default function Home() {
       )}
 
       <ProductsLister
-        filteredProducts={filteredProducts}
+        productsGrouped={filteredProducts}
         currentPage={currentPage}
         setCurrentPage={setCurrentPage}
         productsPerPage={productsPerPage}  

@@ -2,8 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { ProductProps } from '@/types/home/product'
-import { useDispatch } from 'react-redux'
-import { addToCart } from '@/app/store/cart-slice'
+import { useAppDispatch } from '@/app/store'
+import { addToCartWithValidation } from '@/app/store/cart-slice'
+import { useCartDrawer } from '@/app/contexts/cart-drawer-context'
+import { toast, ToastContainer } from 'react-toastify';
 
 export default function ProductPageClient({ sku }: { sku: string }) {
   const [product, setProduct] = useState<ProductProps | null>(null)
@@ -11,8 +13,9 @@ export default function ProductPageClient({ sku }: { sku: string }) {
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({})
   const [quantity, setQuantity] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
-  const dispatch = useDispatch();
- 
+  const dispatch = useAppDispatch()
+  const { openCart } = useCartDrawer()
+
   useEffect(() => {
     const loadProduct = async () => {
       setIsLoading(true)
@@ -43,21 +46,28 @@ export default function ProductPageClient({ sku }: { sku: string }) {
     if (relativeImage !== undefined) setSelectedImage(relativeImage)
   }
   
-  const handleAddToCart = () => {
-    if (!product || product.stock === 0) return
+  const handleAddToCart = async () => {
+  if (!product || product.stock === 0) return
 
-    const cartItem = {
-      sku: product.sku,
-      name: product.name,
-      price: product.price,
-      options: selectedOptions,
-      quantity,
-      image: product.images[selectedImage],
-    }
-
-  dispatch(addToCart(cartItem));
-    console.log('Added to cart:', cartItem)
+  const cartItem = {
+    sku: product.sku,
+    name: product.name,
+    price: product.price,
+    options: selectedOptions,
+    quantity,
+    image: product.images[selectedImage],
+    stock: product.stock
   }
+
+  try {
+    await dispatch(addToCartWithValidation(cartItem)).unwrap()
+    openCart()
+    toast.success('Product added to shopping cart!')
+  } catch (error) {
+    toast.error(typeof error === 'string' ? error : 'Error during shopping cart addiction') 
+  }
+}
+
   
   if (isLoading) {
     return (
@@ -65,7 +75,6 @@ export default function ProductPageClient({ sku }: { sku: string }) {
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-10">
           <div className="space-y-4">
             <div className="w-full aspect-square bg-gray-200 rounded-lg animate-pulse"></div>
-            
             <div className="flex gap-3">
               {[...Array(4)].map((_, idx) => (
                 <div key={idx} className="w-20 h-20 bg-gray-200 rounded-lg animate-pulse"></div>
@@ -178,6 +187,8 @@ export default function ProductPageClient({ sku }: { sku: string }) {
         </div>
 
         <div>
+          <ToastContainer position="top-right" autoClose={3000} />
+
           <div className="flex items-start justify-between mb-2">
             <h1 className="text-4xl font-bold text-gray-900">{product.name}</h1>
             {isOutOfStock && (
@@ -237,34 +248,21 @@ export default function ProductPageClient({ sku }: { sku: string }) {
                       }
                       disabled={isOutOfStock}
                       className={`px-4 py-2 rounded-lg text-sm border transition-all ${
-                        sku
-                        ? 'opacity-50 cursor-not-allowed bg-gray-100 border-gray-200 text-gray-400'
-                        : isSelected
+                        isSelected
                         ? 'bg-gray-900 text-white'
                         : 'bg-white border-gray-300 text-gray-700 hover:border-gray-900'
                       }`}
-                      style={
-                        opt.type === 'color' && !isOutOfStock
-                          ? {
-                              backgroundColor: value,
-                              color: 'transparent',
-                              border: value === 'white' ? '1px solid #ccc' : undefined,
-                              width: '2rem',
-                              height: '2rem',
-                              padding: 0,
-                              borderRadius: '9999px',
-                            }
-                          : opt.type === 'color' && isOutOfStock
-                          ? {
-                              backgroundColor: '#f3f4f6',
-                              color: 'transparent',
-                              border: '1px solid #d1d5db',
-                              width: '2rem',
-                              height: '2rem',
-                              padding: 0,
-                              borderRadius: '9999px',
-                            }
-                          : {}
+                      style={opt.type === 'color' && !isOutOfStock
+                        ? {
+                            backgroundColor: value,
+                            color: 'transparent',
+                            border: value === 'white' ? '1px solid #ccc' : undefined,
+                            width: '2rem',
+                            height: '2rem',
+                            padding: 0,
+                            borderRadius: '9999px',
+                          }
+                        : {}
                       }
                     >
                       {opt.type !== 'color' && value}
@@ -320,7 +318,7 @@ export default function ProductPageClient({ sku }: { sku: string }) {
             <button
               onClick={handleAddToCart}
               disabled={Object.keys(selectedOptions).length < (product.options?.length || 0)}
-              className="w-full bg-gray-900 text-white py-4 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full cursor-pointer bg-gray-900 text-white py-4 rounded-lg font-medium hover:bg-gray-800 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               Add to cart
             </button>

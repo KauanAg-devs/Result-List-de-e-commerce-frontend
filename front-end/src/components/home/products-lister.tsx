@@ -1,70 +1,90 @@
-'use client'
+import { useState,  } from 'react'
+import { ProductGrouped} from '@/types/home/product'
+import Product from './product'
 
-import Product from '@/components/home/product';
-import { ProductsListerProps } from '@/types/home/products-lister';
-import { useMemo, useState } from 'react';
+interface ProductsListerProps {
+  productsGrouped: ProductGrouped[]
+  productsPerPage: number
+  currentPage: number
+  setCurrentPage: (page: number) => void
+}
 
 export default function ProductsLister({
-  filteredProducts,
+  productsGrouped = [],
+  productsPerPage,
   currentPage,
   setCurrentPage,
-  productsPerPage
 }: ProductsListerProps) {
-  const [showProductDetails, setShowProductDetails] = useState('');
+  const totalPages = Math.ceil(productsGrouped.length / productsPerPage)
+  const start = (currentPage - 1) * productsPerPage
+  const end = start + productsPerPage
+  const paginatedGroups = productsGrouped.slice(start, end)
 
-  const paginatedProducts = useMemo(() => {
-    const start = (currentPage - 1) * productsPerPage;
-    const end = start + productsPerPage;
-    return filteredProducts.slice(start, end);
-  }, [currentPage, filteredProducts, productsPerPage]);
+  const [selectedVariants, setSelectedVariants] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {}
+    productsGrouped.forEach((group) => {
+      if (group.variants.length > 0) initial[group.sku] = group.variants[0].sku
+    })
+    return initial
+  })
 
-  const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-
-  const handlePrev = () => {
-    setCurrentPage((prev) => Math.max(prev - 1, 1));
-  };
-
-  const handleNext = () => {
-    setCurrentPage((prev) => Math.min(prev + 1, totalPages));
-  };
-
+  const handleVariantChange = (groupSku: string, variantSku: string) => {
+    setSelectedVariants((prev) => ({
+      ...prev,
+      [groupSku]: variantSku,
+    }))
+  }
+  console.log(productsGrouped);
+  
   return (
-    <div className="bg-white">
-      <div className="mx-auto max-w-2xl px-4 py-16 sm:px-6 sm:py-24 lg:max-w-7xl lg:px-8">
-        <div className="grid gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
-          {paginatedProducts.map((product, index) => (
-            <Product
-              key={product.sku}
-              product={product}
-              showProductDetails={showProductDetails}
-              setShowProductDetails={setShowProductDetails}
-              showColorsOnCard={true}
-              lazy={index >= 4 || currentPage > 1}
-            />
-          ))}
-        </div>
+    <div>
+      <div className="grid gap-6 grid-cols-2 lg:grid-cols-4">
+        {paginatedGroups.map((group) => {
+          const selectedSku = selectedVariants[group.sku]
+          const selectedVariant = group.variants.find((v) => v.sku === selectedSku)
+          if (!selectedVariant) return null
 
-        <p className="w-full text-center text-zinc-500 pt-6 font-bold">
-          Page {currentPage} of {totalPages}
-        </p>
+          return (
+            <div key={group.sku} className="border rounded p-2">
+              <Product product={selectedVariant} options={group.options} />
+              <div className="flex gap-2 mt-2">
+                {group.variants.map((variant) => (
+                  <button
+                    key={variant.sku}
+                    onClick={() => handleVariantChange(group.sku, variant.sku)}
+                    className={`h-6 w-6 rounded-full border-2 ${
+                      selectedSku === variant.sku ? 'border-black' : 'border-gray-300'
+                    }`}
+                    style={{
+                      backgroundColor: variant.options['Color'],
+                      border:
+                        variant.options['Color'] === 'white' ? '2px solid #e5e7eb' : undefined,
+                    }}
+                    title={variant.options['Color']}
+                  />
+                ))}
+              </div>
+            </div>
+          )
+        })}
+      </div>
 
-        <div className="flex justify-center space-x-4 mt-4">
-          <button
-            onClick={handlePrev}
-            disabled={currentPage === 1}
-            className="bg-gray-300 hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed text-gray-800 font-bold py-2 px-4 rounded-l"
-          >
-            Prev
-          </button>
-          <button
-            onClick={handleNext}
-            disabled={currentPage === totalPages}
-            className="bg-gray-300 hover:bg-gray-400 disabled:opacity-50 disabled:cursor-not-allowed text-gray-800 font-bold py-2 px-4 rounded-r"
-          >
-            Next
-          </button>
-        </div>
+      <div className="flex justify-center mt-6 space-x-4">
+        <button
+          disabled={currentPage === 1}
+          onClick={() => setCurrentPage(Math.max(currentPage - 1, 1))}
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Prev
+        </button>
+        <button
+          disabled={currentPage === totalPages}
+          onClick={() => setCurrentPage(Math.min(currentPage + 1, totalPages))}
+          className="px-4 py-2 bg-gray-300 rounded disabled:opacity-50"
+        >
+          Next
+        </button>
       </div>
     </div>
-  );
+  )
 }

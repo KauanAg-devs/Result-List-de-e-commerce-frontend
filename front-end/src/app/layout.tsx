@@ -4,6 +4,7 @@ import RootLayoutClient from '@/app/root-layout-client'
 import "./globals.css";
 import type { Metadata } from "next";
 import ReduxProvider from "./store/redux-provider";
+import { CartDrawerProvider } from "./contexts/cart-drawer-context";
 
 export const homeMetadata: Metadata = {
   title: "Compass Shop",
@@ -36,9 +37,11 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <ReduxProvider>
-          <RootLayoutClient>
-            {children}
-          </RootLayoutClient>
+          <CartDrawerProvider>
+            <RootLayoutClient>
+              {children}
+            </RootLayoutClient>
+          </CartDrawerProvider>
         </ReduxProvider>
       </body>
     </html>

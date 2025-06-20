@@ -2,17 +2,17 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
-import { cartReducer } from "./cart-slice"; 
+import { cartReducer } from "./cart-slice";
 
 const createNoopStorage = () => {
   return {
-    getItem() {
+    getItem(_key: string): Promise<string | null> {
       return Promise.resolve(null);
     },
-    setItem(_key: string, value: number) {
-      return Promise.resolve(value);
+    setItem(_key: string, value: string): Promise<void> {
+      return Promise.resolve();
     },
-    removeItem() {
+    removeItem(_key: string): Promise<void> {
       return Promise.resolve();
     },
   };
@@ -26,7 +26,7 @@ const storage =
 const cartPersistConfig = {
   key: "cart",
   storage,
-  whitelist: ["items"], 
+  whitelist: ["items"],
 };
 
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);
@@ -38,7 +38,9 @@ const rootReducer = combineReducers({
 export const store = configureStore({
   reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ serializableCheck: false }),
+    getDefaultMiddleware({
+      serializableCheck: false,
+    }),
 });
 
 export type RootState = ReturnType<typeof store.getState>;

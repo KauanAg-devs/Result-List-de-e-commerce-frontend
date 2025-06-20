@@ -1,146 +1,132 @@
 'use client'
 
-import { ProductProps, Option } from '@/types/home/product'
 import { useState, useEffect, useRef } from 'react'
 import Link from 'next/link'
+import { ProductGrouped, Option, ProductVariant } from '@/types/home/product'
 
-interface ProductComponentProps {
-  product: ProductProps
+interface ProductProps {
+  product: ProductGrouped
   showProductDetails?: string
   setShowProductDetails?: (sku: string) => void
-  showColorsOnCard?: boolean
   lazy?: boolean
 }
 
-// Skeleton component that matches the product card dimensions
-const ProductSkeleton = () => {
-  return (
-    <div className="group relative overflow-hidden">
-      <div className="relative bg-white rounded-2xl shadow-lg">
-        {/* Image skeleton */}
-        <div className="relative overflow-hidden rounded-t-2xl">
-          <div className="w-full aspect-square bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
+const ProductSkeleton = () => (
+  <div className="group relative overflow-hidden">
+    <div className="relative bg-white rounded-2xl shadow-lg">
+      <div className="relative overflow-hidden rounded-t-2xl">
+        <div className="w-full aspect-square bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
+      </div>
+      <div className="p-6">
+        <div className="flex justify-between items-start mb-4">
+          <div className="flex-1">
+            <div className="h-6 bg-gray-200 rounded animate-pulse mb-2 w-3/4" />
+            <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2" />
+          </div>
+          <div className="text-right">
+            <div className="h-8 bg-gray-200 rounded animate-pulse w-16 mb-1" />
+            <div className="h-4 bg-gray-200 rounded animate-pulse w-20" />
+          </div>
         </div>
-
-        <div className="p-6">
-          {/* Header skeleton */}
-          <div className="flex justify-between items-start mb-4">
-            <div className="flex-1">
-              <div className="h-6 bg-gray-200 rounded animate-pulse mb-2 w-3/4" />
-              <div className="h-4 bg-gray-200 rounded animate-pulse w-1/2" />
-            </div>
-            <div className="text-right">
-              <div className="h-8 bg-gray-200 rounded animate-pulse w-16 mb-1" />
-              <div className="h-4 bg-gray-200 rounded animate-pulse w-20" />
-            </div>
-          </div>
-
-          {/* Options skeleton */}
-          <div className="mb-4">
-            <div className="h-4 bg-gray-200 rounded animate-pulse w-24 mb-3" />
-            <div className="flex gap-3">
-              {[1, 2, 3].map((i) => (
-                <div key={i} className="h-5 w-5 bg-gray-200 rounded-full animate-pulse" />
-              ))}
-            </div>
-          </div>
-
-          {/* Specs skeleton */}
-          <div className="mt-4">
-            {[1, 2].map((i) => (
-              <div key={i} className="h-4 bg-gray-200 rounded animate-pulse mb-2 w-full" />
+        <div className="mb-4">
+          <div className="h-4 bg-gray-200 rounded animate-pulse w-24 mb-3" />
+          <div className="flex gap-3">
+            {[1, 2, 3].map((i) => (
+              <div key={i} className="h-5 w-5 bg-gray-200 rounded-full animate-pulse" />
             ))}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  </div>
+)
 
 export default function Product({
-  product,
+  group,
+  variant,
   showProductDetails,
   setShowProductDetails,
-  showColorsOnCard,
-  lazy = false
-}: ProductComponentProps) {
-  
+  lazy = false,
+}: ProductProps) {
   const [isVisible, setIsVisible] = useState(!lazy)
   const [isLoaded, setIsLoaded] = useState(!lazy)
   const elementRef = useRef<HTMLDivElement>(null)
-  
-  const colorOption = product.options?.find((opt) => opt.type === 'color') as Option | undefined
-  const defaultColor = colorOption?.values?.[0]
 
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(
-    (product.options ?? []).reduce((acc, opt) => {
+  // Estado das opções selecionadas, inicializa com o primeiro valor de cada opção
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
+    const initial: Record<string, string> = {}
+    product.options.forEach((opt) => {
       const firstValue = opt.values[0]
-      acc[opt.label] = 'color' in firstValue ? firstValue.color : (firstValue as any)
-      return acc
-    }, {} as Record<string, string>)
-  )
+      initial[opt.label] = firstValue.color ?? firstValue.label ?? ''
+    })
+    return initial
+  })
 
-  const [activeImageIndex, setActiveImageIndex] = useState<number>(
-    defaultColor?.relativeImage ?? 0
-  )
+  // Variante selecionada com base nas opções
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(null)
+
+  // Atualiza variante quando as opções mudam
+  useEffect(() => {
+    // Procura variante que casa exatamente com todas as opções selecionadas
+    const variant = product.variants.find((variant) => {
+      return Object.entries(selectedOptions).every(
+        ([optLabel, optValue]) => variant.options[optLabel] === optValue
+      )
+    }) || null
+
+    setSelectedVariant(variant)
+  }, [selectedOptions, product.variants])
+
+  // Índice da imagem ativa, tenta achar índice da imagem da variante dentro das imagens gerais
+  const activeImageIndex = selectedVariant
+    ? product.images.findIndex((img) => img === selectedVariant.image)
+    : 0
 
   const [isImageLoaded, setIsImageLoaded] = useState(false)
-  const isExpanded = showProductDetails === product.sku
+  const isExpanded = showProductDetails === (selectedVariant?.sku ?? '')
 
-  // Intersection Observer for lazy loading
+  // Lazy load observer
   useEffect(() => {
     if (!lazy) return
-
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
             setIsVisible(true)
-            // Add a small delay to simulate loading time and show the skeleton briefly
-            setTimeout(() => {
-              setIsLoaded(true)
-            }, 300)
+            setTimeout(() => setIsLoaded(true), 300)
             observer.unobserve(entry.target)
           }
         })
       },
-      {
-        rootMargin: '50px', // Start loading when element is 50px away from viewport
-        threshold: 0.1
-      }
+      { rootMargin: '50px', threshold: 0.1 }
     )
 
-    if (elementRef.current) {
-      observer.observe(elementRef.current)
-    }
+    if (elementRef.current) observer.observe(elementRef.current)
 
     return () => {
-      if (elementRef.current) {
-        observer.unobserve(elementRef.current)
-      }
+      if (elementRef.current) observer.unobserve(elementRef.current)
     }
   }, [lazy])
 
-  const handleToggleDetails = () => {
-    if (setShowProductDetails) {
-      setShowProductDetails(isExpanded ? '' : product.sku)
-    }
+  const toggleDetails = () => {
+    if (!setShowProductDetails) return
+    setShowProductDetails(isExpanded ? '' : (selectedVariant?.sku ?? ''))
   }
 
   const memorizeProductDetails = () => {
+    if (!selectedVariant) return
     localStorage.setItem(
-      `product_${product.sku}`, 
+      `product_${selectedVariant.sku}`,
       JSON.stringify({
         name: product.name,
-        sku: product.sku,
-        price: product.price,
+        sku: selectedVariant.sku,
+        price: selectedVariant.price,
         images: product.images,
-        stock: product.stock
+        stock: selectedVariant.stock,
       })
     )
   }
 
-  // Show skeleton while loading
   if (lazy && (!isVisible || !isLoaded)) {
     return (
       <div ref={elementRef}>
@@ -153,27 +139,24 @@ export default function Product({
     <div className="group relative overflow-hidden" ref={elementRef}>
       <div
         className={`
-          relative bg-white rounded-2xl shadow-lg hover:shadow-2xl 
+          relative bg-white rounded-2xl shadow-lg hover:shadow-2xl
           transition-all duration-500 ease-out
           ${isExpanded ? 'scale-105 z-20' : 'hover:scale-[1.02]'}
         `}
-        onClick={handleToggleDetails}
+        onClick={toggleDetails}
       >
         <div className="relative overflow-hidden rounded-t-2xl">
           {!isImageLoaded && (
             <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-pulse" />
           )}
-
           <img
-            src={product.images[activeImageIndex]}
-            alt={`${product.name}`}
-            className={`
-              w-full aspect-square object-cover transition-all duration-700
-              ${isImageLoaded ? 'opacity-100' : 'opacity-0'}
-              ${!isExpanded ? 'group-hover:scale-110' : ''}
-            `}
+            src={product.images[activeImageIndex] ?? product.images[0]}
+            alt={`${product.name} variant`}
+            className={`w-full aspect-square object-cover transition-all duration-700 ${
+              isImageLoaded ? 'opacity-100' : 'opacity-0'
+            } ${!isExpanded ? 'group-hover:scale-110' : ''}`}
             onLoad={() => setIsImageLoaded(true)}
-            loading={lazy ? "lazy" : "eager"}
+            loading={lazy ? 'lazy' : 'eager'}
           />
         </div>
 
@@ -184,64 +167,55 @@ export default function Product({
                 {product.name}
               </h3>
               <p className="text-sm text-gray-500 uppercase tracking-wide font-medium">
-                SKU: {product.sku}
+                SKU: {selectedVariant?.sku ?? '—'}
               </p>
             </div>
             <div className="text-right">
-              <p className="text-2xl font-bold text-gray-900">${product.price}</p>
+              <p className="text-2xl font-bold text-gray-900">
+                ${selectedVariant?.price?.toFixed(2) ?? '--'}
+              </p>
               <p
                 className="text-sm font-medium"
-                style={{ color: product.stock > 0 ? 'green' : 'red' }}
+                style={{ color: selectedVariant?.stock && selectedVariant.stock > 0 ? 'green' : 'red' }}
               >
-                {product.stock > 0 ? 'In Stock' : 'Out of Stock'}
+                {selectedVariant?.stock && selectedVariant.stock > 0 ? 'In Stock' : 'Out of Stock'}
               </p>
             </div>
           </div>
 
-          {(product.options ?? []).map((opt) => (
+          {product.options.map((opt) => (
             <div className="mb-4" key={opt.label}>
               <p className="text-sm font-medium text-gray-700 mb-3">
-                {opt.label}:{' '}
-                <span className="capitalize">{selectedOptions[opt.label]}</span>
+                {opt.label}: <span className="capitalize">{selectedOptions[opt.label]}</span>
               </p>
               <div className="flex gap-3">
                 {opt.values.map((value, i) => {
-                  const colorValue = 'color' in value ? value.color : String(value)
-                  const isSelected = selectedOptions[opt.label] === colorValue
+                  const valStr = value.color ?? value.label ?? ''
+                  const isSelected = selectedOptions[opt.label] === valStr
                   return (
                     <button
                       key={i}
-                      title={colorValue}
+                      title={valStr}
                       onClick={(e) => {
                         e.stopPropagation()
-                        setSelectedOptions((prev) => ({
-                          ...prev,
-                          [opt.label]: colorValue
-                        }))
-                        if ('relativeImage' in value && typeof value.relativeImage === 'number') {
-                          setActiveImageIndex(value.relativeImage)
-                        }
+                        setSelectedOptions((prev) => ({ ...prev, [opt.label]: valStr }))
+                        setIsImageLoaded(false) // para efeito de loading imagem
                       }}
                       className={`
                         relative h-5 w-5 rounded-full text-sm border transition-all duration-200
-                        ${isSelected
-                          ? 'bg-gray-900 text-white'
-                          : 'bg-white border-gray-300 text-gray-700 hover:border-gray-900'}
+                        ${isSelected ? 'bg-gray-900 text-white' : 'bg-white border-gray-300 text-gray-700 hover:border-gray-900'}
                       `}
                       style={
                         opt.type === 'color'
                           ? {
-                              backgroundColor: colorValue,
+                              backgroundColor: valStr,
                               color: 'transparent',
-                              border:
-                                colorValue === 'white'
-                                  ? '2px solid #e5e7eb'
-                                  : undefined
+                              border: valStr === 'white' ? '2px solid #e5e7eb' : undefined,
                             }
                           : {}
                       }
                     >
-                      {opt.type !== 'color' && colorValue}
+                      {opt.type !== 'color' && valStr}
                     </button>
                   )
                 })}
@@ -262,7 +236,7 @@ export default function Product({
           {isExpanded && (
             <div className="mt-6 border-t border-gray-200 pt-4 text-gray-700 flex justify-center">
               <Link
-                href={`/product/${product.sku}`}
+                href={`/product/${selectedVariant?.sku}`}
                 onClick={(e) => {
                   e.stopPropagation()
                   memorizeProductDetails()
@@ -277,10 +251,7 @@ export default function Product({
       </div>
 
       {isExpanded && (
-        <div
-          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10"
-          onClick={handleToggleDetails}
-        />
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-10" onClick={toggleDetails} />
       )}
     </div>
   )
