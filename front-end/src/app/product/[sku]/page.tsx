@@ -1,5 +1,6 @@
 import ProductPageClient from '@/components/product/sku/product-page-client'
 
-export default function ProductPage({ params }: { params: { sku: string } }) {
-  return <ProductPageClient sku={params.sku} />
+export default async function ProductPage({ params }: { params: Promise<{ sku: string }> }) {
+  const { sku } = await params
+  return <ProductPageClient sku={sku} />
 }
