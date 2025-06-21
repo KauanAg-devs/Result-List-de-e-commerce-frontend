@@ -1,124 +1,140 @@
-'use client'
+"use client";
 
-import { useState, useEffect, useRef, useCallback } from 'react'
-import { ProductGrouped, ProductVariant } from '@/types/home/product'
-import Link from 'next/link'
+import { useState, useEffect, useRef, useCallback } from "react";
+import { ProductGrouped, ProductVariant } from "@/types/home/product";
+import Link from "next/link";
 
 interface ProductProps {
-  group: ProductGrouped
-  variant?: ProductVariant | null
-  lazy?: boolean
+  group: ProductGrouped;
+  variant?: ProductVariant | null;
+  lazy?: boolean;
 }
 
-export default function Product({ group, variant = null, lazy = false }: ProductProps) {
-  const [isVisible, setIsVisible] = useState(!lazy)
-  const [isLoaded, setIsLoaded] = useState(!lazy)
-  const elementRef = useRef<HTMLDivElement>(null)
+export default function Product({
+  group,
+  variant = null,
+  lazy = false,
+}: ProductProps) {
+  const [isVisible, setIsVisible] = useState(!lazy);
+  const [isLoaded, setIsLoaded] = useState(!lazy);
+  const elementRef = useRef<HTMLDivElement>(null);
 
   const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
     variant || group.variants[0] || null
-  )
+  );
 
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
-    if (!selectedVariant) return {}
-    return { ...selectedVariant.options }
-  })
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<string, string>
+  >(() => {
+    if (!selectedVariant) return {};
+    return { ...selectedVariant.options };
+  });
 
-  const [isExpanded, setIsExpanded] = useState(false)
-  const [isImageLoaded, setIsImageLoaded] = useState(false)
-  const [isImageLoading, setIsImageLoading] = useState(false)
-  const [showTooltip, setShowTooltip] = useState<string | null>(null)
-  const [isAnimating, setIsAnimating] = useState(false)
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [isImageLoading, setIsImageLoading] = useState(false);
+  const [showTooltip, setShowTooltip] = useState<string | null>(null);
+  const [isAnimating, setIsAnimating] = useState(false);
 
   const findMatchingVariant = useCallback(() => {
-    return group.variants.find((v) =>
-      Object.entries(selectedOptions).every(([key, val]) => v.options[key] === val)
-    ) || null
-  }, [selectedOptions, group.variants])
+    return (
+      group.variants.find((v) =>
+        Object.entries(selectedOptions).every(
+          ([key, val]) => v.options[key] === val
+        )
+      ) || null
+    );
+  }, [selectedOptions, group.variants]);
 
   useEffect(() => {
     if (variant) {
-      setSelectedVariant(variant)
-      setSelectedOptions({ ...variant.options })
+      setSelectedVariant(variant);
+      setSelectedOptions({ ...variant.options });
     }
-  }, [variant])
+  }, [variant]);
 
   useEffect(() => {
-    const match = findMatchingVariant()
+    const match = findMatchingVariant();
     if (match !== selectedVariant) {
-      setSelectedVariant(match)
+      setSelectedVariant(match);
     }
-  }, [selectedOptions, findMatchingVariant, selectedVariant])
+  }, [selectedOptions, findMatchingVariant, selectedVariant]);
 
   useEffect(() => {
-    if (!lazy) return
+    if (!lazy) return;
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setIsVisible(true)
-            setTimeout(() => setIsLoaded(true), 300)
-            observer.unobserve(entry.target)
+            setIsVisible(true);
+            setTimeout(() => setIsLoaded(true), 300);
+            observer.unobserve(entry.target);
           }
-        })
+        });
       },
-      { rootMargin: '50px', threshold: 0.1 }
-    )
-    if (elementRef.current) observer.observe(elementRef.current)
+      { rootMargin: "50px", threshold: 0.1 }
+    );
+    if (elementRef.current) observer.observe(elementRef.current);
     return () => {
-      if (elementRef.current) observer.unobserve(elementRef.current)
-    }
-  }, [lazy])
+      if (elementRef.current) observer.unobserve(elementRef.current);
+    };
+  }, [lazy]);
 
-  const handleOptionChange = useCallback((optionLabel: string, value: string) => {
-    setIsAnimating(true)
-    setIsImageLoading(true)
-    setIsImageLoaded(false)
-    
-    setSelectedOptions((prev) => ({ ...prev, [optionLabel]: value }))
-    
-    setTimeout(() => setIsAnimating(false), 200)
-  }, [])
+  const handleOptionChange = useCallback(
+    (optionLabel: string, value: string) => {
+      setIsAnimating(true);
+      setIsImageLoading(true);
+      setIsImageLoaded(false);
+
+      setSelectedOptions((prev) => ({ ...prev, [optionLabel]: value }));
+
+      setTimeout(() => setIsAnimating(false), 200);
+    },
+    []
+  );
 
   const handleExpand = useCallback(() => {
     if (!isAnimating) {
-      setIsExpanded(true)
+      setIsExpanded(true);
     }
-  }, [isAnimating])
+  }, [isAnimating]);
 
   const handleCollapse = useCallback(() => {
-    setIsExpanded(false)
-  }, [])
+    setIsExpanded(false);
+  }, []);
 
-  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
-    if (e.target === e.currentTarget) {
-      handleCollapse()
-    }
-  }, [handleCollapse])
+  const handleBackdropClick = useCallback(
+    (e: React.MouseEvent) => {
+      if (e.target === e.currentTarget) {
+        handleCollapse();
+      }
+    },
+    [handleCollapse]
+  );
 
   const handleSaveProduct = useCallback(() => {
-    console.log('Produto salvo:', selectedVariant)
-  }, [selectedVariant])
+    console.log("Produto salvo:", selectedVariant);
+  }, [selectedVariant]);
 
-  const imageToShow = selectedVariant?.image || group.images[0] || ''
-  const isOutOfStock = !selectedVariant?.stock || selectedVariant.stock === 0
+  const imageToShow = selectedVariant?.image || group.images[0] || "";
+  const isOutOfStock = !selectedVariant?.stock || selectedVariant.stock === 0;
 
   return (
     <>
       <div
         ref={elementRef}
         className={`group relative overflow-hidden transition-all duration-300 ease-out ${
-          isExpanded ? 'scale-105 z-20' : 'hover:scale-[1.02] hover:z-10'
-        } ${isAnimating ? 'pointer-events-none' : ''}`}
+          isExpanded ? "scale-105 z-20" : "hover:scale-[1.02] hover:z-10"
+        } ${isAnimating ? "pointer-events-none" : ""}`}
         onClick={handleExpand}
         role="button"
         tabIndex={0}
         aria-expanded={isExpanded}
         aria-label={`Ver detalhes de ${group.name}`}
         onKeyDown={(e) => {
-          if (e.key === 'Enter' || e.key === ' ') {
-            e.preventDefault()
-            handleExpand()
+          if (e.key === "Enter" || e.key === " ") {
+            e.preventDefault();
+            handleExpand();
           }
         }}
       >
@@ -128,7 +144,7 @@ export default function Product({ group, variant = null, lazy = false }: Product
               <div className="w-4 h-4 border-2 border-gray-300 border-t-blue-500 rounded-full animate-spin"></div>
             </div>
           )}
-          
+
           {isOutOfStock && (
             <div className="absolute top-2 left-2 z-10 bg-red-500 text-white text-xs px-2 py-1 rounded-full font-medium">
               Esgotado
@@ -143,25 +159,27 @@ export default function Product({ group, variant = null, lazy = false }: Product
                 </div>
               </div>
             )}
-            
+
             <img
               src={imageToShow}
-              alt={`${group.name} - ${Object.values(selectedOptions).join(', ')}`}
+              alt={`${group.name} - ${Object.values(selectedOptions).join(
+                ", "
+              )}`}
               className={`w-full aspect-square object-cover transition-all duration-700 ${
-                isImageLoaded ? 'opacity-100' : 'opacity-0'
-              } ${!isExpanded ? 'group-hover:scale-110' : ''} ${
-                isOutOfStock ? 'grayscale' : ''
+                isImageLoaded ? "opacity-100" : "opacity-0"
+              } ${!isExpanded ? "group-hover:scale-110" : ""} ${
+                isOutOfStock ? "grayscale" : ""
               }`}
               onLoad={() => {
-                setIsImageLoaded(true)
-                setIsImageLoading(false)
+                setIsImageLoaded(true);
+                setIsImageLoading(false);
               }}
               onError={() => {
-                setIsImageLoading(false)
+                setIsImageLoading(false);
               }}
-              loading={lazy ? 'lazy' : 'eager'}
+              loading={lazy ? "lazy" : "eager"}
             />
-            
+
             <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity duration-300"></div>
           </div>
 
@@ -172,23 +190,25 @@ export default function Product({ group, variant = null, lazy = false }: Product
                   {group.name}
                 </h3>
                 <p className="text-sm text-gray-500 uppercase tracking-wide font-medium">
-                  SKU: {selectedVariant?.sku ?? '—'}
+                  SKU: {selectedVariant?.sku ?? "—"}
                 </p>
               </div>
               <div className="text-right ml-4">
                 <p className="text-2xl font-bold text-gray-900">
-                  {selectedVariant?.price ? `$${selectedVariant.price.toFixed(2)}` : '--'}
+                  {selectedVariant?.price
+                    ? `$${selectedVariant.price.toFixed(2)}`
+                    : "--"}
                 </p>
                 <p
                   className={`text-sm font-medium transition-colors ${
-                    selectedVariant?.stock && selectedVariant.stock > 0 
-                      ? 'text-emerald-600' 
-                      : 'text-red-500'
+                    selectedVariant?.stock && selectedVariant.stock > 0
+                      ? "text-emerald-600"
+                      : "text-red-500"
                   }`}
                 >
                   {selectedVariant?.stock && selectedVariant.stock > 0
                     ? `In stock (${selectedVariant.stock})`
-                    : 'Sold out'}
+                    : "Sold out"}
                 </p>
               </div>
             </div>
@@ -196,51 +216,59 @@ export default function Product({ group, variant = null, lazy = false }: Product
             {group.options.map((opt) => (
               <div className="mb-4" key={opt.label}>
                 <p className="text-sm font-medium text-gray-700 mb-3">
-                  {opt.label}: <span className="capitalize font-semibold">{selectedOptions[opt.label]}</span>
+                  {opt.label}:{" "}
+                  <span className="capitalize font-semibold">
+                    {selectedOptions[opt.label]}
+                  </span>
                 </p>
                 <div className="flex gap-2 flex-wrap">
                   {opt.values.map((value, i) => {
-                    const valStr = value.label ?? ''
-                    const isSelected = selectedOptions[opt.label] === valStr
+                    const valStr = value.label ?? "";
+                    const isSelected = selectedOptions[opt.label] === valStr;
                     return (
                       <div
                         key={i}
                         className="relative"
-                        onMouseEnter={() => setShowTooltip(`${opt.label}-${valStr}`)}
+                        onMouseEnter={() =>
+                          setShowTooltip(`${opt.label}-${valStr}`)
+                        }
                         onMouseLeave={() => setShowTooltip(null)}
                       >
                         <button
                           title={valStr}
                           onClick={(e) => {
-                            e.stopPropagation()
-                            handleOptionChange(opt.label, valStr)
+                            e.stopPropagation();
+                            handleOptionChange(opt.label, valStr);
                           }}
                           disabled={isAnimating}
                           className={`relative h-8 min-w-8 px-2 rounded-lg text-sm border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                             isSelected
-                              ? 'bg-gray-900 text-white border-gray-900 shadow-md'
-                              : 'bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm'
-                          } ${isAnimating ? 'opacity-50 cursor-not-allowed' : ''}`}
+                              ? "bg-gray-900 text-white border-gray-900 shadow-md"
+                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm"
+                          } ${
+                            isAnimating ? "opacity-50 cursor-not-allowed" : ""
+                          }`}
                           style={
-                            opt.type === 'color'
+                            opt.type === "color"
                               ? {
                                   backgroundColor: value.color,
-                                  color: 'transparent',
-                                  border: valStr.toLowerCase() === 'white' 
-                                    ? '2px solid #e5e7eb' 
-                                    : isSelected 
-                                      ? '2px solid #374151'
-                                      : '2px solid transparent',
+                                  color: "transparent",
+                                  border:
+                                    valStr.toLowerCase() === "white"
+                                      ? "2px solid #e5e7eb"
+                                      : isSelected
+                                      ? "2px solid #374151"
+                                      : "2px solid transparent",
                                 }
                               : {}
                           }
                         >
-                          {opt.type !== 'color' && valStr}
-                          {isSelected && opt.type === 'color' && (
+                          {opt.type !== "color" && valStr}
+                          {isSelected && opt.type === "color" && (
                             <div className="absolute inset-0 rounded-lg border-2 border-gray-900"></div>
                           )}
                         </button>
-                        
+
                         {showTooltip === `${opt.label}-${valStr}` && (
                           <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap z-30">
                             {valStr}
@@ -248,7 +276,7 @@ export default function Product({ group, variant = null, lazy = false }: Product
                           </div>
                         )}
                       </div>
-                    )
+                    );
                   })}
                 </div>
               </div>
@@ -256,11 +284,15 @@ export default function Product({ group, variant = null, lazy = false }: Product
 
             {(group.specs ?? []).length > 0 && (
               <div className="mt-4 p-3 bg-gray-50 rounded-lg">
-                <h4 className="text-sm font-medium text-gray-700 mb-2">Especificações:</h4>
+                <h4 className="text-sm font-medium text-gray-700 mb-2">
+                  Especificações:
+                </h4>
                 <div className="space-y-1">
                   {group.specs?.map(({ label, value }) => (
                     <div key={label} className="flex justify-between text-sm">
-                      <span className="font-medium text-gray-600">{label}:</span>
+                      <span className="font-medium text-gray-600">
+                        {label}:
+                      </span>
                       <span className="text-gray-900">{value}</span>
                     </div>
                   ))}
@@ -271,22 +303,24 @@ export default function Product({ group, variant = null, lazy = false }: Product
             {isExpanded && (
               <div className="mt-6 border-t border-gray-200 pt-4 space-y-3">
                 <div className="flex gap-3">
-                  <Link 
-                    href={`/product/${group?.sku ?? ''}`}
+                  <Link
+                    href={`/product/${group?.sku ?? ""}`}
                     className="flex-1"
                     onClick={handleSaveProduct}
                   >
-                    <button 
-                      className={`${!isOutOfStock && 'cursor-pointer'} w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2`}
+                    <button
+                      className={`${
+                        !isOutOfStock && "cursor-pointer"
+                      } w-full bg-gray-900 text-white py-3 px-4 rounded-lg font-semibold hover:bg-gray-800 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2`}
                       disabled={isOutOfStock}
                     >
-                      {isOutOfStock ? 'Produto Esgotado' : 'Ver Detalhes'}
+                      {isOutOfStock ? "Produto Esgotado" : "Ver Detalhes"}
                     </button>
                   </Link>
                   <button
                     onClick={(e) => {
-                      e.stopPropagation()
-                      handleCollapse()
+                      e.stopPropagation();
+                      handleCollapse();
                     }}
                     className="px-4 py-3 border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2"
                     aria-label="Fechar detalhes"
@@ -308,12 +342,12 @@ export default function Product({ group, variant = null, lazy = false }: Product
           tabIndex={0}
           aria-label="Fechar detalhes do produto"
           onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              handleCollapse()
+            if (e.key === "Escape") {
+              handleCollapse();
             }
           }}
         />
       )}
     </>
-  )
+  );
 }

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import { RootState } from "@/app/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -10,12 +10,15 @@ import Link from "next/link";
 
 export default function ShoppingCart() {
   const cartItems = useSelector((state: RootState) => state.cart.items);
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
   const [isAnimating, setIsAnimating] = useState<string | null>(null);
   const drawerRef = useRef<HTMLDivElement>(null);
   const { closeCart } = useCartDrawer();
 
-  const subtotal = cartItems.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+  const subtotal = cartItems.reduce(
+    (sum, item) => sum + item.price * item.quantity,
+    0
+  );
   const shipping = subtotal > 100 ? 0 : 15;
   const tax = subtotal * 0.08;
   const total = subtotal + shipping + tax;
@@ -41,7 +44,10 @@ export default function ShoppingCart() {
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
-      if (drawerRef.current && !drawerRef.current.contains(event.target as Node)) {
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(event.target as Node)
+      ) {
         closeCart();
       }
     }
@@ -51,7 +57,10 @@ export default function ShoppingCart() {
 
   return (
     <>
-      <div className="fixed inset-0 bg-opacity-30 z-40" style={{ pointerEvents: "none" }} />
+      <div
+        className="fixed inset-0 bg-opacity-30 z-40"
+        style={{ pointerEvents: "none" }}
+      />
 
       <div
         ref={drawerRef}
@@ -74,8 +83,12 @@ export default function ShoppingCart() {
               <div className="w-24 h-24 mb-4 bg-gray-100 rounded-full flex items-center justify-center">
                 <ShoppingBag className="w-12 h-12 text-gray-400" />
               </div>
-              <h2 className="text-lg font-semibold text-gray-700">Your cart is empty</h2>
-              <p className="text-gray-500 mt-1">Add some items to get started</p>
+              <h2 className="text-lg font-semibold text-gray-700">
+                Your cart is empty
+              </h2>
+              <p className="text-gray-500 mt-1">
+                Add some items to get started
+              </p>
               <button
                 onClick={closeCart}
                 className="mt-6 bg-black text-white px-6 py-2 rounded-full hover:bg-gray-800 transition"
@@ -89,7 +102,9 @@ export default function ShoppingCart() {
                 <div
                   key={item.sku}
                   className={`p-4 border-b transition-all duration-300 ${
-                    isAnimating === item.sku ? "opacity-50 scale-95" : "opacity-100 scale-100"
+                    isAnimating === item.sku
+                      ? "opacity-50 scale-95"
+                      : "opacity-100 scale-100"
                   }`}
                 >
                   <div className="flex gap-4">
@@ -110,8 +125,12 @@ export default function ShoppingCart() {
                     <div className="flex-1">
                       <div className="flex justify-between items-start">
                         <div>
-                          <p className="text-sm font-semibold text-gray-800">{item.name}</p>
-                          <p className="text-xs text-gray-500">SKU: {item.sku}</p>
+                          <p className="text-sm font-semibold text-gray-800">
+                            {item.name}
+                          </p>
+                          <p className="text-xs text-gray-500">
+                            SKU: {item.sku}
+                          </p>
                           {Object.entries(item.options).map(([key, value]) => (
                             <div key={key} className="text-xs text-gray-500">
                               {key}: <span className="capitalize">{value}</span>
@@ -131,7 +150,10 @@ export default function ShoppingCart() {
                         <div className="flex items-center space-x-2">
                           <button
                             onClick={() =>
-                              handleQuantityChange(item.sku, Math.max(1, item.quantity - 1))
+                              handleQuantityChange(
+                                item.sku,
+                                Math.max(1, item.quantity - 1)
+                              )
                             }
                             className="p-1 bg-gray-100 rounded-full hover:bg-gray-200"
                           >
@@ -139,7 +161,9 @@ export default function ShoppingCart() {
                           </button>
                           <span className="text-sm px-2">{item.quantity}</span>
                           <button
-                            onClick={() => handleQuantityChange(item.sku, item.quantity + 1)}
+                            onClick={() =>
+                              handleQuantityChange(item.sku, item.quantity + 1)
+                            }
                             className="p-1 bg-gray-100 rounded-full hover:bg-gray-200"
                           >
                             <Plus className="w-4 h-4" />
@@ -162,7 +186,9 @@ export default function ShoppingCart() {
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Shipping</span>
-                  <span>{shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}</span>
+                  <span>
+                    {shipping === 0 ? "FREE" : `$${shipping.toFixed(2)}`}
+                  </span>
                 </div>
                 <div className="flex justify-between text-sm text-gray-600">
                   <span>Tax</span>
@@ -173,7 +199,10 @@ export default function ShoppingCart() {
                   <span>${total.toFixed(2)}</span>
                 </div>
 
-                <Link href={'/checkout'} className="text-center font-bold w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition">
+                <Link
+                  href={"/checkout"}
+                  className="text-center font-bold w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition"
+                >
                   Checkout
                 </Link>
               </div>

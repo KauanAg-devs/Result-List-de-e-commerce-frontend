@@ -1,5 +1,6 @@
 'use client';
 
+import { CartDrawerContextProps } from '@/types/main/contexts/cart-drawer-context';
 import { createContext, useContext, useState } from 'react';
 
 type CartDrawerContextType = {
@@ -10,7 +11,7 @@ type CartDrawerContextType = {
 
 const CartDrawerContext = createContext<CartDrawerContextType | undefined>(undefined);
 
-export function CartDrawerProvider({ children }: { children: React.ReactNode }) {
+export function CartDrawerProvider({ children }: CartDrawerContextProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

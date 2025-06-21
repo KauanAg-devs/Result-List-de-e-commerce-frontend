@@ -1,11 +1,16 @@
-import React, { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import React, { useState } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
+import { FooterSectionProps } from "@/types/main/layout-client/footer-section";
 
-export default function FooterSection({ title, children, sectionKey }) {
+export default function FooterSection({
+  title,
+  children,
+  sectionKey,
+}: FooterSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const toggleSection = () => {
-    setIsExpanded(prev => !prev);
+    setIsExpanded((prev) => !prev);
   };
 
   return (
@@ -26,15 +31,15 @@ export default function FooterSection({ title, children, sectionKey }) {
         </span>
       </button>
 
-      <div 
-        id={`${sectionKey}-content`} 
+      <div
+        id={`${sectionKey}-content`}
         className={`md:block overflow-hidden transition-all duration-300 ease-in-out ${
-          isExpanded ? 'max-h-96 opacity-100' : 'max-h-0 opacity-0 md:max-h-none md:opacity-100'
+          isExpanded
+            ? "max-h-96 opacity-100"
+            : "max-h-0 opacity-0 md:max-h-none md:opacity-100"
         }`}
       >
-        <div className="space-y-3 pb-2 md:pb-0">
-          {children}
-        </div>
+        <div className="space-y-3 pb-2 md:pb-0">{children}</div>
       </div>
     </section>
   );
