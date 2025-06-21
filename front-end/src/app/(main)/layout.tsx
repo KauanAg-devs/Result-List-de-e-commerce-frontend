@@ -7,11 +7,12 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <ReduxProvider>
-      <CartDrawerProvider>
-        <LayoutClient>{children}</LayoutClient>
-      </CartDrawerProvider>
+        <CartDrawerProvider>
+          <LayoutClient>{children}</LayoutClient>
+        </CartDrawerProvider>
     </ReduxProvider>
   );
 }

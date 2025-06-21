@@ -4,6 +4,7 @@ import { MenuProps } from "@/types/main/layout-client/menu-props";
 import Image from "next/image";
 import Link from "next/link";
 import { useCartDrawer } from "@/app/(main)/contexts/cart-drawer-context";
+import { ConditionalAuth } from "@/utils/conditional-auth";
 
 export default function Menu({
   setShowCompanyProducts,
@@ -28,8 +29,8 @@ export default function Menu({
           />
         </Link>
       </div>
-
-      <div className="flex lg:hidden">
+      
+      <div className="flex w-auto items-center gap-2 lg:hidden">
         <button
           onClick={openCart}
           className="p-2 rounded hover:bg-gray-100"
@@ -49,6 +50,23 @@ export default function Menu({
             />
           </svg>
         </button>
+        <ConditionalAuth 
+          authenticated={(
+            <svg 
+              width="25" 
+              height="25" 
+              viewBox="0 0 256 256" 
+              className={`mr-2 text-gray-600 hover:text-gray-800 transition-colors`}
+              fill="none"
+            >
+              <g transform="translate(1.41 1.41) scale(2.81 2.81)">
+                <path 
+                  d="M 45 0 C 20.147 0 0 20.147 0 45 c 0 24.853 20.147 45 45 45 s 45 -20.147 45 -45 C 90 20.147 69.853 0 45 0 z M 45 22.007 c 8.899 0 16.14 7.241 16.14 16.14 c 0 8.9 -7.241 16.14 -16.14 16.14 c -8.9 0 -16.14 -7.24 -16.14 -16.14 C 28.86 29.248 36.1 22.007 45 22.007 z M 45 83.843 c -11.135 0 -21.123 -4.885 -27.957 -12.623 c 3.177 -5.75 8.144 -10.476 14.05 -13.341 c 2.009 -0.974 4.354 -0.958 6.435 0.041 c 2.343 1.126 4.857 1.696 7.473 1.696 c 2.615 0 5.13 -0.571 7.473 -1.696 c 2.083 -1 4.428 -1.015 6.435 -0.041 c 5.906 2.864 10.872 7.591 14.049 13.341 C 66.123 78.957 56.135 83.843 45 83.843 z" 
+                  fill='#666'
+                />
+              </g>
+            </svg>
+          )}/>
         <button
           type="button"
           onClick={() => setShowMobileMenu((prev) => !prev)}
@@ -319,9 +337,29 @@ export default function Menu({
             />
           </svg>
         </button>
-        <Link href="/login" className="text-sm/6 font-semibold text-gray-900">
-          Log in <span aria-hidden="true">&rarr;</span>
-        </Link>
+        <ConditionalAuth 
+          authenticated={(
+            <svg 
+              width="25" 
+              height="25" 
+              viewBox="0 0 256 256" 
+              className={`cursor-pointer inline-block text-gray-600 hover:text-gray-800 transition-colors`}
+              fill="none"
+            >
+              <g transform="translate(1.41 1.41) scale(2.81 2.81)">
+                <path 
+                  d="M 45 0 C 20.147 0 0 20.147 0 45 c 0 24.853 20.147 45 45 45 s 45 -20.147 45 -45 C 90 20.147 69.853 0 45 0 z M 45 22.007 c 8.899 0 16.14 7.241 16.14 16.14 c 0 8.9 -7.241 16.14 -16.14 16.14 c -8.9 0 -16.14 -7.24 -16.14 -16.14 C 28.86 29.248 36.1 22.007 45 22.007 z M 45 83.843 c -11.135 0 -21.123 -4.885 -27.957 -12.623 c 3.177 -5.75 8.144 -10.476 14.05 -13.341 c 2.009 -0.974 4.354 -0.958 6.435 0.041 c 2.343 1.126 4.857 1.696 7.473 1.696 c 2.615 0 5.13 -0.571 7.473 -1.696 c 2.083 -1 4.428 -1.015 6.435 -0.041 c 5.906 2.864 10.872 7.591 14.049 13.341 C 66.123 78.957 56.135 83.843 45 83.843 z" 
+                  fill='#666'
+                />
+              </g>
+            </svg>
+          )}
+          notAuthenticated={(
+          <Link href="/login" className="text-sm/6 font-semibold text-gray-900">
+            Log in <span aria-hidden="true">&rarr;</span>
+          </Link>
+        )}/>
+           
       </div>
     </nav>
   );

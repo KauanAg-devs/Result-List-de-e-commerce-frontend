@@ -3,7 +3,7 @@
 import { useState, useEffect } from 'react'
 import ProductsLister from '@/components/home/products-lister'
 import {fetchMockedProducts} from '@/app/api/fetch-products'
-import { ProductGrouped } from '@/types/home/product';
+import { ProductGrouped } from '@/types/main/home/product';
 import SearchProducts from '@/components/home/search-products';
 import ProductsPerPage from '@/components/home/products-per-page';
 

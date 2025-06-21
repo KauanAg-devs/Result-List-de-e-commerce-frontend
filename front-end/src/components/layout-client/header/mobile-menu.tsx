@@ -1,6 +1,7 @@
 "use client";
 
 import { MobileMenuProps } from "@/types/main/layout-client/menu-props";
+import { ConditionalAuth } from "@/utils/conditional-auth";
 import Link from "next/link";
 export default function MobileMenu({
   setShowMobileProducts,
@@ -138,12 +139,16 @@ export default function MobileMenu({
                   </Link>
                 </div>
                 <div className="py-6">
-                  <Link
-                    href="/login"
-                    className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
-                  >
-                    Log in
-                  </Link>
+                  <ConditionalAuth
+                    notAuthenticated={(
+                      <Link
+                        href="/login"
+                        className="-mx-3 block rounded-lg px-3 py-2.5 text-base/7 font-semibold text-gray-900 hover:bg-gray-50"
+                      >
+                        Log in
+                      </Link>
+                    )}
+                  />
                 </div>
               </div>
             </div>
