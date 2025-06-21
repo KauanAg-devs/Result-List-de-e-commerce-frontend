@@ -9,7 +9,6 @@ import { useState } from 'react'
 import { usePathname } from 'next/navigation'
 import { useCartDrawer } from './contexts/cart-drawer-context'
 import ShoppingCart from '@/components/layout-client/header/shopping-cart'
-import { ConditionalAuth } from '@/utils/conditional-auth'
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const [showCompanyProducts, setShowCompanyProducts] = useState(false)

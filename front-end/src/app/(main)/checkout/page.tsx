@@ -1,11 +1,10 @@
 'use server'
 
 import Checkout from "@/components/checkout/checkout";
-import { handleIsAuthenticated } from "@/utils/isAuthenticated"
-
+import {cookies} from 'next/headers'
 
 export default async function Page() {
-  const isAuthenticated = await handleIsAuthenticated()
-
+  const accessToken = (await cookies()).get('access_token');
+  const isAuthenticated = !!accessToken;
   return <Checkout isAuthenticated={isAuthenticated} />
 }

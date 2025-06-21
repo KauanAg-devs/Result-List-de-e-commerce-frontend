@@ -273,6 +273,23 @@ export default function Checkout({
                     </div>
                   </label>
                 </div>
+                {formData.paymentMethod === 'pix' && <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <span className="font-medium">PIX</span> payment is available.
+                  </p>
+                  <p className="text-sm text-blue-600">
+                    You will receive a QR code to complete the payment.
+                  </p>
+                  </div>}
+                {formData.paymentMethod === 'credit' && <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+                  <p className="text-sm text-blue-800">
+                    <span className="font-medium">Credit Card</span> payment is available.
+                  </p>
+                  <p className="text-sm text-blue-600">
+                    You will be redirected to a secure payment page.
+                  </p>
+                  </div>}
+                  
               </div>
 
               <button
