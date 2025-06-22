@@ -1,6 +1,7 @@
 'use client'
+import { ChildrenProps } from "@/types/children"
 import { handleIsAuthenticated } from "@/utils/isAuthenticated"
-import React, { useEffect, useState } from "react"
+import { useEffect, useState } from "react"
 
 function useAuthCheck() {
   const [isAuthenticated, setIsAuthenticated] = useState(false)
@@ -29,8 +30,8 @@ export function ConditionalAuth({
   notAuthenticated, 
   authenticated
 }: {
-  notAuthenticated?: React.ReactNode
-  authenticated?: React.ReactNode
+  notAuthenticated?: ChildrenProps['children']
+  authenticated?: ChildrenProps['children']
 }) {
   const { isAuthenticated, loading } = useAuthCheck()
 

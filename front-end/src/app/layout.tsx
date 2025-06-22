@@ -1,5 +1,6 @@
 import "./globals.css";
 import { geistSans, geistMono } from "@/app/fonts";
+import { ChildrenProps } from "@/types/children";
 import type { Metadata } from "next";
 
 export const homeMetadata: Metadata = {
@@ -7,11 +8,7 @@ export const homeMetadata: Metadata = {
   description: "Compass Shop - Integrated with AI",
 };
 
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function RootLayout({ children }: ChildrenProps) {
   return (
     <html lang="en">
       <body

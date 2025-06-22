@@ -19,7 +19,10 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@main/*": ["./src/app/(main)/*"],
+      "@checkout/*": ["./src/app/(main)/(subpages)/checkout/*"],
+      "@product/*": ["./src/app/(main)/(subpages)/product/*"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

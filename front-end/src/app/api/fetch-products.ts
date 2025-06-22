@@ -1,4 +1,6 @@
-export const fetchMockedProducts = [
+import { ProductGrouped } from "@/types/product";
+
+export const fetchMockedProducts: ProductGrouped[] = [
   {
     name: "Black T-Shirt",
     sku: "TSHIRT-BLK",

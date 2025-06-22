@@ -1,17 +1,11 @@
 'use client';
 
-import { CartDrawerContextProps } from '@/types/main/contexts/cart-drawer-context';
+import { CartDrawerProviderProps, CartDrawerContextType } from '@main/contexts/types/cart-drawer-context';
 import { createContext, useContext, useState } from 'react';
-
-type CartDrawerContextType = {
-  isOpen: boolean;
-  openCart: () => void;
-  closeCart: () => void;
-};
 
 const CartDrawerContext = createContext<CartDrawerContextType | undefined>(undefined);
 
-export function CartDrawerProvider({ children }: CartDrawerContextProps) {
+export function CartDrawerProvider({ children }: CartDrawerProviderProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   return (

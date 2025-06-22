@@ -1,18 +1,22 @@
-import LayoutClient from "@/app/(main)/layout-client";
+'use server'
+
+import LayoutClient from "@main/layout-client";
 import ReduxProvider from "@/app/store/redux-provider";
-import { CartDrawerProvider } from "@/app/(main)/contexts/cart-drawer-context";
+import { CartDrawerProvider } from "@main/contexts/cart-drawer-context";
+import { AuthProvider } from "@main/contexts/auth-context";
+import { ChildrenProps } from "@/types/children";
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-
+}: Readonly<ChildrenProps>) {
+  
   return (
     <ReduxProvider>
-        <CartDrawerProvider>
-          <LayoutClient>{children}</LayoutClient>
-        </CartDrawerProvider>
+      <AuthProvider>
+      <CartDrawerProvider>
+        <LayoutClient>{children}</LayoutClient>
+      </CartDrawerProvider>
+      </AuthProvider>
     </ReduxProvider>
   );
 }
