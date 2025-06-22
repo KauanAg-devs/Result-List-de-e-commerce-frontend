@@ -1,8 +1,11 @@
-import { FormSchemaType } from "@/zod/form/form-schema";
+import { FormSchemaType } from "@/zod/checkout-form/checkout-form";
 import { useFormContext } from "react-hook-form";
 
 export function ContactInfo() {
-  const { register, formState: { errors } } = useFormContext<FormSchemaType>();
+  const {
+    register,
+    formState: { errors },
+  } = useFormContext<FormSchemaType>();
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">

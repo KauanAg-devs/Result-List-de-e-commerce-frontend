@@ -204,7 +204,7 @@ export default function ShoppingCart() {
 
                 <Link
                   onClick={() => closeCart()}
-                  href={isAuthenticated ? "/checkout" : '/login'}
+                  href={isAuthenticated ? "/checkout" : '/signin'}
                   className="text-center font-bold w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition"
                 >
                   Checkout

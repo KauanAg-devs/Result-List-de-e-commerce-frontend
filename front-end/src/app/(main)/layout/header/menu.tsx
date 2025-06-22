@@ -357,7 +357,7 @@ export default function Menu({
           }
           notAuthenticated={
             <Link
-              href="/login"
+              href="/signin"
               className="text-sm/6 font-semibold text-gray-900"
             >
               Log in <span aria-hidden="true">&rarr;</span>

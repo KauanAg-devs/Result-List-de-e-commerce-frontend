@@ -1,6 +1,11 @@
 import Image from "next/image";
 
-export default function Header() {
+type HeaderProps = {
+  idea: string, 
+  message: string
+}
+
+export default function Header({idea, message}: HeaderProps) {
   return (
     <div className="text-center mb-10">
       <Image
@@ -11,9 +16,9 @@ export default function Header() {
         alt="logo"
       />
       <h1 className="text-2xl font-bold text-gray-900 mb-2">
-        Sign in to your account
+        {idea}
       </h1>
-      <p className="text-gray-600">Welcome back! Please enter your details.</p>
+      <p className="text-gray-600">{message}</p>
     </div>
   );
 }

@@ -21,6 +21,7 @@
     "paths": {
       "@/*": ["./src/*"],
       "@main/*": ["./src/app/(main)/*"],
+      "@auth/*": ["./src/app/(auth)/*"],
       "@checkout/*": ["./src/app/(main)/(subpages)/checkout/*"],
       "@product/*": ["./src/app/(main)/(subpages)/product/*"]
     }

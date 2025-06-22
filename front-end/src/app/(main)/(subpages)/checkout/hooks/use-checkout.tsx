@@ -1,7 +1,7 @@
 import { RootState } from "@/app/store";
-import { useCheckoutForm } from "@/zod/form/use-checkout-form";
 import { useSelector } from "react-redux";
 import { useMemo, useEffect, useState } from "react";
+import { useCheckoutForm } from "@/zod/checkout-form/checkout-form";
 
 type PixData = {
   qrCode: string;
@@ -41,7 +41,10 @@ export const useCheckout = (): {
 
   const tax = useMemo(() => subtotal * TAX_RATE, [subtotal]);
 
-  const total = useMemo(() => subtotal + shipping + tax, [subtotal, shipping, tax]);
+  const total = useMemo(
+    () => subtotal + shipping + tax,
+    [subtotal, shipping, tax]
+  );
 
   useEffect(() => {
     if (paymentStep === "pix") {

@@ -1,8 +1,13 @@
-import { FormSchemaType } from "@/zod/form/form-schema";
+import { FormSchemaType } from "@/zod/checkout-form/checkout-form";
 import { useFormContext } from "react-hook-form";
 
 export default function ShippingInfo() {
-  const { register, setValue, watch, formState: { errors } } = useFormContext<FormSchemaType>();
+  const {
+    register,
+    setValue,
+    watch,
+    formState: { errors },
+  } = useFormContext<FormSchemaType>();
 
   const formatPhone = (value: string) => {
     const nums = value.replace(/\D/g, "");
@@ -20,7 +25,7 @@ export default function ShippingInfo() {
     return `${nums.slice(0, 5)}-${nums.slice(5, 8)}`;
   };
 
-    const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const formatted = formatPhone(e.target.value);
     setValue("phone", formatted, { shouldValidate: true });
   };

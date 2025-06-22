@@ -1,10 +1,10 @@
-import { FormSchemaType } from "@/zod/form/form-schema";
+import { FormSchemaType } from "@/zod/checkout-form/checkout-form";
 import { useFormContext } from "react-hook-form";
 
-export default function ChoosePaymentMethod({ setPaymentStep }: {
-  setPaymentStep: React.Dispatch<
-    React.SetStateAction<"pix" | "credit">
-  >;
+export default function ChoosePaymentMethod({
+  setPaymentStep,
+}: {
+  setPaymentStep: React.Dispatch<React.SetStateAction<"pix" | "credit">>;
 }) {
   const {
     register,
@@ -17,25 +17,25 @@ export default function ChoosePaymentMethod({ setPaymentStep }: {
         Método de Pagamento
       </h2>
       <div className="space-y-3">
-          <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
-            <input
-              type="radio"
-              value="credit"
-              {...register("paymentMethod")}
-              onClick={() => setPaymentStep("credit")}
-              className="mr-3"
-            />
-            <div className="flex items-center">
-              <svg
-                className="w-8 h-8 text-blue-600 mr-3"
-                fill="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 4v8h16V8H4zm2 2h6v2H6v-2z" />
-              </svg>
-              <span className="font-medium text-zinc-400">Cartão de Crédito</span>
-            </div>
-          </label>
+        <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
+          <input
+            type="radio"
+            value="credit"
+            {...register("paymentMethod")}
+            onClick={() => setPaymentStep("credit")}
+            className="mr-3"
+          />
+          <div className="flex items-center">
+            <svg
+              className="w-8 h-8 text-blue-600 mr-3"
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2zm0 4v8h16V8H4zm2 2h6v2H6v-2z" />
+            </svg>
+            <span className="font-medium text-zinc-400">Cartão de Crédito</span>
+          </div>
+        </label>
         <label className="flex items-center p-4 border border-gray-300 rounded-lg cursor-pointer hover:bg-gray-50">
           <input
             type="radio"

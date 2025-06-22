@@ -1,4 +1,4 @@
-export default function SocialLogin() {
+export default function SocialSignin() {
   return (
     <>
       <div className="relative my-6">

@@ -11,7 +11,7 @@ export function useRequireAuth() {
     if (isAuthenticated === null) {
       setLoading(true);
     } else if (!isAuthenticated) {
-      router.push("/login");
+      router.push("/signin");
     } else {
       setLoading(false);
     }
