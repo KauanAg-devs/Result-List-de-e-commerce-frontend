@@ -20,6 +20,7 @@
     ],
     "paths": {
       "@/*": ["./src/*"],
+      "@user/*": ["./src/app/(user)/*"],
       "@main/*": ["./src/app/(main)/*"],
       "@auth/*": ["./src/app/(auth)/*"],
       "@checkout/*": ["./src/app/(main)/(subpages)/checkout/*"],
