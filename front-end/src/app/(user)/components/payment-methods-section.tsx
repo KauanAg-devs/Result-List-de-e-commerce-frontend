@@ -7,7 +7,7 @@ export const PaymentMethodsSection = () => (
       <h2 className="text-2xl font-bold text-zinc-900">
         Métodos de Pagamento
       </h2>
-      <button className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700">
+      <button className="flex items-center gap-2 px-4 py-2 bg-zinc-600 text-white rounded-lg hover:bg-zinc-700">
         <Plus size={16} />
         Adicionar Cartão
       </button>

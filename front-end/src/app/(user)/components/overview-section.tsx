@@ -2,9 +2,11 @@ import { Edit3, User, Star, Mail, Phone, MapPin, Calendar, ShoppingBag, Package,
 import { RecentOrder } from "./recent-order";
 import { StatCard } from "./stat-card";
 import { QuickActionCard } from "./quick-action-cart";
+import { OverviewSectionProps } from "../types/overview-section";
+import { ChangeEvent } from "react";
 
-export default function OverviewSection({userInfo, setPickedMethod, profileImage, setProfileImage}) {
-  const handleFileChange = (e) => {
+export default function OverviewSection({userInfo, setPickedMethod, profileImage, setProfileImage}: OverviewSectionProps) {
+  const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const imageUrl = URL.createObjectURL(file);
@@ -14,7 +16,6 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
 
   return (
     <div className="space-y-8">
-      {/* Profile Header */}
       <div className="bg-white border border-zinc-200 rounded-2xl p-6 md:p-8 shadow-sm">
         <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8">
           <div className="flex flex-col items-center gap-4">
@@ -36,7 +37,7 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
             </div>
 
             <div className="relative">
-              <button className="flex gap-2 items-center font-semibold px-6 py-3 text-sm bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-all duration-200 hover:scale-105">
+              <button className="flex gap-2 items-center font-semibold px-6 py-3 text-sm bg-zinc-900 text-white rounded-xl transition-all duration-200 hover:scale-105">
                 <Edit3 size={16} />
                 Alterar Foto
               </button>
@@ -93,41 +94,38 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
         </div>
       </div>
 
-      {/* Stats Cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <StatCard
           title="Total de Pedidos"
           value="47"
           icon={Package}
-          color="blue"
+          color="text-zinc-600"
           trend={12}
         />
         <StatCard
           title="Favoritos"
           value="23"
           icon={Heart}
-          color="red"
+          color="text-red-400"
           trend={5}
         />
         <StatCard
           title="Economia Total"
           value="R$ 1.247"
           icon={TrendingUp}
-          color="green"
+          color="text-green-400"
           trend={23}
         />
         <StatCard
           title="Pontos"
           value="2.340"
           icon={Star}
-          color="yellow"
+          color="text-yellow-400"
           trend={15}
         />
       </div>
 
-      {/* Main Content Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* Quick Actions */}
         <div className="space-y-6">
           <h2 className="text-xl font-bold text-zinc-900">Ações Rápidas</h2>
           <div className="space-y-4">
@@ -159,7 +157,6 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
           </div>
         </div>
 
-        {/* Recent Orders */}
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-zinc-900">
@@ -201,7 +198,6 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
         </div>
       </div>
 
-      {/* Recommendations */}
       <div className="bg-[url(/navigation.svg)] rounded-2xl p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
@@ -212,7 +208,7 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
             <p className="text-blue-100 mb-6">
               Com base no seu histórico de compras
             </p>
-            <button className="bg-white text-blue-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 hover:scale-105">
+            <button className="bg-white text-zinc-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 hover:scale-105">
               Ver Recomendações
             </button>
           </div>

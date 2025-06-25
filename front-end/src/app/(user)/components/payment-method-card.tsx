@@ -1,6 +1,7 @@
 import { CreditCard } from "lucide-react"
+import { PaymentMethodCartProps } from "../types/payment-method-cart";
 
-export const PaymentMethodCard = ({ type, number, expiry, isDefault }) => (
+export const PaymentMethodCard = ({ type, number, expiry, isDefault }: PaymentMethodCartProps) => (
   <div className="bg-gradient-to-r from-gray-900 to-gray-700 rounded-2xl p-6 text-white relative overflow-hidden">
     <div className="absolute top-0 right-0 w-32 h-32 bg-white opacity-5 rounded-full -mr-16 -mt-16"></div>
     <div className="flex justify-between items-start mb-6">

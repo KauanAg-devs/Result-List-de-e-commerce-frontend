@@ -3,7 +3,7 @@ import { CartItem, addToCartWithValidation } from "@/app/store/cart-slice";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { fetchMockedProducts } from "@/app/api/fetch-products";
-import { useCartDrawer } from "@main/contexts/cart-drawer-context";
+import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import { ProductGrouped } from "@/types/product";
 
 function findProductBySku(productSku: string) {

@@ -1,7 +1,9 @@
-import { Check, Clock, Package, Truck } from "lucide-react";
+import { AlertCircle, Check, Clock, Package, Truck } from "lucide-react";
+import { RecentOrderProps } from "../types/recent-order";
 
-export const RecentOrder = ({ id, date, status, total, items, product }) => {
-  const getStatusConfig = (status) => {
+export const RecentOrder = ({ id, date, status, total, items, product }: RecentOrderProps) => {
+  
+  const getStatusConfig = (status: string) => {
     switch (status) {
       case "Entregue":
         return { color: "bg-green-100 text-green-800", icon: Check };
@@ -21,7 +23,7 @@ export const RecentOrder = ({ id, date, status, total, items, product }) => {
     <div className="flex items-center justify-between p-5 border border-zinc-200 rounded-2xl hover:bg-zinc-50 transition-all duration-200 hover:border-blue-200">
       <div className="flex items-center gap-4">
         <div className="p-3 bg-blue-50 rounded-xl">
-          <Package className="text-blue-600" size={20} />
+          <Package className="text-zinc-600" size={20} />
         </div>
         <div>
           <p className="font-semibold text-zinc-900 mb-1">Pedido #{id}</p>

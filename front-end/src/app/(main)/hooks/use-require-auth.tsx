@@ -1,6 +1,6 @@
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import { useAuth } from "@main/contexts/auth-context";
+import { useAuth } from "@/app/contexts/auth-context";
 
 export function useRequireAuth() {
   const { isAuthenticated } = useAuth();

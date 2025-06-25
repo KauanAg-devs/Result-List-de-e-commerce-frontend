@@ -1,6 +1,7 @@
 import { Edit3, Trash2 } from "lucide-react"
+import { AddressCardProps } from "../types/address-card";
 
-export const AddressCard = ({ title, address, isDefault, onEdit, onDelete }) => (
+export const AddressCard = ({ title, address, isDefault, onEdit, onDelete }: AddressCardProps) => (
   <div className="bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-200">
     <div className="flex justify-between items-start mb-4">
       <div>

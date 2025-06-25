@@ -2,7 +2,7 @@
 
 import { MobileMenuProps } from "@/app/(main)/layout/types/menu-props";
 import Link from "next/link";
-import { useAuth } from "../../contexts/auth-context";
+import { useAuth } from "@/app/contexts/auth-context";
 export default function MobileMenu({
   setShowMobileProducts,
   showMobileProducts,

@@ -1,8 +1,10 @@
-export const StatCard = ({ title, value, icon: Icon, color = "blue", trend }) => (
+import { StatCardProps } from "../types/stat-card";
+
+export const StatCard = ({ title, value, icon: Icon, color = "blue", trend }: StatCardProps) => (
   <div className="bg-white border border-zinc-200 rounded-2xl p-6 hover:shadow-lg transition-all duration-200 hover:border-blue-200">
     <div className="flex items-center justify-between mb-4">
       <div className={`p-3 bg-${color}-100 rounded-xl`}>
-        <Icon className={`text-${color}-600`} size={24} />
+        <Icon className={`${color}`} size={24} />
       </div>
       {trend && (
         <span

@@ -3,9 +3,9 @@
 import { MenuProps } from "@main/layout/types/menu-props";
 import Image from "next/image";
 import Link from "next/link";
-import { useCartDrawer } from "@main/contexts/cart-drawer-context";
+import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import UserProfile from "./user-profile";
-import { useAuth } from "../../contexts/auth-context";
+import { useAuth } from "@/app/contexts/auth-context";
 
 export default function Menu({
   setShowCompanyProducts,

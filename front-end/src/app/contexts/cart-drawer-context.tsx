@@ -1,6 +1,6 @@
 'use client';
 
-import { CartDrawerProviderProps, CartDrawerContextType } from '@main/contexts/types/cart-drawer-context';
+import { CartDrawerProviderProps, CartDrawerContextType } from '@/app/contexts/types/cart-drawer-context';
 import { createContext, useContext, useState } from 'react';
 
 const CartDrawerContext = createContext<CartDrawerContextType | undefined>(undefined);

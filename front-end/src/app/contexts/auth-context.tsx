@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
-import { AuthProviderProps, AuthContextType } from "@main/contexts/types/auth-context";
+import { AuthProviderProps, AuthContextType } from "@/app/contexts/types/auth-context";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

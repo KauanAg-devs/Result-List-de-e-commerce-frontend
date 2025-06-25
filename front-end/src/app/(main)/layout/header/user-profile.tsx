@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useAuth } from "../../contexts/auth-context";
+import { useAuth } from "@/app/contexts/auth-context";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
 

@@ -7,10 +7,14 @@ import { AddressesSection } from "../components/addresses-section";
 import { PaymentMethodsSection } from "../components/payment-methods-section";
 import { DesktopNavigation } from "../components/desktop-navigation";
 import OverviewSection from "../components/overview-section";
+import Header from "@/app/(main)/layout/header/header";
+import ShoppingCart from "@/app/(main)/layout/header/shopping-cart";
+import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 
 export default function Page() {
+  const {isOpen} = useCartDrawer()
   const [pickedMethod, setPickedMethod] = useState("overview");
-  const [profileImage, setProfileImage] = useState(null);
+  const [profileImage, setProfileImage] = useState<string | null>(null);
   const [userInfo, setUserInfo] = useState({
     name: "Kauan Barcelos",
     email: "kauan.barcelos@email.com",
@@ -23,6 +27,8 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-blue-50">
       <div className="mx-auto px-4 md:px-6 py-6 md:py-8">
+        <Header />
+        {isOpen && <ShoppingCart/>}
         <MobileNavigation
           pickedMethod={pickedMethod}
           setPickedMethod={setPickedMethod}

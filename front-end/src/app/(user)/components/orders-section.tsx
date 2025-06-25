@@ -15,10 +15,10 @@ export const OrdersSection = () => (
           <input
             type="text"
             placeholder="Buscar pedidos..."
-            className="pl-10 pr-4 py-2 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            className="text-zinc-600 pl-10 w-54 pr-4 py-2 border border-zinc-200 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
           />
         </div>
-        <button className="flex items-center gap-2 px-4 py-2 border border-zinc-200 rounded-lg hover:bg-zinc-50">
+        <button className="text-zinc-400 flex items-center gap-2 px-4 py-2 border border-zinc-200 rounded-lg hover:bg-zinc-50">
           <Filter size={16} />
           Filtrar
         </button>
@@ -30,15 +30,15 @@ export const OrdersSection = () => (
         title="Total de Pedidos"
         value="47"
         icon={Package}
-        color="blue"
+        color="text-zinc-400"
         trend={12}
       />
-      <StatCard title="Em Andamento" value="3" icon={Clock} color="yellow" />
+      <StatCard title="Em Andamento" value="3" icon={Clock} color="text-yellow-400" />
       <StatCard
         title="Entregues"
         value="44"
         icon={Check}
-        color="green"
+        color="text-green-400"
         trend={8}
       />
     </div>
