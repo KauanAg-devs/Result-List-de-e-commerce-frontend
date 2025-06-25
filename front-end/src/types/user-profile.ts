@@ -1,23 +1,35 @@
-import { ProductVariant } from "./product";
+import { ProductVariant, VariantStatus } from "./product";
 
 export type UserRole = 'admin' | 'seller' | 'user'
 
-export type UserProfile = {
-  name: string | null;
-  email: string;
-  phone: string | null;
-  profileImage: string | ArrayBuffer | null;
-  memberSince: string;
-  
-  role: UserRole[]
-  
-  addressData?: {
+type CommercializedVariant = {
+  variant: ProductVariant;
+  quantity: number;
+  price: number;
+  date: string;
+  status: VariantStatus
+}
+export type UserAddress = {
+    title: string
     address: string;
     city: string;
     state: string;
     zipCode: string;
-    complement: string;
+    complement?: string;
+}
+
+export type UserProfile = {
+  name: string | null;
+  email: {
+    credentialPrivateEmail: string
+    publicEmail: string | null
   };
+  phone: string | null;
+  profileImage: string | ArrayBuffer | null;
+  memberSince: string;
+  role: UserRole[]
+  
+  UserAddresses?: UserAddress[];
 
   userPaymentMethods?: {
     cardName: string;
@@ -29,10 +41,10 @@ export type UserProfile = {
   }[]
 
   purchases?: {
-    variants: ProductVariant[];
+    purchasedVariants: CommercializedVariant[];
   };
 
   sales?: {
-    variants: ProductVariant[];
+    variants: CommercializedVariant[];
   };
 };

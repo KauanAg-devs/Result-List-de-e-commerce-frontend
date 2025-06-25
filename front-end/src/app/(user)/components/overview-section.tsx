@@ -1,18 +1,113 @@
-import { Edit3, User, Star, Mail, Phone, MapPin, Calendar, ShoppingBag, Package, Heart, TrendingUp, CreditCard, Shield } from "lucide-react";
+import {
+  Edit3,
+  User,
+  Star,
+  Mail,
+  Phone,
+  MapPin,
+  Calendar,
+  ShoppingBag,
+  Package,
+  TrendingUp,
+  CreditCard,
+  Shield,
+  Check,
+  X,
+} from "lucide-react";
 import { RecentOrder } from "./recent-order";
 import { StatCard } from "./stat-card";
 import { QuickActionCard } from "./quick-action-cart";
 import { OverviewSectionProps } from "../types/overview-section";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
+import { UserAddress, UserRole } from "@/types/user-profile";
+import { useUserProfile } from "../contexts/user-profile-context";
 
-export default function OverviewSection({userInfo, setPickedMethod, profileImage, setProfileImage}: OverviewSectionProps) {
+export default function OverviewSection({
+  setPickedMethod,
+}: OverviewSectionProps) {
+  const { userProfile, setUserProfile } = useUserProfile();
+  const [isEditing, setIsEditing] = useState(false);
+  const [editedProfile, setEditedProfile] = useState(userProfile);
+
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
-      const imageUrl = URL.createObjectURL(file);
-      setProfileImage(imageUrl);
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        if (event.target?.result && setUserProfile) {
+          const updatedProfile = {
+            ...userProfile,
+            profileImage: event.target.result,
+          };
+          setUserProfile(updatedProfile);
+        }
+      };
+      reader.readAsDataURL(file);
     }
   };
+
+  const handleInputChange = (field: string, value: string) => {
+    if (field === "publicEmail") {
+      setEditedProfile((prev) => ({
+        ...prev,
+        email: {
+          ...prev.email,
+          publicEmail: value,
+        },
+      }));
+    } else {
+      setEditedProfile((prev) => ({
+        ...prev,
+        [field]: value,
+      }));
+    }
+  };
+
+  const handleSave = () => {
+    if (setUserProfile) {
+      setUserProfile(editedProfile);
+    }
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditedProfile(userProfile);
+    setIsEditing(false);
+  };
+
+  const getRoleBadge = (roles: UserRole[]) => {
+    const primaryRole = roles.includes("admin")
+      ? "admin"
+      : roles.includes("seller")
+        ? "seller"
+        : "user";
+    const roleLabels = {
+      admin: { label: "ADMIN", color: "bg-red-100 text-red-800" },
+      seller: { label: "VENDEDOR", color: "bg-green-100 text-green-800" },
+      user: { label: "USUÁRIO", color: "bg-blue-100 text-blue-800" },
+    };
+    return roleLabels[primaryRole];
+  };
+
+  const formatAddress = (addressData?: UserAddress) => {
+    if (!addressData) return "Endereço não informado";
+    if (Array.isArray(addressData)) {
+      return `${addressData[0]?.address}, ${addressData[0]?.city} - ${addressData[0]?.state}`;
+    }
+    return `${addressData.address}, ${addressData.city} - ${addressData.state}`;
+  };
+
+  const getProfileImageSrc = () => {
+    if (!userProfile.profileImage) return null;
+    if (typeof userProfile.profileImage === "string")
+      return userProfile.profileImage;
+    return URL.createObjectURL(new Blob([userProfile.profileImage]));
+  };
+
+  const roleBadge = getRoleBadge(userProfile.role);
+  const displayEmail =
+    userProfile.email.publicEmail || userProfile.email.credentialPrivateEmail;
+  const profileImageSrc = getProfileImageSrc();
 
   return (
     <div className="space-y-8">
@@ -21,9 +116,9 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <div className="h-32 w-32 border-2 border-zinc-200 rounded-full flex justify-center items-center overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50">
-                {profileImage ? (
+                {profileImageSrc ? (
                   <img
-                    src={profileImage}
+                    src={profileImageSrc}
                     alt="Profile"
                     className="object-cover w-full h-full"
                   />
@@ -53,8 +148,10 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
           <div className="flex-1 space-y-6">
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span className="text-xs bg-blue-100 px-3 py-1 text-blue-800 rounded-full font-medium">
-                  ADMIN
+                <span
+                  className={`text-xs px-3 py-1 rounded-full font-medium ${roleBadge.color}`}
+                >
+                  {roleBadge.label}
                 </span>
                 <div className="flex items-center gap-1">
                   <Star className="text-yellow-500 fill-current" size={16} />
@@ -64,29 +161,113 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
                   </span>
                 </div>
               </div>
-              <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-2">
-                {userInfo.name}
-              </h1>
-              <p className="text-xl text-zinc-600 mb-4">{userInfo.role}</p>
+
+              {isEditing ? (
+                <input
+                  type="text"
+                  value={editedProfile.name || ""}
+                  onChange={(e) => handleInputChange("name", e.target.value)}
+                  className="text-3xl md:text-4xl font-bold text-zinc-900 mb-2 w-full bg-transparent border-b-2 border-blue-500 focus:outline-none"
+                  placeholder="Seu nome"
+                />
+              ) : (
+                <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-2">
+                  {userProfile.name || "Nome não informado"}
+                </h1>
+              )}
+
+              <p className="text-xl text-zinc-600 mb-4">
+                {userProfile.role.includes("admin")
+                  ? "Administrador"
+                  : userProfile.role.includes("seller")
+                    ? "Vendedor"
+                    : "Usuário"}
+              </p>
             </div>
+
+            {setUserProfile && (
+              <div className="flex gap-3 mb-4">
+                {!isEditing ? (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className="flex gap-2 items-center font-semibold px-4 py-2 text-sm bg-blue-600 text-white rounded-lg transition-all duration-200 hover:bg-blue-700"
+                  >
+                    <Edit3 size={16} />
+                    Editar Perfil
+                  </button>
+                ) : (
+                  <div className="flex gap-2">
+                    <button
+                      onClick={handleSave}
+                      className="flex gap-2 items-center font-semibold px-4 py-2 text-sm bg-green-600 text-white rounded-lg transition-all duration-200 hover:bg-green-700"
+                    >
+                      <Check size={16} />
+                      Salvar
+                    </button>
+                    <button
+                      onClick={handleCancel}
+                      className="flex gap-2 items-center font-semibold px-4 py-2 text-sm bg-gray-600 text-white rounded-lg transition-all duration-200 hover:bg-gray-700"
+                    >
+                      <X size={16} />
+                      Cancelar
+                    </button>
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <div className="flex items-center gap-3">
                 <Mail className="text-zinc-400" size={16} />
-                <span className="text-zinc-700">{userInfo.email}</span>
+                {isEditing ? (
+                  <input
+                    type="email"
+                    value={editedProfile.email.publicEmail || ""}
+                    onChange={(e) =>
+                      handleInputChange("publicEmail", e.target.value)
+                    }
+                    className="text-zinc-700 bg-transparent border-b border-zinc-300 focus:outline-none focus:border-blue-500 flex-1"
+                    placeholder="Email público"
+                  />
+                ) : (
+                  <span className="text-zinc-700">{displayEmail}</span>
+                )}
               </div>
+
               <div className="flex items-center gap-3">
                 <Phone className="text-zinc-400" size={16} />
-                <span className="text-zinc-700">{userInfo.phone}</span>
+                {isEditing ? (
+                  <input
+                    type="tel"
+                    value={editedProfile.phone || ""}
+                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    className="text-zinc-700 bg-transparent border-b border-zinc-300 focus:outline-none focus:border-blue-500 flex-1"
+                    placeholder="Telefone"
+                  />
+                ) : (
+                  <span className="text-zinc-700">
+                    {userProfile.phone || "Telefone não informado"}
+                  </span>
+                )}
               </div>
+
               <div className="flex items-center gap-3">
-                <MapPin className="text-zinc-400" size={16} />
-                <span className="text-zinc-700">{userInfo.address}</span>
+                {isEditing ? (
+                  ""
+                ) : (
+                  <>
+                    <MapPin className="text-zinc-400" size={16} />
+                    <span className="text-zinc-700">
+                      {formatAddress(userProfile.UserAddresses![0])}
+                    </span>{" "}
+                  </>
+                )}
               </div>
+
               <div className="flex items-center gap-3">
                 <Calendar className="text-zinc-400" size={16} />
                 <span className="text-zinc-700">
-                  Membro desde {userInfo.memberSince}
+                  Membro desde {userProfile.memberSince}
                 </span>
               </div>
             </div>
@@ -96,25 +277,27 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
         <StatCard
-          title="Total de Pedidos"
-          value="47"
+          title="Total de Compras"
+          value={
+            userProfile.purchases?.purchasedVariants.length.toString() || "0"
+          }
           icon={Package}
           color="text-zinc-600"
           trend={12}
         />
         <StatCard
-          title="Favoritos"
-          value="23"
-          icon={Heart}
-          color="text-red-400"
-          trend={5}
-        />
-        <StatCard
-          title="Economia Total"
-          value="R$ 1.247"
+          title="Vendas"
+          value={userProfile.sales?.variants.length.toString() || "0"}
           icon={TrendingUp}
           color="text-green-400"
           trend={23}
+        />
+        <StatCard
+          title="Cartões"
+          value={userProfile.userPaymentMethods?.length.toString() || "0"}
+          icon={CreditCard}
+          color="text-blue-400"
+          trend={5}
         />
         <StatCard
           title="Pontos"
@@ -130,15 +313,15 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
           <h2 className="text-xl font-bold text-zinc-900">Ações Rápidas</h2>
           <div className="space-y-4">
             <QuickActionCard
-              title="Rastrear Pedido"
-              description="Acompanhe suas encomendas"
+              title="Minhas Compras"
+              description="Acompanhe suas compras"
               icon={Package}
               onClick={() => setPickedMethod("orders")}
-              badge="3"
+              badge={userProfile.purchases?.purchasedVariants.length.toString()}
             />
             <QuickActionCard
-              title="Adicionar Endereço"
-              description="Gerencie seus endereços"
+              title="Gerenciar Endereços"
+              description="Configure seus endereços"
               icon={MapPin}
               onClick={() => setPickedMethod("addresses")}
             />
@@ -147,6 +330,7 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
               description="Cartões e formas de pagamento"
               icon={CreditCard}
               onClick={() => setPickedMethod("paymentMethods")}
+              badge={userProfile.userPaymentMethods?.length.toString()}
             />
             <QuickActionCard
               title="Central de Segurança"
@@ -160,56 +344,51 @@ export default function OverviewSection({userInfo, setPickedMethod, profileImage
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-xl font-bold text-zinc-900">
-              Pedidos Recentes
+              Atividade Recente
             </h2>
             <button
               onClick={() => setPickedMethod("orders")}
               className="text-blue-600 hover:text-blue-800 font-medium text-sm hover:underline"
             >
-              Ver todos
+              Ver todas
             </button>
           </div>
           <div className="space-y-4">
-            <RecentOrder
-              id="2024001"
-              date="23 Jun 2025"
-              status="Em trânsito"
-              total="189,90"
-              items="3"
-              product="Smartphone Galaxy S24"
-            />
-            <RecentOrder
-              id="2024002"
-              date="20 Jun 2025"
-              status="Entregue"
-              total="299,99"
-              items="1"
-              product="Fone Bluetooth Premium"
-            />
-            <RecentOrder
-              id="2024003"
-              date="15 Jun 2025"
-              status="Processando"
-              total="89,90"
-              items="2"
-              product="Carregador Wireless"
-            />
+            {userProfile.purchases?.purchasedVariants.map((variant, index) => {
+              return (
+                <RecentOrder
+                  key={index}
+                  id={variant.variant.sku}
+                  date={variant.date}
+                  status={variant.status}
+                  total={variant.price.toString()}
+                  items={variant.quantity.toString()}
+                  product={variant.variant.sku}
+                />
+              );
+            })}
           </div>
         </div>
       </div>
 
-      <div className="bg-[url(/navigation.svg)] rounded-2xl p-8 text-white relative overflow-hidden">
+      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-white relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-32 -mt-32"></div>
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="relative z-10">
             <h3 className="text-2xl md:text-3xl font-bold mb-2">
-              Produtos Recomendados
+              {userProfile.role.includes("seller")
+                ? "Painel do Vendedor"
+                : "Produtos Recomendados"}
             </h3>
             <p className="text-blue-100 mb-6">
-              Com base no seu histórico de compras
+              {userProfile.role.includes("seller")
+                ? "Gerencie suas vendas e produtos"
+                : "Com base no seu histórico de compras"}
             </p>
             <button className="bg-white text-zinc-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 hover:scale-105">
-              Ver Recomendações
+              {userProfile.role.includes("seller")
+                ? "Acessar Painel"
+                : "Ver Recomendações"}
             </button>
           </div>
           <ShoppingBag size={80} className="text-blue-200 opacity-50" />

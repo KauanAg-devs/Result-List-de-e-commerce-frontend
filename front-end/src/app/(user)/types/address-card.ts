@@ -1,8 +1,8 @@
+import { UserAddress } from "@/types/user-profile";
 import { MouseEventHandler } from "react";
 
 export type AddressCardProps = {
-  title: string;
-  address: string;
+  userAddress: UserAddress;
   isDefault: boolean;
   onEdit: MouseEventHandler<HTMLButtonElement>;
   onDelete: MouseEventHandler<HTMLButtonElement>;

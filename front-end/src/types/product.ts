@@ -1,3 +1,12 @@
+export enum VariantStatus {
+  Processing = "Processing",
+  InTransit = "In-transit",
+  Delivered = "Delivered",
+  Cancelled = "Cancelled",
+  PaymentPendent = "Payment-pendent",
+  Paid = "Paid",
+  Refunded = "Refunded",
+}
 export interface OptionValue {
   color?: string;
   label?: string;

@@ -1,19 +1,23 @@
 import { AlertCircle, Check, Clock, Package, Truck } from "lucide-react";
 import { RecentOrderProps } from "../types/recent-order";
+import { VariantStatus } from "@/types/product";
 
 export const RecentOrder = ({ id, date, status, total, items, product }: RecentOrderProps) => {
   
   const getStatusConfig = (status: string) => {
-    switch (status) {
-      case "Entregue":
-        return { color: "bg-green-100 text-green-800", icon: Check };
-      case "Em trânsito":
-        return { color: "bg-blue-100 text-blue-800", icon: Truck };
-      case "Processando":
-        return { color: "bg-yellow-100 text-yellow-800", icon: Clock };
-      default:
-        return { color: "bg-gray-100 text-gray-800", icon: AlertCircle };
+    if(status === VariantStatus['Delivered']) {
+      return { color: "bg-green-100 text-green-800", icon: Check };
     }
+    if(status === VariantStatus['Cancelled']) {
+      return { color: "bg-red-100 text-red-800", icon: AlertCircle };
+    }
+    if(status === VariantStatus['InTransit']) {
+      return { color: "bg-blue-100 text-blue-800", icon: Clock };
+    }
+    if(status === VariantStatus['Processing']) {
+      return { color: "bg-yellow-100 text-yellow-800", icon: Truck };
+    }
+    return { color: "bg-gray-100 text-gray-800", icon: AlertCircle };
   };
 
   const statusConfig = getStatusConfig(status);

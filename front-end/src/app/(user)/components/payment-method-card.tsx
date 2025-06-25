@@ -7,7 +7,7 @@ export const PaymentMethodCard = ({ type, number, expiry, isDefault }: PaymentMe
     <div className="flex justify-between items-start mb-6">
       <div>
         <p className="text-sm opacity-75 mb-1">{type}</p>
-        <p className="text-lg font-mono">•••• •••• •••• {number}</p>
+        <p className="text-lg font-mono">•••• •••• •••• {number.slice(number.length-4, number.length)}</p>
       </div>
       {isDefault && (
         <span className="bg-green-500 text-white text-xs px-2 py-1 rounded-full">
