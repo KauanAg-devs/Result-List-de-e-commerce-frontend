@@ -1,0 +1,58 @@
+import { UserProfile, UserRole } from "@/types/user-profile";
+
+export const fetchMockedUsers: UserProfile[] = [
+  {
+    id: 1,
+    name: 'random_user_1',
+    email: { credentialPrivateEmail: 'user1@example.com' },
+    phone: '11 99999-0001',
+    memberSince: '06/26/25',
+    profileImage: 'null',
+    role: [UserRole.Seller],
+  },
+  {
+    id: 2,
+    name: 'random_user_2',
+    email: { credentialPrivateEmail: 'user2@example.com' },
+    phone: '11 99999-0002',
+    memberSince: '06/26/25',
+    profileImage: 'null',
+    role: [UserRole.Seller],
+  },
+  {
+    id: 3,
+    name: 'random_user_3',
+    email: { credentialPrivateEmail: 'user3@example.com' },
+    phone: '11 99999-0003',
+    memberSince: '06/26/25',
+    profileImage: 'null',
+    role: [UserRole.Seller],
+  },
+  {
+    id: 4,
+    name: 'random_user_4',
+    email: { credentialPrivateEmail: 'user4@example.com' },
+    phone: '11 99999-0004',
+    memberSince: '06/26/25',
+    profileImage: 'null',
+    role: [UserRole.Seller],
+  },
+  {
+    id: 5,
+    name: 'random_user_5',
+    email: { credentialPrivateEmail: 'user5@example.com' },
+    phone: '11 99999-0005',
+    memberSince: '06/26/25',
+    profileImage: 'null',
+    role: [UserRole.Seller],
+  },
+  {
+    id: 6,
+    name: 'random_user_6',
+    email: { credentialPrivateEmail: 'user6@example.com' },
+    phone: '11 99999-0006',
+    memberSince: '06/26/25',
+    profileImage: 'null',
+    role: [UserRole.Seller],
+  },
+];

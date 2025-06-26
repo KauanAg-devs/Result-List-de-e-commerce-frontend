@@ -1,3 +1,5 @@
+import { UserProfile } from "./user-profile";
+
 export enum VariantStatus {
   Processing = "Processing",
   InTransit = "In-transit",
@@ -28,6 +30,7 @@ export interface ProductVariant {
 }
 
 export interface ProductGrouped {
+  ownerId: UserProfile['id'];
   name: string;
   sku: string;
   images: string[]; 

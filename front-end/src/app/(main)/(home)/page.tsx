@@ -2,10 +2,10 @@
 
 import { useState, useEffect } from "react";
 import { fetchMockedProducts } from "@/app/api/fetch-products";
-import { ProductGrouped } from "@/app/(main)/(home)/types/product";
 import SearchProducts from "@/app/(main)/(home)/components/search-products";
 import ProductsPerPage from "@/app/(main)/(home)/components/products-per-page";
 import ProductsLister from "@/app/(main)/(home)/components/products-lister";
+import { ProductGrouped } from "@/types/product";
 
 export default function Home() {
   const [filteredProducts, setFilteredProducts] = useState<ProductGrouped[]>(

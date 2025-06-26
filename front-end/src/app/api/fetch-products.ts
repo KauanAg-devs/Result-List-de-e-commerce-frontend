@@ -2,6 +2,7 @@ import { ProductGrouped } from "@/types/product";
 
 export const fetchMockedProducts: ProductGrouped[] = [
   {
+    ownerId: 1,
     name: "Black T-Shirt",
     sku: "TSHIRT-BLK",
     images: [
@@ -41,6 +42,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Hoodie",
     sku: "HOODIE-BLU",
     images: [
@@ -80,6 +82,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Sneakers",
     sku: "SNKR-WHT",
     images: [
@@ -119,6 +122,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Hat",
     sku: "HAT-GRN",
     images: [
@@ -158,6 +162,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Jacket",
     sku: "JKT-RED",
     images: [
@@ -197,6 +202,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Shorts",
     sku: "SHRT-YLW",
     images: [
@@ -226,6 +232,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 2,
     name: "Scarf",
     sku: "SCARF-PRP",
     images: [
@@ -254,6 +261,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 4,
     name: "Socks",
     sku: "SOCKS-ORG",
     images: [
@@ -292,6 +300,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 2,
     name: "Jacket",
     sku: "JKT-GRY",
     images: [
@@ -320,6 +329,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Brown Boots",
     sku: "BTS-BRN",
     images: [
@@ -348,6 +358,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 3,
     name: "Pink Dress",
     sku: "DRS-PNK",
     images: [
@@ -376,6 +387,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 4,
     name: "Black Leather Belt",
     sku: "BLT-BLK",
     images: [
@@ -404,6 +416,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "White Cap",
     sku: "CAP-WHT",
     images: [
@@ -432,6 +445,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Blue Jeans",
     sku: "JEANS-BLU",
     images: [
@@ -460,6 +474,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Gray Sneakers",
     sku: "SNKR-GRY",
     images: [
@@ -488,6 +503,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 1,
     name: "Red Dress",
     sku: "DRS-RED",
     images: [
@@ -516,6 +532,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 6,
     name: "Brown Leather Bag",
     sku: "BAG-BRN",
     images: [
@@ -544,6 +561,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 5,
     name: "Black Gloves",
     sku: "GLVS-BLK",
     images: [
@@ -572,6 +590,7 @@ export const fetchMockedProducts: ProductGrouped[] = [
     ]
   },
   {
+    ownerId: 3,
     name: "White Shirt",
     sku: "SHRT-WHT",
     images: [

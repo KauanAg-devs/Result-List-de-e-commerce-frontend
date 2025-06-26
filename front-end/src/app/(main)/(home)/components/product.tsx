@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useCallback } from "react";
 import Link from "next/link";
 import { ProductProps } from "@/app/(main)/(home)/types/product";
 import { ProductVariant } from "@/types/product";
+import { fetchMockedUsers } from "@/app/api/fetch-users";
 
 
 
@@ -111,6 +112,7 @@ export default function Product({
 
   const imageToShow = selectedVariant?.image || group.images[0] || "";
   const isOutOfStock = !selectedVariant?.stock || selectedVariant.stock === 0;
+  const owner = fetchMockedUsers.find((user) => user.id === group.ownerId);
 
   return (
     <>
@@ -202,6 +204,7 @@ export default function Product({
                   {selectedVariant?.stock && selectedVariant.stock > 0
                     ? `In stock (${selectedVariant.stock})`
                     : "Sold out"}
+                    
                 </p>
               </div>
             </div>
@@ -214,7 +217,9 @@ export default function Product({
                     {selectedOptions[opt.label]}
                   </span>
                 </p>
-                <div className="flex gap-2 flex-wrap">
+                
+                <div className="flex gap-2 flex-wrap justify-between">
+                  <div className="flex gap-2 flex-wrap">
                   {opt.values.map((value, i) => {
                     const valStr = value.label ?? "";
                     const isSelected = selectedOptions[opt.label] === valStr;
@@ -270,7 +275,10 @@ export default function Product({
                         )}
                       </div>
                     );
+                    
                   })}
+                  </div>
+                  {owner!.name}
                 </div>
               </div>
             ))}

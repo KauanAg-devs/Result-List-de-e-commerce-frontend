@@ -1,6 +1,10 @@
 import { ProductVariant, VariantStatus } from "./product";
 
-export type UserRole = 'admin' | 'seller' | 'user'
+export enum UserRole {
+  Admin = 'Admin',
+  User = 'User',
+  Seller = 'Seller'
+}
 
 type CommercializedVariant = {
   variant: ProductVariant;
@@ -19,6 +23,7 @@ export type UserAddress = {
 }
 
 export type UserProfile = {
+  id: number;
   name?: string;
   email: {
     credentialPrivateEmail: string
