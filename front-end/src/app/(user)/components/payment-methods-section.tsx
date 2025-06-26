@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { PaymentMethodCard } from "./payment-method-card";
-import { useUserProfile } from "../contexts/user-profile-context";
+import { useUserProfile } from "@/app/contexts/user-profile-context";
 
 export const PaymentMethodsSection = () => {
   const { userProfile } = useUserProfile();

@@ -1,11 +1,20 @@
+import { useUserProfile } from "@/app/contexts/user-profile-context";
 import { FormSchemaType } from "@/zod/checkout-form/checkout-form";
+import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
 
 export function ContactInfo() {
   const {
     register,
     formState: { errors },
+    setValue
   } = useFormContext<FormSchemaType>();
+  const { userProfile } = useUserProfile()
+  
+  useEffect(() => {
+    setValue("email", userProfile.email.credentialPrivateEmail);
+  }, [userProfile.email.credentialPrivateEmail, setValue]);
+  
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">

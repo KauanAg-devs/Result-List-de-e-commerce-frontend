@@ -1,7 +1,7 @@
 import { Check, Clock, Filter, Package, Search } from "lucide-react";
 import { RecentOrder } from "./recent-order";
 import { StatCard } from "./stat-card";
-import { useUserProfile } from "../contexts/user-profile-context";
+import { useUserProfile } from "@/app/contexts/user-profile-context";
 import { VariantStatus } from "@/types/product";
 
 export const OrdersSection = () => {

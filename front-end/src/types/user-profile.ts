@@ -19,12 +19,12 @@ export type UserAddress = {
 }
 
 export type UserProfile = {
-  name: string | null;
+  name?: string;
   email: {
     credentialPrivateEmail: string
-    publicEmail: string | null
+    publicEmail?: string
   };
-  phone: string | null;
+  phone?: string;
   profileImage: string | ArrayBuffer | null;
   memberSince: string;
   role: UserRole[]

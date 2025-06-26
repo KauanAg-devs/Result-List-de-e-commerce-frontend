@@ -20,7 +20,7 @@ import { QuickActionCard } from "./quick-action-cart";
 import { OverviewSectionProps } from "../types/overview-section";
 import { ChangeEvent, useState } from "react";
 import { UserAddress, UserRole } from "@/types/user-profile";
-import { useUserProfile } from "../contexts/user-profile-context";
+import { useUserProfile } from "@/app/contexts/user-profile-context";
 
 export default function OverviewSection({
   setPickedMethod,

@@ -1,6 +1,6 @@
 import { Plus } from "lucide-react";
 import { AddressCard } from "./address-card";
-import { useUserProfile } from "../contexts/user-profile-context";
+import { useUserProfile } from "@/app/contexts/user-profile-context";
 
 export const AddressesSection = () => {
   const { userProfile } = useUserProfile();

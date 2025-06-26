@@ -1,6 +1,9 @@
+"use client";
+
+import { useUserProfile } from "@/app/contexts/user-profile-context";
 import { FormSchemaType } from "@/zod/checkout-form/checkout-form";
 import { useFormContext } from "react-hook-form";
-
+import { useEffect } from "react";
 export default function ShippingInfo() {
   const {
     register,
@@ -8,6 +11,7 @@ export default function ShippingInfo() {
     watch,
     formState: { errors },
   } = useFormContext<FormSchemaType>();
+  const { userProfile } = useUserProfile();
 
   const formatPhone = (value: string) => {
     const nums = value.replace(/\D/g, "");
@@ -35,6 +39,41 @@ export default function ShippingInfo() {
     setValue("zipCode", formatted, { shouldValidate: true });
   };
 
+  useEffect(() => {
+    setValue("firstName", userProfile.name?.split(" ")[0] || "");
+  }, [userProfile.name, setValue]);
+
+  useEffect(() => {
+    setValue("lastName", userProfile.name?.split(" ").slice(1).join(" ") || "");
+  }, [userProfile.name, setValue]);
+
+  useEffect(() => {
+    setValue("phone", userProfile.phone || "");
+  }, [userProfile.phone, setValue]);
+
+  useEffect(() => {
+    setValue("address", userProfile.UserAddresses?.[0]?.address || "");
+  }, [userProfile.UserAddresses, setValue]);
+
+  useEffect(() => {
+    setValue("city", userProfile.UserAddresses?.[0]?.city || "");
+  }
+            , [userProfile.UserAddresses, setValue])
+
+  useEffect(() => {
+    setValue("state", userProfile.UserAddresses?.[0]?.state || "");
+  }
+            , [userProfile.UserAddresses, setValue]
+
+            )
+
+  useEffect(() => {
+    setValue("zipCode", userProfile.UserAddresses?.[0]?.zipCode || "");
+  }
+            , [userProfile.UserAddresses, setValue]
+            )
+
+  
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">

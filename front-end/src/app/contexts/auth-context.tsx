@@ -1,21 +1,21 @@
 "use client";
-
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useRef } from "react";
 import { AuthProviderProps, AuthContextType } from "@/app/contexts/types/auth-context";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean | null>(null); 
   const [loading, setLoading] = useState(true);
+  const hasInitialized = useRef(false);
 
   useEffect(() => {
-    const token = document.cookie.match(/access_token=([^;]+)/)?.[1] //validate token from backend;
+    if (hasInitialized.current) return;
 
-    if (token) setIsAuthenticated(true);
-    else setIsAuthenticated(false);
-
+    const token = document.cookie.match(/access_token=([^;]+)/)?.[1];
+    setIsAuthenticated(!!token); 
     setLoading(false);
+    hasInitialized.current = true;
   }, []);
 
   return (
