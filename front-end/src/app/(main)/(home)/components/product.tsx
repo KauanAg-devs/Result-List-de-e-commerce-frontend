@@ -1,114 +1,62 @@
 "use client";
-
-import { useState, useEffect, useRef, useCallback } from "react";
+import { User } from "lucide-react";
+import { useEffect } from "react";
 import Link from "next/link";
 import { ProductProps } from "@/app/(main)/(home)/types/product";
-import { ProductVariant } from "@/types/product";
 import { fetchMockedUsers } from "@/app/api/fetch-users";
-
-
+import Image from "next/image";
+import { useProductState } from "../hooks/use-product-state";
+import { useIntersectionObserver } from "../hooks/use-intersection-observer";
+import { arrayBufferToBase64 } from "@/utils/image-utils";
 
 export default function Product({
   group,
   variant = null,
   lazy = false,
 }: ProductProps) {
-  const [isVisible, setIsVisible] = useState(!lazy);
-  const [isLoaded, setIsLoaded] = useState(!lazy);
-  const elementRef = useRef<HTMLDivElement>(null);
+  const {
+    elementRef,
+    selectedVariant,
+    setSelectedVariant,
+    selectedOptions,
+    setSelectedOptions,
+    isExpanded,
+    isImageLoaded,
+    setIsImageLoaded,
+    isImageLoading,
+    setIsImageLoading,
+    showTooltip,
+    setShowTooltip,
+    isAnimating,
+    findMatchingVariant,
+    handleOptionChange,
+    handleExpand,
+    handleCollapse,
+    handleBackdropClick,
+    setIsVisible,
+    setIsLoaded,
+  } = useProductState({ group, variant, lazy });
 
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
-    variant || group.variants[0] || null
-  );
-
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, string>
-  >(() => {
-    if (!selectedVariant) return {};
-    return { ...selectedVariant.options };
-  });
-
-  const [isExpanded, setIsExpanded] = useState(false);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
-  const [isImageLoading, setIsImageLoading] = useState(false);
-  const [showTooltip, setShowTooltip] = useState<string | null>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
-
-  const findMatchingVariant = useCallback(() => {
-    return (
-      group.variants.find((v) =>
-        Object.entries(selectedOptions).every(
-          ([key, val]) => v.options[key] === val
-        )
-      ) || null
-    );
-  }, [selectedOptions, group.variants]);
+  useIntersectionObserver(elementRef, lazy, setIsVisible, setIsLoaded);
 
   useEffect(() => {
     if (variant) {
       setSelectedVariant(variant);
       setSelectedOptions({ ...variant.options });
     }
-  }, [variant]);
+  }, [variant, setSelectedVariant, setSelectedOptions]);
 
   useEffect(() => {
     const match = findMatchingVariant();
     if (match !== selectedVariant) {
       setSelectedVariant(match);
     }
-  }, [selectedOptions, findMatchingVariant, selectedVariant]);
-
-  useEffect(() => {
-    if (!lazy) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setIsVisible(true);
-            setTimeout(() => setIsLoaded(true), 300);
-            observer.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: "50px", threshold: 0.1 }
-    );
-    if (elementRef.current) observer.observe(elementRef.current);
-    return () => {
-      if (elementRef.current) observer.unobserve(elementRef.current);
-    };
-  }, [lazy]);
-
-  const handleOptionChange = useCallback(
-    (optionLabel: string, value: string) => {
-      setIsAnimating(true);
-      setIsImageLoading(true);
-      setIsImageLoaded(false);
-
-      setSelectedOptions((prev) => ({ ...prev, [optionLabel]: value }));
-
-      setTimeout(() => setIsAnimating(false), 200);
-    },
-    []
-  );
-
-  const handleExpand = useCallback(() => {
-    if (!isAnimating) {
-      setIsExpanded(true);
-    }
-  }, [isAnimating]);
-
-  const handleCollapse = useCallback(() => {
-    setIsExpanded(false);
-  }, []);
-
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.target === e.currentTarget) {
-        handleCollapse();
-      }
-    },
-    [handleCollapse]
-  );
+  }, [
+    selectedOptions,
+    findMatchingVariant,
+    selectedVariant,
+    setSelectedVariant,
+  ]);
 
   const imageToShow = selectedVariant?.image || group.images[0] || "";
   const isOutOfStock = !selectedVariant?.stock || selectedVariant.stock === 0;
@@ -204,7 +152,6 @@ export default function Product({
                   {selectedVariant?.stock && selectedVariant.stock > 0
                     ? `In stock (${selectedVariant.stock})`
                     : "Sold out"}
-                    
                 </p>
               </div>
             </div>
@@ -217,68 +164,90 @@ export default function Product({
                     {selectedOptions[opt.label]}
                   </span>
                 </p>
-                
+
                 <div className="flex gap-2 flex-wrap justify-between">
                   <div className="flex gap-2 flex-wrap">
-                  {opt.values.map((value, i) => {
-                    const valStr = value.label ?? "";
-                    const isSelected = selectedOptions[opt.label] === valStr;
-                    return (
-                      <div
-                        key={i}
-                        className="relative"
-                        onMouseEnter={() =>
-                          setShowTooltip(`${opt.label}-${valStr}`)
-                        }
-                        onMouseLeave={() => setShowTooltip(null)}
-                      >
-                        <button
-                          title={valStr}
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            handleOptionChange(opt.label, valStr);
-                          }}
-                          disabled={isAnimating}
-                          className={`relative h-8 min-w-8 px-2 rounded-lg text-sm border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                            isSelected
-                              ? "bg-gray-900 text-white border-gray-900 shadow-md"
-                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm"
-                          } ${
-                            isAnimating ? "opacity-50 cursor-not-allowed" : ""
-                          }`}
-                          style={
-                            opt.type === "color"
-                              ? {
-                                  backgroundColor: value.color,
-                                  color: "transparent",
-                                  border:
-                                    valStr.toLowerCase() === "white"
-                                      ? "2px solid #e5e7eb"
-                                      : isSelected
-                                      ? "2px solid #374151"
-                                      : "2px solid transparent",
-                                }
-                              : {}
+                    {opt.values.map((value, i) => {
+                      const valStr = value.label ?? "";
+                      const isSelected = selectedOptions[opt.label] === valStr;
+                      return (
+                        <div
+                          key={i}
+                          className="relative"
+                          onMouseEnter={() =>
+                            setShowTooltip(`${opt.label}-${valStr}`)
                           }
+                          onMouseLeave={() => setShowTooltip(null)}
                         >
-                          {opt.type !== "color" && valStr}
-                          {isSelected && opt.type === "color" && (
-                            <div className="absolute inset-0 rounded-lg border-2 border-gray-900"></div>
-                          )}
-                        </button>
+                          <button
+                            title={valStr}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleOptionChange(opt.label, valStr);
+                            }}
+                            disabled={isAnimating}
+                            className={`relative h-8 min-w-8 px-2 rounded-lg text-sm border transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
+                              isSelected
+                                ? "bg-gray-900 text-white border-gray-900 shadow-md"
+                                : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm"
+                            } ${
+                              isAnimating ? "opacity-50 cursor-not-allowed" : ""
+                            }`}
+                            style={
+                              opt.type === "color"
+                                ? {
+                                    backgroundColor: value.color,
+                                    color: "transparent",
+                                    border:
+                                      valStr.toLowerCase() === "white"
+                                        ? "2px solid #e5e7eb"
+                                        : isSelected
+                                          ? "2px solid #374151"
+                                          : "2px solid transparent",
+                                  }
+                                : {}
+                            }
+                          >
+                            {opt.type !== "color" && valStr}
+                            {isSelected && opt.type === "color" && (
+                              <div className="absolute inset-0 rounded-lg border-2 border-gray-900"></div>
+                            )}
+                          </button>
 
-                        {showTooltip === `${opt.label}-${valStr}` && (
-                          <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap z-30">
-                            {valStr}
-                            <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
-                          </div>
-                        )}
-                      </div>
-                    );
-                    
-                  })}
+                          {showTooltip === `${opt.label}-${valStr}` && (
+                            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap z-30">
+                              {valStr}
+                              <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-gray-900"></div>
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                  {owner!.name}
+                  <div className="flex items-center gap-2">
+                    <p>{owner?.name}</p>
+                    {owner?.profileImage &&
+                    owner.profileImage !== null &&
+                    owner.profileImage !== "null" &&
+                    owner.profileImage !== "" ? (
+                      <Image
+                        className="rounded-full h-8 w-8 border border-black p-1"
+                        src={
+                          typeof owner.profileImage === "string"
+                            ? owner.profileImage
+                            : `data:image/jpeg;base64,${arrayBufferToBase64(owner.profileImage)}`
+                        }
+                        width={10}
+                        height={10}
+                        alt="Profile"
+                      />
+                    ) : (
+                      <User
+                        className="text-zinc-400 rounded-full border border-black p-1"
+                        size={35}
+                      />
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

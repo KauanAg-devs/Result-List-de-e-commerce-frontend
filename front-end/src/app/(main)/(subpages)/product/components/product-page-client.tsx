@@ -2,9 +2,11 @@
 
 import { ToastContainer } from "react-toastify";
 import { useProductPage } from "@product/hooks/use-product";
-import { LoaderCircle } from "lucide-react";
+import { LoaderCircle, User } from "lucide-react";
+import Image from "next/image";
 import { PageProps } from "@product/types/page";
-
+import {fetchMockedUsers} from "@/app/api/fetch-users";
+import { arrayBufferToBase64 } from "@/utils/image-utils";
 export default function ProductPageClient({ sku }: PageProps['params']) {
   const {
     handleAddToCart,
@@ -21,7 +23,6 @@ export default function ProductPageClient({ sku }: PageProps['params']) {
     price,
     stock,
   } = useProductPage(sku);
-
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50">
@@ -37,6 +38,7 @@ export default function ProductPageClient({ sku }: PageProps['params']) {
       </div>
     );
   }
+  const owner = fetchMockedUsers.filter(user => user.id === product.ownerId)[0]
 
   return (
     <div className="min-h-screen bg-gray-50 py-10 px-4">
@@ -61,11 +63,38 @@ export default function ProductPageClient({ sku }: PageProps['params']) {
         <div>
           <ToastContainer position="top-right" autoClose={3000} />
 
+          <div className="flex gap-14 justify-between">
           <h1 className="text-4xl font-bold text-gray-900 mb-2">
-            {product.name}
+            {product.name} 
             {variant && ` - ${Object.values(variant.options).join(", ")}`}
           </h1>
 
+            <div className="flex items-center gap-4 mr-10">
+                    {owner?.profileImage &&
+                    owner.profileImage !== null &&
+                    owner.profileImage !== "null" &&
+                    owner.profileImage !== "" ? (
+                      <Image
+                        className="rounded-full h-8 w-8 border border-zinc-300 p-1"
+                        src={
+                          typeof owner.profileImage === "string"
+                            ? owner.profileImage
+                            : `data:image/jpeg;base64,${arrayBufferToBase64(owner.profileImage)}`
+                        }
+                        width={10}
+                        height={10}
+                        alt="Profile"
+                      />
+                    ) : (
+                      <User
+                        className="text-zinc-400 rounded-full border border-black p-1"
+                        size={35}
+                      />
+                    )}
+              <p className="text-black">{owner?.name}</p>
+
+                  </div>
+            </div>
           <p className="text-sm text-gray-500 mb-4">SKU: {variant?.sku}</p>
 
           <div className="mb-4">
