@@ -58,7 +58,10 @@ export default function Product({
     setSelectedVariant,
   ]);
 
-  const imageToShow = selectedVariant?.image || group.images[0] || "";
+  const imageToShow =
+    selectedVariant?.images?.[0]?.trim() ||
+    group.default.images?.[0]?.trim()
+
   const isOutOfStock = !selectedVariant?.stock || selectedVariant.stock === 0;
   const owner = fetchMockedUsers.find((user) => user.id === group.ownerId);
 
@@ -274,7 +277,7 @@ export default function Product({
               <div className="mt-6 border-t border-gray-200 pt-4 space-y-3">
                 <div className="flex gap-3">
                   <Link
-                    href={`/product/${group?.sku ?? ""}`}
+                    href={`/product/${group?.default.sku ?? ""}`}
                     className="flex-1"
                   >
                     <button

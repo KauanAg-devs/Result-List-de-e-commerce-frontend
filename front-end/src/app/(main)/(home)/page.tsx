@@ -19,8 +19,8 @@ export default function Home() {
   useEffect(() => {
     const filtered = fetchMockedProducts.filter(
       (product) =>
-        product.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        product.sku.toLowerCase().includes(searchTerm.toLowerCase())
+        product.variants[0].name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        product.variants[0].sku.toLowerCase().includes(searchTerm.toLowerCase())
     );
     setFilteredProducts(filtered);
     setCurrentPage(1);

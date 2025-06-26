@@ -8,7 +8,8 @@ import { ProductGrouped } from "@/types/product";
 
 function findProductBySku(productSku: string) {
   return (
-    fetchMockedProducts.find((product) => product.sku === productSku) || null
+    fetchMockedProducts.find((product) => product.default.sku === productSku) ||
+    null
   );
 }
 
@@ -77,8 +78,8 @@ export function useProductPage(sku: string) {
           });
           setSelectedOptions(initialOptions);
 
-          const imgIndex = foundProduct.images.findIndex(
-            (img) => img === variantToUse.image
+          const imgIndex = foundProduct.default.images.findIndex(
+            (img) => img === variantToUse.images[0]
           );
           setSelectedImage(imgIndex !== -1 ? imgIndex : 0);
         }
@@ -98,11 +99,8 @@ export function useProductPage(sku: string) {
 
       if (product) {
         const variant = findVariant(product, updated);
-        if (variant) {
-          const imgIndex = product.images.findIndex(
-            (img) => img === variant.image
-          );
-          setSelectedImage(imgIndex !== -1 ? imgIndex : 0);
+        if (variant && variant.images.length > 0) {
+          setSelectedImage(0); 
         }
       }
 
@@ -114,15 +112,18 @@ export function useProductPage(sku: string) {
     if (!product) return;
 
     const variant = findVariant(product, selectedOptions);
-    if (!variant || variant.stock === 0) return;
+    if (!variant || variant.stock === 0) {
+      toast.error("Produto fora de estoque ou variante inválida");
+      return;
+    }
 
     const cartItem: CartItem = {
-      name: product.name,
+      name: variant.name,
       sku: variant.sku,
       price: variant.price,
       options: selectedOptions,
       quantity,
-      image: variant.image,
+      image: variant.images[0] ?? "",
       stock: variant.stock,
       group: product,
       lazy: false,
@@ -131,9 +132,9 @@ export function useProductPage(sku: string) {
     try {
       await dispatch(addToCartWithValidation(cartItem)).unwrap();
       openCart();
-      toast.success("Product added to shopping cart!");
+      toast.success("Produto adicionado ao carrinho!");
     } catch (error) {
-      toast.error(typeof error === "string" ? error : "Error adding to cart");
+      toast.error(typeof error === "string" ? error : "Erro ao adicionar ao carrinho");
     }
   };
 

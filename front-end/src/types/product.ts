@@ -21,20 +21,21 @@ export interface Option {
   values: OptionValue[];
 }
 
-export interface ProductVariant {
+export interface ProductVariant {  
+  name: string;
   sku: string;
   price: number;
+  discount?: number;
+  avaliations?: { star: number, comment: string }[]
   stock: number;
-  image: string; 
+  images: string[]; 
   options: Record<string, string>; 
 }
 
 export interface ProductGrouped {
   ownerId: UserProfile['id'];
-  name: string;
-  sku: string;
-  images: string[]; 
   options: Option[];
+  default: ProductVariant;
   specs?: { label: string; value: string }[];
   variants: ProductVariant[];
 }

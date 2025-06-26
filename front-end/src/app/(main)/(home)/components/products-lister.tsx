@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Product from "./product";
 import { ProductsListerProps } from "@/app/(main)/(home)/types/products-lister";
 
-
 export default function ProductsLister({
   productsGrouped = [],
   productsPerPage,
@@ -24,8 +23,9 @@ export default function ProductsLister({
       let changed = false;
 
       paginatedGroups.forEach((group) => {
-        if (!next[group.sku] && group.variants.length > 0) {
-          next[group.sku] = group.variants[0].sku;
+        const groupId = group.default.sku;
+        if (!next[groupId] && group.variants.length > 0) {
+          next[groupId] = group.variants[0].sku;
           changed = true;
         }
       });
@@ -34,10 +34,10 @@ export default function ProductsLister({
     });
   }, [paginatedGroups]);
 
-  const handleVariantChange = (groupSku: string, variantSku: string) => {
+  const handleVariantChange = (groupId: string, variantSku: string) => {
     setSelectedVariants((prev) => ({
       ...prev,
-      [groupSku]: variantSku,
+      [groupId]: variantSku,
     }));
   };
 
@@ -79,7 +79,8 @@ export default function ProductsLister({
     <div className="space-y-6 py-6 px-6">
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
         {paginatedGroups.map((group) => {
-          const selectedSku = selectedVariants[group.sku];
+          const groupId = group.default.sku;
+          const selectedSku = selectedVariants[groupId];
           const selectedVariant = group.variants.find(
             (v) => v.sku === selectedSku
           );
@@ -88,7 +89,7 @@ export default function ProductsLister({
 
           return (
             <div
-              key={group.sku}
+              key={groupId}
               className="hover:shadow-lg transition-shadow duration-200"
             >
               <Product variant={selectedVariant} group={group} />
