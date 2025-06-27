@@ -76,7 +76,7 @@ export default function Product({
         role="button"
         tabIndex={0}
         aria-expanded={isExpanded}
-        aria-label={`Ver detalhes de ${group.name}`}
+        aria-label={`Ver detalhes de ${variant?.name}`}
         onKeyDown={(e) => {
           if (e.key === "Enter" || e.key === " ") {
             e.preventDefault();
@@ -108,7 +108,7 @@ export default function Product({
 
             <img
               src={imageToShow}
-              alt={`${group.name} - ${Object.values(selectedOptions).join(
+              alt={`${variant?.name} - ${Object.values(selectedOptions).join(
                 ", "
               )}`}
               className={`w-full aspect-square object-cover transition-all duration-700 ${
@@ -133,7 +133,7 @@ export default function Product({
             <div className="flex justify-between items-start mb-4">
               <div className="flex-1 min-w-0">
                 <h3 className="text-lg font-semibold text-gray-900 mb-2 truncate">
-                  {group.name}
+                  {selectedVariant?.name}
                 </h3>
                 <p className="text-sm text-gray-500 uppercase tracking-wide font-medium">
                   SKU: {selectedVariant?.sku ?? "—"}

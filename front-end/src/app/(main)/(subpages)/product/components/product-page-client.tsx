@@ -80,7 +80,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
     });
   };
 
-  const selectImage = (index) => {
+  const selectImage = (index: number) => {
     const availableImages = getAvailableImages();
     if (index >= 0 && index < availableImages.length) {
       setCurrentImageIndex(index);
@@ -99,7 +99,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
   }, [selectedImage]);
 
   useEffect(() => {
-    const handleKeyDown = (e) => {
+    const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'ArrowLeft') {
         e.preventDefault();
         e.stopPropagation()
@@ -181,7 +181,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
           <div className="relative max-w-4xl max-h-full">
             <img
               src={displayImage}
-              alt={variant.name}
+              alt={variant?.name}
               className="max-w-full max-h-full object-contain"
             />
 
@@ -238,7 +238,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                 {displayImage ? (
                   <img
                     src={displayImage}
-                    alt={variant.name}
+                    alt={variant?.name}
                     className={`w-full aspect-square object-cover transition-all duration-300 ${
                       isOutOfStock ? "filter grayscale" : "group-hover:scale-105"
                     }`}
@@ -317,7 +317,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                   >
                     <img
                       src={image}
-                      alt={`${variant.name} ${idx + 1}`}
+                      alt={`${variant?.name} ${idx + 1}`}
                       className="w-full h-full object-cover"
                     />
                   </button>
@@ -330,7 +330,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   <p className="text-xs sm:text-sm text-blue-800 font-medium">
-                    Mostrando imagem{availableImages.length > 1 ? 's' : ''} da variante: {Object.values(variant.options).join(", ")}
+                    Mostrando imagem{availableImages.length > 1 ? 's' : ''} da variante: {Object.values(variant?.options!).join(", ")}
                   </p>
                 </div>
                 {availableImages.length > 1 && (
@@ -353,7 +353,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
               <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-3 gap-3">
                 <div className="flex-1">
                   <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
-                    {variant.name}
+                    {variant?.name}
                     {variant && (
                       <span className="text-gray-600 font-normal block sm:inline">
                         {" - " + Object.values(variant.options).join(", ")}
@@ -433,20 +433,21 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     isOutOfStock ? "text-gray-500" : "text-gray-900"
                   }`}
                 >
-                  R$ {(price * (variant.discount/100)).toFixed(2)}
+                 R$ {variant?.discount ? (price * (variant?.discount!/100)).toFixed(2) : variant?.price}
                 </span>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  <span className="text-base sm:text-lg text-gray-500 line-through">
-                    R$ {parseFloat(price).toFixed(2)}
-                  </span>
-                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs sm:text-sm font-medium">
+                  {variant?.discount && <span className="text-base sm:text-lg text-gray-500 line-through">
+                    R$ {price.toFixed(2)}
+                  </span>}
+
+                 {variant?.discount && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs sm:text-sm font-medium">
                     {variant.discount}% OFF
-                  </span>
+                  </span>}
                 </div>
               </div>
-              <p className="text-xs sm:text-sm text-gray-600 mt-2">
+              {/*<p className="text-xs sm:text-sm text-gray-600 mt-2">
                 ou 12x de R$ {(parseFloat(price) / variant?.discount).toFixed(2)} sem juros
-              </p>
+              </p>*/}
             </div>
 
             {product.options?.map((opt, i) => (

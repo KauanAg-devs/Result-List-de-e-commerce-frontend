@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
 export const useIntersectionObserver = (
-  elementRef: React.RefObject<HTMLDivElement>,
+  elementRef: React.RefObject<HTMLDivElement | null>,
   lazy: boolean,
   setIsVisible: (visible: boolean) => void,
   setIsLoaded: (loaded: boolean) => void
@@ -22,10 +22,10 @@ export const useIntersectionObserver = (
       { rootMargin: "50px", threshold: 0.1 }
     );
 
-    if (elementRef.current) observer.observe(elementRef.current);
+    if (elementRef?.current) observer.observe(elementRef?.current);
 
     return () => {
-      if (elementRef.current) observer.unobserve(elementRef.current);
+      if (elementRef?.current) observer.unobserve(elementRef?.current);
     };
   }, [lazy, elementRef, setIsVisible, setIsLoaded]);
 };

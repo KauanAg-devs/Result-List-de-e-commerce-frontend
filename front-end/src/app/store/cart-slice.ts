@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { ProductProps } from '@/types/home/product';
+import { ProductProps } from '../(main)/(home)/types/product';
 
 export interface CartItem extends Omit<ProductProps, 'images' | 'options'> {
   name: string
