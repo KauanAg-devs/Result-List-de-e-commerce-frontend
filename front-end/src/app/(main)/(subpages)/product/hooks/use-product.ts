@@ -142,7 +142,7 @@ export function useProductPage(sku: string) {
   };
 
   const handleBuyNow = (product: ProductVariant) => {
-    dispatch(setBuyNowProduct(product));
+    dispatch(setBuyNowProduct({...product, quantity}));
     router.push('/checkout');
   };
   

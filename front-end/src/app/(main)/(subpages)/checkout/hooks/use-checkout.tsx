@@ -1,9 +1,7 @@
 import { RootState } from "@/app/store";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useMemo, useEffect, useState } from "react";
-import { usePathname, useRouter } from "next/navigation"; 
 import { useCheckoutForm } from "@/zod/checkout-form/checkout-form";
-import { resetCheckout } from "@/app/store/checkout-slice"; 
 
 type PixData = {
   qrCode: string;
@@ -33,9 +31,6 @@ export const useCheckout = (): {
 } => {
   const [paymentStep, setPaymentStep] = useState<"pix" | "credit">("credit");
   const [pixData, setPixData] = useState<PixData | null>(null);
-  const [previousPath, setPreviousPath] = useState<string>("");
-  const dispatch = useDispatch();
-  const pathname = usePathname();
 
   const checkoutState = useSelector((state: RootState) => state.checkout);
   const cartItems = useSelector((state: RootState) => state.cart.items);
@@ -47,7 +42,6 @@ export const useCheckout = (): {
     if (isFromProduct && selectedProduct) {
       return [{
         ...selectedProduct,
-        quantity: 1
       }];
     } else {
       return cartItems;
@@ -68,31 +62,6 @@ export const useCheckout = (): {
     () => subtotal + shipping + tax,
     [subtotal, shipping, tax]
   );
-
-  useEffect(() => {
-    if (previousPath && previousPath.includes('/checkout') && !pathname.includes('/checkout')) {
-      if (comeFrom === 'product') {
-        dispatch(resetCheckout());
-      }
-    }
-    setPreviousPath(pathname);
-  }, [pathname, dispatch, comeFrom, previousPath]);
-
- 
-
-  useEffect(() => {
-    const handleBeforeUnload = () => {
-      if (comeFrom === 'product') {
-        dispatch(resetCheckout());
-      }
-    };
-
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
-    return () => {
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [dispatch, comeFrom]);
 
   useEffect(() => {
     if (paymentStep === "pix") {

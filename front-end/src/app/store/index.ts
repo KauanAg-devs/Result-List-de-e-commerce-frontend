@@ -33,7 +33,7 @@ const cartPersistConfig = {
 const checkoutPersistConfig = {
   key: "checkout",
   storage,
-  whitelist: ["comeFrom"],
+  whitelist: ["comeFrom", "selectedProduct"],
 };
 
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);

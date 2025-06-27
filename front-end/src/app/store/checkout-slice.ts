@@ -1,10 +1,20 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { RootState } from './index'
-import { ProductVariant } from '@/types/product'
+import { ProductProps } from '@/app/(main)/(home)/types/product'
+
+export interface ProductItem extends Omit<ProductProps, 'images' | 'options'> {
+  name: string
+  quantity: number;
+  image: string;
+  options: Record<string, string>;
+  sku: string; 
+  stock: number;
+  price: number;
+}
 
 interface CheckoutState {
   comeFrom: 'cart' | 'product';
-  selectedProduct: ProductVariant | null; 
+  selectedProduct: ProductItem | null; 
 }
 
 const initialState: CheckoutState = {
@@ -20,7 +30,7 @@ const checkoutSlice = createSlice({
       state.comeFrom = action.payload;
     },
 
-    setBuyNowProduct: (state, action: PayloadAction<ProductVariant>) => {
+    setBuyNowProduct: (state, action: PayloadAction<ProductItem>) => {
       state.comeFrom = 'product';
       state.selectedProduct = action.payload;
     },

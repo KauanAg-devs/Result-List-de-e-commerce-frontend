@@ -25,7 +25,7 @@ export default function OrderResume({total, tax, subtotal, shipping}: OrderResum
     if (isFromProduct && hasValidSelectedProduct) {
       return [{
         ...selectedProduct,
-        quantity: selectedProduct.quantity || 1,
+        quantity: selectedProduct.quantity,
         id: selectedProduct.id || selectedProduct.sku || `product-${Date.now()}`,
         sku: selectedProduct.sku || selectedProduct.id || 'N/A',
         image: selectedProduct.image || '/placeholder-product.svg',
@@ -42,7 +42,6 @@ export default function OrderResume({total, tax, subtotal, shipping}: OrderResum
       item.price !== null
     );
   })();
-
  
   return (
     <div className="bg-white rounded-lg shadow-sm p-6 h-fit">
@@ -67,7 +66,7 @@ export default function OrderResume({total, tax, subtotal, shipping}: OrderResum
         {displayItems.length > 0 ? (
           displayItems.map((item, index) => {
             const itemKey = item.sku || item.id || `item-${index}`;
-            const itemQuantity = item.quantity || 1;
+            const itemQuantity = item.quantity;
             const itemPrice = item.price || 0;
             const itemTotal = itemPrice * itemQuantity;
 
@@ -75,7 +74,7 @@ export default function OrderResume({total, tax, subtotal, shipping}: OrderResum
               <div key={itemKey} className="flex items-center space-x-4">
                 <div className="relative">
                   <img
-                    src={(isFromProduct ? item.images[0] : item.image) || '/placeholder-product.svg'}
+                    src={(isFromProduct ? (item.images?.[0] ?? item.image) : item.image) || '/placeholder-product.svg'}
                     alt={item.name || 'Produto'}
                     className="w-16 h-16 object-cover rounded-lg"
                     onError={(e) => {
@@ -93,7 +92,7 @@ export default function OrderResume({total, tax, subtotal, shipping}: OrderResum
                     {item.name || 'Nome não disponível'}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    SKU: {item.sku || item.id || 'N/A'}
+                    SKU: {item.sku || 'N/A'}
                   </p>
 
                   {item.options && typeof item.options === 'object' &&
@@ -204,14 +203,6 @@ export default function OrderResume({total, tax, subtotal, shipping}: OrderResum
           </svg>
           {isFromProduct ? 'Entrega individual' : 'Entrega rápida'}
         </div>
-
-        {isFromProduct && hasValidSelectedProduct && (
-          <div className="mt-4 p-3 bg-gray-50 border border-gray-200 rounded-lg">
-            <p className="text-xs text-gray-600">
-              <span className="font-medium">Compra direta:</span> Este produto será processado e enviado individualmente.
-            </p>
-          </div>
-        )}
       </div>
     </div>
   );

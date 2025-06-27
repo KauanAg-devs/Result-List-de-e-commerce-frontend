@@ -604,7 +604,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     </button>
                   </div>
                   <span className="text-gray-600 text-sm sm:text-base">
-                    {stock} disponível{stock > 1 ? "is" : ""}
+                    {stock} disponíve{stock > 1 ? "is" : "l"}
                   </span>
                 </div>
               </div>
