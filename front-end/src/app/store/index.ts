@@ -2,7 +2,8 @@ import { combineReducers, configureStore } from "@reduxjs/toolkit";
 import { useDispatch, TypedUseSelectorHook, useSelector } from "react-redux";
 import { persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
-import { cartReducer } from "./cart-slice";
+import { cartReducer } from "./cart-slice"; 
+import { checkoutReducer } from "./checkout-slice"; 
 
 const createNoopStorage = () => {
   return {
@@ -26,13 +27,21 @@ const storage =
 const cartPersistConfig = {
   key: "cart",
   storage,
-  whitelist: ["items"],
+  whitelist: ["items"], 
+};
+
+const checkoutPersistConfig = {
+  key: "checkout",
+  storage,
+  whitelist: ["comeFrom"],
 };
 
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);
+const persistedCheckoutReducer = persistReducer(checkoutPersistConfig, checkoutReducer);
 
 const rootReducer = combineReducers({
   cart: persistedCartReducer,
+  checkout: persistedCheckoutReducer,
 });
 
 export const store = configureStore({

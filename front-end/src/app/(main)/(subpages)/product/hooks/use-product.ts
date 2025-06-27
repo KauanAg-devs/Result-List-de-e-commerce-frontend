@@ -1,10 +1,12 @@
 import { useAppDispatch } from "@/app/store";
 import { CartItem, addToCartWithValidation } from "@/app/store/cart-slice";
+import {useRouter} from "next/navigation";
+import { setBuyNowProduct } from "@/app/store/checkout-slice";
 import { useState, useEffect } from "react";
 import { toast } from "react-toastify";
 import { fetchMockedProducts } from "@/app/api/fetch-products";
 import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
-import { ProductGrouped } from "@/types/product";
+import { ProductGrouped, productVariant, } from "@/types/product";
 
 function findProductBySku(productSku: string) {
   return (
@@ -35,6 +37,7 @@ function findVariant(
 }
 
 export function useProductPage(sku: string) {
+  const router = useRouter()
   const [product, setProduct] = useState<ProductGrouped | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
   const [selectedOptions, setSelectedOptions] = useState<
@@ -110,7 +113,7 @@ export function useProductPage(sku: string) {
 
   const handleAddToCart = async () => {
     if (!product) return;
-
+    
     const variant = findVariant(product, selectedOptions);
     if (!variant || variant.stock === 0) {
       toast.error("Produto fora de estoque ou variante inválida");
@@ -138,7 +141,13 @@ export function useProductPage(sku: string) {
     }
   };
 
+  const handleBuyNow = (product: ProductVariant) => {
+    dispatch(setBuyNowProduct(product));
+    router.push('/checkout');
+  };
+  
   return {
+    handleBuyNow,
     isLoading,
     product,
     selectedImage,

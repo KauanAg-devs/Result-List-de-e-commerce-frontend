@@ -1,5 +1,4 @@
 "use client";
-
 import { FormProvider } from "react-hook-form";
 import { useCheckout } from "./hooks/use-checkout";
 import { LoaderCircle } from "lucide-react";
@@ -12,7 +11,7 @@ import { useRequireAuth } from "@main/hooks/use-require-auth";
 
 export default function Page() {
   const {
-    cartItems,
+    checkoutItems,
     form,
     shipping,
     subtotal,
@@ -22,19 +21,27 @@ export default function Page() {
     setPixData,
     paymentStep,
     setPaymentStep,
+    isFromProduct,
+    comeFrom,
   } = useCheckout();
 
   const { loading } = useRequireAuth();
 
-  if (loading) return <LoaderCircle/>;
-  if (cartItems.length === 0) return <EmptyCart />;
+  if (loading) return <LoaderCircle className="animate-spin mx-auto mt-8" />;
+
+  if (checkoutItems.length === 0) return <EmptyCart />;
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-4 py-8">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Finalizar Compra</h1>
-          <p className="text-gray-600 mt-2">Complete seu pedido</p>
+          <p className="text-gray-600 mt-2">
+            {isFromProduct 
+              ? "Complete sua compra do produto selecionado" 
+              : "Complete seu pedido"
+            }
+          </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -42,7 +49,13 @@ export default function Page() {
             <form
               onSubmit={form.handleSubmit(async () => {
                 setPaymentStep(form.getValues("paymentMethod"));
-                console.log(form.getValues());
+                console.log({
+                  formData: form.getValues(),
+                  checkoutItems,
+                  comeFrom,
+                  isFromProduct,
+                  totals: { subtotal, shipping, tax, total }
+                });
               })}
               className="bg-white rounded-lg shadow-sm p-6"
             >
@@ -54,10 +67,16 @@ export default function Page() {
               />
 
               {paymentStep === "credit" && <CreditPayment total={total} />}
+
               {paymentStep === "pix" && pixData && (
                 <PixPayment
                   onPixConfirm={() => {
                     alert("Pagamento confirmado!");
+                    if (isFromProduct) {
+                      console.log("Processando compra direta de produto");
+                    } else {
+                      console.log("Processando itens do carrinho");
+                    }
                   }}
                   total={pixData.value}
                 />

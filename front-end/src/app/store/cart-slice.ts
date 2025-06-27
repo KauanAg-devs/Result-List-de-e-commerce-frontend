@@ -1,6 +1,6 @@
+import { ProductProps } from '@/app/(main)/(home)/types/product';
 import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
-import { ProductProps } from '../(main)/(home)/types/product';
-
+import { RootState } from './index'
 export interface CartItem extends Omit<ProductProps, 'images' | 'options'> {
   name: string
   quantity: number;
@@ -93,5 +93,7 @@ export const cartSlice = createSlice({
   }
 });
 
+export const selectCartItems = (state: RootState) => state.cart.items;
+export const selectCartTotal = (state: RootState) => state.cart.total;
 export const { removeFromCart, updateQuantity, clearCart } = cartSlice.actions;
 export const cartReducer = cartSlice.reducer;

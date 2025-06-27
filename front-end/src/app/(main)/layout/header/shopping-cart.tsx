@@ -1,6 +1,6 @@
 "use client";
 
-import { RootState } from "@/app/store";
+import { RootState } from "@/app/store/";
 import { useDispatch, useSelector } from "react-redux";
 import { Trash2, Plus, Minus, ShoppingBag, X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
@@ -8,10 +8,12 @@ import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import { removeFromCart } from "@/app/store/cart-slice";
 import Link from "next/link";
 import { useAuth } from "@/app/contexts/auth-context";
+import { resetCheckout } from "@/app/store/checkout-slice";
+import { useRouter } from "next/navigation";
 
 export default function ShoppingCart() {
   const { isAuthenticated } = useAuth()
-  
+  const router = useRouter()
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const dispatch = useDispatch();
   const [isAnimating, setIsAnimating] = useState<string | null>(null);
@@ -202,13 +204,20 @@ export default function ShoppingCart() {
                   <span>${total.toFixed(2)}</span>
                 </div>
 
-                <Link
-                  onClick={() => closeCart()}
-                  href={isAuthenticated ? "/checkout" : '/signin'}
+                <button
+                  onClick={() => {
+                    closeCart();
+                    if (isAuthenticated) {
+                      dispatch(resetCheckout());
+                      router.push("/checkout");
+                    } else {
+                      router.push("/signin");
+                    }
+                  }}
                   className="text-center font-bold w-full bg-black text-white py-3 mt-4 rounded-xl hover:bg-gray-800 transition"
                 >
                   Checkout
-                </Link>
+                </button>
               </div>
             </>
           )}

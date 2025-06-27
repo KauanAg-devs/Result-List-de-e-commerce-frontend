@@ -2,7 +2,20 @@
 
 import { ToastContainer } from "react-toastify";
 import { useProductPage } from "@product/hooks/use-product";
-import { LoaderCircle, User, Heart, Share2, ShoppingCart, MessageCircle, ChevronLeft, ChevronRight, Star, Shield, Truck, RotateCcw } from "lucide-react";
+import {
+  LoaderCircle,
+  User,
+  Heart,
+  Share2,
+  ShoppingCart,
+  MessageCircle,
+  ChevronLeft,
+  ChevronRight,
+  Star,
+  Shield,
+  Truck,
+  RotateCcw,
+} from "lucide-react";
 import Image from "next/image";
 import { PageProps } from "@product/types/page";
 import { fetchMockedUsers } from "@/app/api/fetch-users";
@@ -11,6 +24,7 @@ import { useState, useEffect } from "react";
 
 export default function ProductPageClient({ sku }: PageProps["params"]) {
   const {
+    handleBuyNow,
     handleAddToCart,
     handleOptionChange,
     isLoading,
@@ -45,14 +59,17 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
       return product.default.images;
     }
 
-    return []; 
+    return [];
   };
 
   const getCurrentDisplayImage = () => {
     const availableImages = getAvailableImages();
     if (availableImages!.length === 0) return null;
 
-    const safeIndex = Math.max(0, Math.min(currentImageIndex, availableImages!.length - 1));
+    const safeIndex = Math.max(
+      0,
+      Math.min(currentImageIndex, availableImages!.length - 1)
+    );
     return availableImages![safeIndex];
   };
 
@@ -93,28 +110,28 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
 
   useEffect(() => {
     if (selectedImage !== undefined && selectedImage !== currentImageIndex) {
-      console.log('Syncing with selectedImage:', selectedImage);
+      console.log("Syncing with selectedImage:", selectedImage);
       setCurrentImageIndex(selectedImage);
     }
   }, [selectedImage]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'ArrowLeft') {
+      if (e.key === "ArrowLeft") {
         e.preventDefault();
-        e.stopPropagation()
+        e.stopPropagation();
         prevImage();
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === "ArrowRight") {
         e.preventDefault();
-        e.stopPropagation()
+        e.stopPropagation();
         nextImage();
-      } else if (e.key === 'Escape' && isFullscreenOpen) {
+      } else if (e.key === "Escape" && isFullscreenOpen) {
         setIsFullscreenOpen(false);
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isFullscreenOpen]);
 
   if (isLoading) {
@@ -122,7 +139,9 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="flex flex-col items-center gap-4">
           <LoaderCircle className="animate-spin h-12 w-12 text-gray-600" />
-          <p className="text-gray-600 text-base sm:text-lg text-center">Carregando produto...</p>
+          <p className="text-gray-600 text-base sm:text-lg text-center">
+            Carregando produto...
+          </p>
         </div>
       </div>
     );
@@ -133,8 +152,12 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
         <div className="text-center max-w-md">
           <div className="text-4xl sm:text-6xl mb-4">😕</div>
-          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">Produto não encontrado</h2>
-          <p className="text-gray-600 mb-6 text-sm sm:text-base">O produto que você está procurando não existe ou foi removido.</p>
+          <h2 className="text-xl sm:text-2xl font-bold text-gray-900 mb-2">
+            Produto não encontrado
+          </h2>
+          <p className="text-gray-600 mb-6 text-sm sm:text-base">
+            O produto que você está procurando não existe ou foi removido.
+          </p>
           <button className="bg-gray-900 text-white px-6 py-3 rounded-lg hover:bg-gray-800 transition-colors w-full sm:w-auto">
             Voltar à loja
           </button>
@@ -161,8 +184,12 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
 
   let avaliationMedia = 0;
 
-  if(variant?.avaliations){
-     avaliationMedia = variant!.avaliations!.reduce((acc, avaliation) => acc + avaliation.star, 0) / variant!.avaliations!.length
+  if (variant?.avaliations) {
+    avaliationMedia =
+      variant!.avaliations!.reduce(
+        (acc, avaliation) => acc + avaliation.star,
+        0
+      ) / variant!.avaliations!.length;
   }
 
   return (
@@ -173,8 +200,18 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
             onClick={closeFullscreen}
             className="absolute top-4 right-4 text-white hover:text-gray-300 z-60 p-2"
           >
-            <svg className="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+            <svg
+              className="w-6 h-6 sm:w-8 sm:h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M6 18L18 6M6 6l12 12"
+              />
             </svg>
           </button>
 
@@ -234,44 +271,61 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                 </div>
               )}
 
-              <div className="relative overflow-hidden rounded-xl shadow-lg cursor-pointer" onClick={openFullscreen}>
+              <div
+                className="relative overflow-hidden rounded-xl shadow-lg cursor-pointer"
+                onClick={openFullscreen}
+              >
                 {displayImage ? (
                   <img
                     src={displayImage}
                     alt={variant?.name}
                     className={`w-full aspect-square object-cover transition-all duration-300 ${
-                      isOutOfStock ? "filter grayscale" : "group-hover:scale-105"
+                      isOutOfStock
+                        ? "filter grayscale"
+                        : "group-hover:scale-105"
                     }`}
                   />
                 ) : (
                   <div className="w-full aspect-square bg-gray-200 flex items-center justify-center">
-                    <span className="text-gray-500 text-sm sm:text-base">Sem imagem disponível</span>
+                    <span className="text-gray-500 text-sm sm:text-base">
+                      Sem imagem disponível
+                    </span>
                   </div>
                 )}
 
                 {displayImage && (
                   <div className="absolute top-4 right-4 bg-white/80 p-2 rounded-full opacity-0 group-hover:opacity-100 transition-all">
-                    <svg className="w-4 h-4 sm:w-5 sm:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7" />
+                    <svg
+                      className="w-4 h-4 sm:w-5 sm:h-5"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0zM10 7v3m0 0v3m0-3h3m-3 0H7"
+                      />
                     </svg>
                   </div>
                 )}
 
                 {multipleImages && (
                   <>
-                    <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        prevImage(); 
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        prevImage();
                       }}
                       className="absolute left-2 sm:left-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1.5 sm:p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
                     >
                       <ChevronLeft className="w-4 h-4 sm:w-5 sm:h-5" />
                     </button>
-                    <button 
-                      onClick={(e) => { 
-                        e.stopPropagation(); 
-                        nextImage(); 
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        nextImage();
                       }}
                       className="absolute right-2 sm:right-4 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white p-1.5 sm:p-2 rounded-full shadow-lg transition-all opacity-0 group-hover:opacity-100"
                     >
@@ -282,7 +336,9 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
 
                 {variant?.images && (
                   <div className="absolute top-4 left-4 bg-blue-600 text-white px-2 sm:px-3 py-1 rounded-full text-xs font-medium">
-                    <span className="hidden sm:inline">{Object.values(variant.options).join(", ")}</span>
+                    <span className="hidden sm:inline">
+                      {Object.values(variant.options).join(", ")}
+                    </span>
                     <span className="sm:hidden">Variante</span>
                   </div>
                 )}
@@ -296,7 +352,9 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     key={idx}
                     onClick={() => selectImage(idx)}
                     className={`w-2 h-2 rounded-full transition-all ${
-                      currentImageIndex === idx ? "bg-gray-900" : "bg-gray-300 hover:bg-gray-500"
+                      currentImageIndex === idx
+                        ? "bg-gray-900"
+                        : "bg-gray-300 hover:bg-gray-500"
                     }`}
                   />
                 ))}
@@ -330,7 +388,8 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                 <div className="flex items-center gap-2">
                   <div className="w-2 h-2 rounded-full bg-blue-500"></div>
                   <p className="text-xs sm:text-sm text-blue-800 font-medium">
-                    Mostrando imagem{availableImages.length > 1 ? 's' : ''} da variante: {Object.values(variant?.options!).join(", ")}
+                    Mostrando imagem{availableImages.length > 1 ? "s" : ""} da
+                    variante: {Object.values(variant?.options!).join(", ")}
                   </p>
                 </div>
                 {availableImages.length > 1 && (
@@ -343,8 +402,8 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
           </div>
 
           <div className="space-y-4 sm:space-y-6">
-            <ToastContainer 
-              position="top-right" 
+            <ToastContainer
+              position="top-right"
               autoClose={3000}
               className="mt-16 !text-sm"
             />
@@ -360,7 +419,9 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                       </span>
                     )}
                   </h1>
-                  <p className="text-gray-500 mt-2 text-sm">SKU: {variant?.sku}</p>
+                  <p className="text-gray-500 mt-2 text-sm">
+                    SKU: {variant?.sku}
+                  </p>
                 </div>
 
                 <div className="flex gap-2 justify-end sm:ml-4">
@@ -372,7 +433,9 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                         : "bg-white border-gray-200 text-gray-600 hover:border-gray-300"
                     }`}
                   >
-                    <Heart className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? "fill-current" : ""}`} />
+                    <Heart
+                      className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? "fill-current" : ""}`}
+                    />
                   </button>
                   <button className="p-2 sm:p-3 rounded-full border bg-white border-gray-200 text-gray-600 hover:border-gray-300 transition-all">
                     <Share2 className="w-4 h-4 sm:w-5 sm:h-5" />
@@ -382,13 +445,22 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
 
               <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 mb-4">
                 <div className="flex items-center gap-1">
-                  {...Array.from({ length: avaliationMedia }, (_, i) =>
-                     <Star key={i} className="w-4 h-4 fill-yellow-400 text-yellow-400" />
-                  )}
-                  <span className="text-sm text-gray-600 ml-1">({avaliationMedia})</span>
+                  {...Array.from({ length: avaliationMedia }, (_, i) => (
+                    <Star
+                      key={i}
+                      className="w-4 h-4 fill-yellow-400 text-yellow-400"
+                    />
+                  ))}
+                  <span className="text-sm text-gray-600 ml-1">
+                    ({avaliationMedia})
+                  </span>
                 </div>
-                <span className="text-sm text-gray-400 hidden sm:inline">•</span>
-                <span className="text-sm text-gray-600">{variant?.avaliations?.length ?? 0} avaliações</span>
+                <span className="text-sm text-gray-400 hidden sm:inline">
+                  •
+                </span>
+                <span className="text-sm text-gray-600">
+                  {variant?.avaliations?.length ?? 0} avaliações
+                </span>
               </div>
             </div>
 
@@ -433,16 +505,23 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     isOutOfStock ? "text-gray-500" : "text-gray-900"
                   }`}
                 >
-                 R$ {variant?.discount ? (price * (variant?.discount!/100)).toFixed(2) : variant?.price}
+                  R${" "}
+                  {variant?.discount
+                    ? (price * (variant?.discount! / 100)).toFixed(2)
+                    : variant?.price}
                 </span>
                 <div className="flex items-center gap-2 sm:gap-4">
-                  {variant?.discount && <span className="text-base sm:text-lg text-gray-500 line-through">
-                    R$ {price.toFixed(2)}
-                  </span>}
+                  {variant?.discount && (
+                    <span className="text-base sm:text-lg text-gray-500 line-through">
+                      R$ {price.toFixed(2)}
+                    </span>
+                  )}
 
-                 {variant?.discount && <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs sm:text-sm font-medium">
-                    {variant.discount}% OFF
-                  </span>}
+                  {variant?.discount && (
+                    <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs sm:text-sm font-medium">
+                      {variant.discount}% OFF
+                    </span>
+                  )}
                 </div>
               </div>
               {/*<p className="text-xs sm:text-sm text-gray-600 mt-2">
@@ -482,7 +561,10 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                           opt.type === "color" && colorValue
                             ? {
                                 backgroundColor: colorValue,
-                                border: colorValue === "#FFFFFF" ? "2px solid #ccc" : undefined,
+                                border:
+                                  colorValue === "#FFFFFF"
+                                    ? "2px solid #ccc"
+                                    : undefined,
                               }
                             : {}
                         }
@@ -539,10 +621,22 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                 className="w-full bg-gray-900 text-white py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg hover:bg-gray-800 disabled:bg-gray-400 disabled:cursor-not-allowed transition-all duration-200 flex items-center justify-center gap-3 shadow-lg hover:shadow-xl"
               >
                 <ShoppingCart className="w-4 h-4 sm:w-5 sm:h-5" />
-                <span className="text-sm sm:text-base">{isOutOfStock ? "Produto Indisponível" : "Adicionar ao Carrinho"}</span>
+                <span className="text-sm sm:text-base">
+                  {isOutOfStock
+                    ? "Produto Indisponível"
+                    : "Adicionar ao Carrinho"}
+                </span>
               </button>
 
-              <button className="w-full bg-white text-gray-900 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg border-2 border-gray-900 hover:bg-gray-50 transition-all duration-200">
+              <button
+                onClick={() => handleBuyNow(variant)}
+                disabled={
+                  isOutOfStock ||
+                  Object.keys(selectedOptions).length <
+                    (product.options?.length || 0)
+                }
+                className="w-full bg-white text-gray-900 py-3 sm:py-4 rounded-lg font-semibold text-base sm:text-lg border-2 border-gray-900 hover:bg-gray-50 transition-all duration-200"
+              >
                 Comprar Agora
               </button>
             </div>
@@ -571,8 +665,12 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     </div>
                   )}
                   <div>
-                    <p className="font-semibold text-gray-900 text-sm sm:text-base">{owner?.name}</p>
-                    <p className="text-xs sm:text-sm text-gray-600">Vendedor verificado</p>
+                    <p className="font-semibold text-gray-900 text-sm sm:text-base">
+                      {owner?.name}
+                    </p>
+                    <p className="text-xs sm:text-sm text-gray-600">
+                      Vendedor verificado
+                    </p>
                   </div>
                 </div>
                 <button className="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 sm:py-3 px-4 sm:px-6 rounded-lg transition-colors flex items-center justify-center gap-2 w-full sm:w-auto">
@@ -589,15 +687,21 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
                   <Shield className="w-4 h-4 sm:w-5 sm:h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700 text-sm sm:text-base">Garantia de 12 meses</span>
+                  <span className="text-gray-700 text-sm sm:text-base">
+                    Garantia de 12 meses
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <Truck className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600 flex-shrink-0" />
-                  <span className="text-gray-700 text-sm sm:text-base">Frete grátis para sua região</span>
+                  <span className="text-gray-700 text-sm sm:text-base">
+                    Frete grátis para sua região
+                  </span>
                 </div>
                 <div className="flex items-center gap-3">
                   <RotateCcw className="w-4 h-4 sm:w-5 sm:h-5 text-orange-600 flex-shrink-0" />
-                  <span className="text-gray-700 text-sm sm:text-base">7 dias para trocas e devoluções</span>
+                  <span className="text-gray-700 text-sm sm:text-base">
+                    7 dias para trocas e devoluções
+                  </span>
                 </div>
               </div>
             </div>
@@ -618,8 +722,12 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                   }`}
                 >
                   <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-1 sm:gap-2">
-                    <span className="font-semibold text-gray-900 text-sm sm:text-base">{spec.label}</span>
-                    <span className="text-gray-700 text-sm sm:text-base">{spec.value}</span>
+                    <span className="font-semibold text-gray-900 text-sm sm:text-base">
+                      {spec.label}
+                    </span>
+                    <span className="text-gray-700 text-sm sm:text-base">
+                      {spec.value}
+                    </span>
                   </div>
                 </div>
               ))}
