@@ -1,9 +1,9 @@
 "use client";
-
-import { useUserProfile } from "@/app/contexts/user-profile-context";
+import { useSelector } from "react-redux";
 import { FormSchemaType } from "@/zod/checkout-form/checkout-form";
 import { useFormContext } from "react-hook-form";
 import { useEffect } from "react";
+import { RootState } from "@/app/store";
 export default function ShippingInfo() {
   const {
     register,
@@ -11,7 +11,9 @@ export default function ShippingInfo() {
     watch,
     formState: { errors },
   } = useFormContext<FormSchemaType>();
-  const { userProfile } = useUserProfile();
+  const userProfile = useSelector(
+    (state: RootState) => state.userProfile.userProfile
+  );
 
   const formatPhone = (value: string) => {
     const nums = value.replace(/\D/g, "");
@@ -40,40 +42,23 @@ export default function ShippingInfo() {
   };
 
   useEffect(() => {
-    setValue("firstName", userProfile.name?.split(" ")[0] || "");
-  }, [userProfile.name, setValue]);
-
-  useEffect(() => {
-    setValue("lastName", userProfile.name?.split(" ").slice(1).join(" ") || "");
-  }, [userProfile.name, setValue]);
-
-  useEffect(() => {
+    if (!userProfile?.name) return;
+    setValue("firstName", userProfile.name.split(" ")[0] || "");
+    setValue("lastName", userProfile.name.split(" ").slice(1).join(" ") || "");
     setValue("phone", userProfile.phone || "");
-  }, [userProfile.phone, setValue]);
+  }, [userProfile, setValue]);
 
   useEffect(() => {
-    setValue("address", userProfile.UserAddresses?.[0]?.address || "");
-  }, [userProfile.UserAddresses, setValue]);
+    const address = userProfile?.UserAddresses?.[0];
+    if (!address) return;
 
-  useEffect(() => {
-    setValue("city", userProfile.UserAddresses?.[0]?.city || "");
-  }
-            , [userProfile.UserAddresses, setValue])
+    setValue("address", address.address || "");
+    setValue("city", address.city || "");
+    setValue("state", address.state || "");
+    setValue("zipCode", address.zipCode || "");
+  }, [userProfile, setValue]);
 
-  useEffect(() => {
-    setValue("state", userProfile.UserAddresses?.[0]?.state || "");
-  }
-            , [userProfile.UserAddresses, setValue]
 
-            )
-
-  useEffect(() => {
-    setValue("zipCode", userProfile.UserAddresses?.[0]?.zipCode || "");
-  }
-            , [userProfile.UserAddresses, setValue]
-            )
-
-  
   return (
     <div>
       <h2 className="text-lg font-semibold text-gray-900 mb-4">

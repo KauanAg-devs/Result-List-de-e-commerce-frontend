@@ -1,4 +1,4 @@
-import { useAppDispatch } from "@/app/store";
+import { RootState, useAppDispatch } from "@/app/store";
 import { CartItem, addToCartWithValidation } from "@/app/store/cart-slice";
 import {useRouter} from "next/navigation";
 import { setBuyNowProduct } from "@/app/store/checkout-slice";
@@ -7,6 +7,8 @@ import { toast } from "react-toastify";
 import { fetchMockedProducts } from "@/app/api/fetch-products";
 import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import { ProductGrouped, productVariant, } from "@/types/product";
+import { useSelector } from "react-redux";
+import { useAuth } from "@/app/contexts/auth-context";
 
 function findProductBySku(productSku: string) {
   return (
@@ -37,6 +39,8 @@ function findVariant(
 }
 
 export function useProductPage(sku: string) {
+  const {isAuthenticated} = useAuth();
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile)
   const router = useRouter()
   const [product, setProduct] = useState<ProductGrouped | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -142,8 +146,12 @@ export function useProductPage(sku: string) {
   };
 
   const handleBuyNow = (product: ProductVariant) => {
-    dispatch(setBuyNowProduct({...product, quantity}));
-    router.push('/checkout');
+    if (isAuthenticated && userProfile) {
+      dispatch(setBuyNowProduct({...product, quantity}));
+      router.push('/checkout')
+    } else {
+      router.push('/signin');
+    }
   };
   
   return {

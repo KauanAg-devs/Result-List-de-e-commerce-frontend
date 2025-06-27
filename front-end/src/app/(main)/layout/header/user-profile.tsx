@@ -4,13 +4,20 @@ import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/app/contexts/auth-context";
 import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
+import {clearUserProfile} from '@/app/store/user-profile-slice'
+import { useDispatch } from "react-redux"
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
 
 export default function UserProfile() {
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile);
+  const dispatch = useDispatch()
   const [showProfileOptions, setShowProfileOptions] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
   const { setIsAuthenticated } = useAuth();
   const router = useRouter();
+  
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -131,7 +138,8 @@ export default function UserProfile() {
   ];
 
   const handleMenuClick = (itemId: string) => {
-    if (itemId === "profile") {
+    console.log(userProfile)
+    if (itemId === "profile" && userProfile) {
       router.push("/profile");
     }
 
@@ -144,6 +152,7 @@ export default function UserProfile() {
     }
 
     if (itemId === "logout") {
+      dispatch(clearUserProfile())
       Cookies.remove("access_token");
       setIsAuthenticated(false);
     }

@@ -20,12 +20,14 @@ import { QuickActionCard } from "./quick-action-cart";
 import { OverviewSectionProps } from "../types/overview-section";
 import { ChangeEvent, useState } from "react";
 import { UserAddress, UserRole } from "@/types/user-profile";
-import { useUserProfile } from "@/app/contexts/user-profile-context";
-
+import {useSelector} from "react-redux";
+import { RootState } from "@/app/store";
+import { setUserProfile } from '@/app/store/user-profile-slice';
+  
 export default function OverviewSection({
   setPickedMethod,
 }: OverviewSectionProps) {
-  const { userProfile, setUserProfile } = useUserProfile();
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile!);
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(userProfile);
 
@@ -76,9 +78,9 @@ export default function OverviewSection({
   };
 
   const getRoleBadge = (roles: UserRole[]) => {
-    const primaryRole = roles.includes("admin")
+    const primaryRole = roles.includes(UserRole.Admin)
       ? "admin"
-      : roles.includes("seller")
+      : roles.includes(UserRole.Seller)
         ? "seller"
         : "user";
     const roleLabels = {

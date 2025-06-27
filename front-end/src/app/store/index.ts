@@ -4,6 +4,7 @@ import { persistReducer } from "redux-persist";
 import createWebStorage from "redux-persist/lib/storage/createWebStorage";
 import { cartReducer } from "./cart-slice"; 
 import { checkoutReducer } from "./checkout-slice"; 
+import { userProfileReducer } from "./user-profile-slice"
 
 const createNoopStorage = () => {
   return {
@@ -36,12 +37,20 @@ const checkoutPersistConfig = {
   whitelist: ["comeFrom", "selectedProduct"],
 };
 
+const userProfilePersistConfig = {
+  key: "userProfile",
+  storage,
+  whitelist: ["userProfile"],
+}
+
 const persistedCartReducer = persistReducer(cartPersistConfig, cartReducer);
 const persistedCheckoutReducer = persistReducer(checkoutPersistConfig, checkoutReducer);
+const persistedUserProfileReducer = persistReducer(userProfilePersistConfig, userProfileReducer)
 
 const rootReducer = combineReducers({
   cart: persistedCartReducer,
   checkout: persistedCheckoutReducer,
+  userProfile: persistedUserProfileReducer
 });
 
 export const store = configureStore({

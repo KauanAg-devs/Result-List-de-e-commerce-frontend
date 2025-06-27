@@ -1,9 +1,9 @@
 import { Plus } from "lucide-react";
 import { PaymentMethodCard } from "./payment-method-card";
-import { useUserProfile } from "@/app/contexts/user-profile-context";
-
+import {useSelector} from "react-redux";
+import { RootState } from "@/app/store";
 export const PaymentMethodsSection = () => {
-  const { userProfile } = useUserProfile();
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile!)
 
   return (
     <div className="bg-white border border-zinc-200 rounded-2xl p-6 md:p-8 shadow-sm">

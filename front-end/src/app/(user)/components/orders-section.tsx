@@ -1,12 +1,13 @@
 import { Check, Clock, Filter, Package, Search } from "lucide-react";
 import { RecentOrder } from "./recent-order";
 import { StatCard } from "./stat-card";
-import { useUserProfile } from "@/app/contexts/user-profile-context";
 import { VariantStatus } from "@/types/product";
+import {useSelector} from "react-redux";
+import { RootState } from "@/app/store";
 
 export const OrdersSection = () => {
-  const { userProfile } = useUserProfile();
-
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile!);
+  
   return (
     <div className="bg-white border border-zinc-200 rounded-2xl p-6 md:p-8 shadow-sm">
     <div className="space-y-6">

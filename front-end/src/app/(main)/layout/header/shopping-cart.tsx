@@ -6,7 +6,6 @@ import { Trash2, Plus, Minus, ShoppingBag, X } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import { removeFromCart } from "@/app/store/cart-slice";
-import Link from "next/link";
 import { useAuth } from "@/app/contexts/auth-context";
 import { resetCheckout } from "@/app/store/checkout-slice";
 import { useRouter } from "next/navigation";
@@ -14,6 +13,7 @@ import { useRouter } from "next/navigation";
 export default function ShoppingCart() {
   const { isAuthenticated } = useAuth()
   const router = useRouter()
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile);
   const cartItems = useSelector((state: RootState) => state.cart.items);
   const dispatch = useDispatch();
   const [isAnimating, setIsAnimating] = useState<string | null>(null);
@@ -207,7 +207,7 @@ export default function ShoppingCart() {
                 <button
                   onClick={() => {
                     closeCart();
-                    if (isAuthenticated) {
+                    if (isAuthenticated && userProfile) {
                       dispatch(resetCheckout());
                       router.push("/checkout");
                     } else {

@@ -1,7 +1,8 @@
-import { useUserProfile } from "@/app/contexts/user-profile-context";
+import { RootState } from "@/app/store";
 import { FormSchemaType } from "@/zod/checkout-form/checkout-form";
 import { useEffect } from "react";
 import { useFormContext } from "react-hook-form";
+import { useSelector } from "react-redux";
 
 export function ContactInfo() {
   const {
@@ -9,11 +10,14 @@ export function ContactInfo() {
     formState: { errors },
     setValue
   } = useFormContext<FormSchemaType>();
-  const { userProfile } = useUserProfile()
-  
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile)
+
   useEffect(() => {
-    setValue("email", userProfile.email.credentialPrivateEmail);
-  }, [userProfile.email.credentialPrivateEmail, setValue]);
+    if (userProfile?.email?.credentialPrivateEmail) {
+      setValue("email", userProfile.email.credentialPrivateEmail);
+    }
+  }, [userProfile, setValue]);
+
   
   return (
     <div>

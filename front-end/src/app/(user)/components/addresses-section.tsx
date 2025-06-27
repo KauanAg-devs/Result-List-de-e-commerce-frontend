@@ -1,9 +1,10 @@
 import { Plus } from "lucide-react";
 import { AddressCard } from "./address-card";
-import { useUserProfile } from "@/app/contexts/user-profile-context";
+import { useSelector } from "react-redux";
+import { RootState } from "@/app/store";
 
 export const AddressesSection = () => {
-  const { userProfile } = useUserProfile();
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile!)
 
   const onDelete = () => {};
 
