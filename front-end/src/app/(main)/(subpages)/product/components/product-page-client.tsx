@@ -41,11 +41,11 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
   } = useProductPage(sku);
 
   const [isFavorite, setIsFavorite] = useState(false);
-  const [showFullDescription, setShowFullDescription] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
 
   const getAvailableImages = () => {
+    console.log(product)
     if (variant && Array.isArray(variant.images) && variant.images.length > 0) {
       return variant.images;
     }

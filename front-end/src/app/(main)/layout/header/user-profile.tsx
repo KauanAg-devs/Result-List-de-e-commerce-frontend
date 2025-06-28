@@ -60,8 +60,8 @@ export default function UserProfile() {
       label: "My Profile",
       icon: (
         <svg
-          width="16"
-          height="16"
+          width="17"
+          height="17"
           viewBox="0 0 24 24"
           fill="none"
           stroke="currentColor"
@@ -184,7 +184,7 @@ export default function UserProfile() {
           height="24"
           viewBox="0 0 256 256"
           fill="currentColor"
-          className={`transition-transform duration-200 ${
+          className={`h-5 md:h-16 transition-transform duration-200 ${
             showProfileOptions ? "scale-110" : ""
           }`}
         >

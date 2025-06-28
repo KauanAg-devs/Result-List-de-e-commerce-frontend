@@ -7,14 +7,15 @@ export const useProductState = ({ group, variant, lazy }: ProductProps) => {
   const [isLoaded, setIsLoaded] = useState(!lazy);
   const elementRef = useRef<HTMLDivElement>(null);
 
-  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
-    variant || group.variants[0] || null
-  );
-
   const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>(() => {
-    if (!selectedVariant) return {};
-    return { ...selectedVariant.options };
+    if (!variant && group.default) return { ...group.default.options };
+    if (variant) return { ...variant.options };
+    return {};
   });
+
+  const [selectedVariant, setSelectedVariant] = useState<ProductVariant | null>(
+    variant || group.default || null
+  );
 
   const [isExpanded, setIsExpanded] = useState(false);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
@@ -26,11 +27,16 @@ export const useProductState = ({ group, variant, lazy }: ProductProps) => {
     return (
       group.variants.find((v) =>
         Object.entries(selectedOptions).every(
-          ([key, val]) => v.options[key] === val
+          ([key, val]) => String(v.options[key]).trim() === val.trim()
         )
-      ) || null
+      ) || group.default
     );
-  }, [selectedOptions, group.variants]);
+  }, [selectedOptions, group.variants, group.default]);
+
+  useEffect(() => {
+    const match = findMatchingVariant();
+    setSelectedVariant(match);
+  }, [selectedOptions, findMatchingVariant]);
 
   const handleOptionChange = useCallback(
     (optionLabel: string, value: string) => {
@@ -53,14 +59,11 @@ export const useProductState = ({ group, variant, lazy }: ProductProps) => {
     setIsExpanded(false);
   }, []);
 
-  const handleBackdropClick = useCallback(
-    (e: React.MouseEvent) => {
-      if (e.target === e.currentTarget) {
-        setIsExpanded(false);
-      }
-    },
-    []
-  );
+  const handleBackdropClick = useCallback((e: React.MouseEvent) => {
+    if (e.target === e.currentTarget) {
+      setIsExpanded(false);
+    }
+  }, []);
 
   return {
     isVisible,

@@ -17,8 +17,8 @@ export default function Page() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-blue-50">
-      <div className="mx-auto px-4 md:px-6 py-6 md:py-8">
-        <Header />
+      <Header />
+      <div className="">
         {isOpen && <ShoppingCart />}
         <MobileNavigation
           pickedMethod={pickedMethod}

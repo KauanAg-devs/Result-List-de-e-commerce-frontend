@@ -4,14 +4,10 @@ import { ProductsListerProps } from "@/app/(main)/(home)/types/products-lister";
 
 export default function ProductsLister({
   productsGrouped = [],
-  productsPerPage,
-  currentPage,
-  setCurrentPage,
-}: ProductsListerProps) {
-  const totalPages = Math.ceil(productsGrouped.length / productsPerPage);
-  const start = (currentPage - 1) * productsPerPage;
-  const end = start + productsPerPage;
-  const paginatedGroups = productsGrouped.slice(start, end);
+  loading,
+  hasMore,
+}: ProductsListerProps & { loading: boolean; hasMore: boolean }) {
+  const paginatedGroups = productsGrouped;
 
   const [selectedVariants, setSelectedVariants] = useState<
     Record<string, string>
@@ -34,40 +30,7 @@ export default function ProductsLister({
     });
   }, [paginatedGroups]);
 
-  const handleVariantChange = (groupId: string, variantSku: string) => {
-    setSelectedVariants((prev) => ({
-      ...prev,
-      [groupId]: variantSku,
-    }));
-  };
-
-  const handlePageChange = (newPage: number) => {
-    if (newPage < 1 || newPage > totalPages) return;
-    setCurrentPage(newPage);
-    window.scrollTo({ top: 0, behavior: "smooth" });
-  };
-
-  const getVisiblePages = () => {
-    const pages = [];
-    const maxVisible = 5;
-
-    if (totalPages <= maxVisible) {
-      for (let i = 1; i <= totalPages; i++) {
-        pages.push(i);
-      }
-    } else {
-      const start = Math.max(1, currentPage - 2);
-      const end = Math.min(totalPages, start + maxVisible - 1);
-
-      for (let i = start; i <= end; i++) {
-        pages.push(i);
-      }
-    }
-
-    return pages;
-  };
-
-  if (productsGrouped.length === 0) {
+  if (productsGrouped.length === 0 && !loading && !hasMore) {
     return (
       <div className="text-center py-12 text-gray-500">
         <p className="text-lg">Nenhum produto encontrado</p>
@@ -77,7 +40,7 @@ export default function ProductsLister({
 
   return (
     <div className="space-y-6 py-6 px-6">
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 md:gap-10 xl:gap-14">
         {paginatedGroups.map((group) => {
           const groupId = group.default.sku;
           const selectedSku = selectedVariants[groupId];
@@ -97,47 +60,6 @@ export default function ProductsLister({
           );
         })}
       </div>
-
-      {totalPages > 1 && (
-        <div className="flex flex-col items-center space-y-3">
-          <div className="text-sm text-gray-600">
-            {start + 1}-{Math.min(end, productsGrouped.length)} de{" "}
-            {productsGrouped.length} produtos
-          </div>
-
-          <div className="flex items-center space-x-1">
-            <button
-              onClick={() => handlePageChange(currentPage - 1)}
-              disabled={currentPage === 1}
-              className="px-3 py-2 text-sm border rounded-l hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              ‹ Anterior
-            </button>
-
-            {getVisiblePages().map((page) => (
-              <button
-                key={page}
-                onClick={() => handlePageChange(page)}
-                className={`px-3 py-2 text-sm border ${
-                  currentPage === page
-                    ? "bg-blue-600 text-white border-blue-600"
-                    : "hover:bg-gray-50"
-                }`}
-              >
-                {page}
-              </button>
-            ))}
-
-            <button
-              onClick={() => handlePageChange(currentPage + 1)}
-              disabled={currentPage === totalPages}
-              className="px-3 py-2 text-sm border rounded-r hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              Próxima ›
-            </button>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

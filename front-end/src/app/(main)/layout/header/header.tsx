@@ -1,6 +1,5 @@
 "use client";
 import { useState } from "react";
-import MobileMenu from "./mobile-menu";
 import Menu from "./menu";
 
 export default function Header() {
@@ -16,12 +15,6 @@ export default function Header() {
         showCompanyProducts={showCompanyProducts}
       />
 
-      <MobileMenu
-        setShowMobileMenu={setShowMobileMenu}
-        setShowMobileProducts={setShowMobileProducts}
-        showMobileMenu={showMobileMenu}
-        showMobileProducts={showMobileProducts}
-      />
     </header>
   );
 }
