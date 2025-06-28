@@ -1,4 +1,4 @@
-## Result-list-de-e-commerce
+## Result-list-de-e-commerce-frontend
 
 > Projeto de e-commerce com listagem de produtos, filtros e navegação infinita.
 
