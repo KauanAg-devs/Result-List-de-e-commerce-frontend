@@ -3,7 +3,7 @@ import { RootState } from './index';
 import { UserProfile, UserRole } from '@/types/user-profile';
 import { VariantStatus } from '@/types/product'
 
-const mockedUserProfile: UserProfile = {
+export const mockedUserProfile: UserProfile = {
   name: "João Silvaa",
   phone: '22 998503923',
   email: {
@@ -48,7 +48,7 @@ interface CheckoutState {
 }
 
 const initialState: CheckoutState = {
-  userProfile: mockedUserProfile
+  userProfile: null,
 };
 
 const userProfileSlice = createSlice({

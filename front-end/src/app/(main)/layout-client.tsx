@@ -7,10 +7,22 @@ import { usePathname } from "next/navigation";
 import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import ShoppingCart from "@main/layout/header/shopping-cart";
 import { ChildrenProps } from "@/types/children";
+import { useEffect } from "react";
+import { useDispatch } from "react-redux";
+import { setUserProfile } from "@/app/store/user-profile-slice";
+import { mockedUserProfile } from "@/app/store/user-profile-slice";
 
 export default function LayoutClient({ children }: ChildrenProps) {
   const { isOpen } = useCartDrawer();
+  const dispatch = useDispatch();
 
+  useEffect(() => {
+    if (process.env.NEXT_PUBLIC_MOCK_MODE === 'true') {
+      dispatch(setUserProfile(mockedUserProfile));
+      console.log("Mock user profile set.");
+    }
+  }, [dispatch]);
+  
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
   const page = segments.length > 0 ? segments[segments.length - 1] : null;
