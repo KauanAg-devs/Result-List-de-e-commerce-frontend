@@ -5,143 +5,111 @@
 ### 🔗 Repositórios
 
 * **Backend**: [https://github.com/KauanAg-devs/result-list-de-e-commerce-backend](https://github.com/KauanAg-devs/result-list-de-e-commerce-backend)
-* **Frontend**: [https://github.com/KauanAg-devs/Result-List-de-e-commerce.git](https://github.com/KauanAg-devs/Result-List-de-e-commerce.git)
+* **Frontend**: [https://github.com/KauanAg-devs/Result-List-de-e-commerce](https://github.com/KauanAg-devs/Result-List-de-e-commerce)
 
 ---
 
 ## 📦 Tecnologias
 
-* **Frontend**: Next.js, React, Tailwind CSS
-* **Backend**: NestJS, Prisma
+* **Frontend**: Next.js · React · Tailwind CSS
+* **Backend**: NestJS · Prisma
 
 ---
 
 ## 🚀 Pré-requisitos
 
 1. **Node.js** ≥ 18.x
-2. **npm** ≥ 9.x (ou **yarn**)
-3. **Banco de dados** configurado (conforme instruções do backend)
+2. **npm** ≥ 9.x ou **yarn** ≥ 1.x
+3. **Banco de dados** (PostgreSQL, MySQL etc.) configurado conforme instruções do backend
 
 ---
 
 ## 🔧 Configuração
 
-### 1. Clonar repositórios
+1. **Clonar repositórios**
 
-```bash
-# Backend
-git clone https://github.com/KauanAg-devs/result-list-de-e-commerce-backend.git
-# Frontend
-git clone https://github.com/KauanAg-devs/Result-List-de-e-commerce.git
-```
+   ```bash
+   # Backend
+   git clone https://github.com/KauanAg-devs/result-list-de-e-commerce-backend.git
+   # Frontend
+   git clone https://github.com/KauanAg-devs/Result-List-de-e-commerce.git
+   ```
 
-### 2. Configurar e rodar o Backend
+2. **Backend**
 
-```bash
-cd result-list-de-e-commerce-backend
-npm install
-# configurar variáveis de ambiente (.env)
-npm run dev
-```
+   ```bash
+   cd result-list-de-e-commerce-backend
+   npm install
+   # Criar e configurar .env conforme README do backend
+   npm run dev
+   ```
 
-### 3. Instalar dependências do Frontend
+3. **Frontend**
 
-```bash
-cd frontend
-npm install   # ou yarn install
-```
+   ```bash
+   cd frontend
+   npm install   # ou yarn install
+   ```
 
-### 4. Configurar variáveis de ambiente
+4. **Variáveis de Ambiente**
 
-Crie um arquivo `.env.local` na raiz do `frontend` e adicione:
+   Crie um arquivo `.env.local` na raiz do `frontend` com:
 
-```env
-NEXT_PUBLIC_API_URL=http://localhost:3333
-```
+   ```env
+   NEXT_PUBLIC_API_URL=http://localhost:3333
+   ```
 
-(ajuste a porta caso necessário)
+5. **Executar Frontend**
 
-### 5. Executar o Frontend
+   ```bash
+   npm run dev   # ou yarn dev
+   ```
 
-```bash
-npm run dev   # ou yarn dev
-```
-
-Abra [http://localhost:3000](http://localhost:3000) no navegador.
+   Acesse [http://localhost:3000](http://localhost:3000) no navegador.
 
 ---
 
-## 📁 Estrutura de pastas
+## 📁 Estrutura de Pastas (Frontend)
 
 ```
- public
-`-- src
-    |-- app
-    |   |-- (auth)
-    |   |   |-- components
-    |   |   |-- signin
-    |   |   |-- signup
-    |   |   `-- types
-    |   |-- (main)
-    |   |   |-- (home)
-    |   |   |   |-- components
-    |   |   |   |-- hooks
-    |   |   |   `-- types
-    |   |   |-- (subpages)
-    |   |   |   |-- checkout
-    |   |   |   |   |-- components
-    |   |   |   |   |-- hooks
-    |   |   |   |   `-- types
-    |   |   |   `-- product
-    |   |   |       |-- [sku]
-    |   |   |       |-- components
-    |   |   |       |-- hooks
-    |   |   |       `-- types
-    |   |   |-- hooks
-    |   |   `-- layout
-    |   |       |-- footer
-    |   |       |-- header
-    |   |       |-- pages-navigation
-    |   |       `-- types
-    |   |-- (user)
-    |   |   |-- components
-    |   |   |-- profile
-    |   |   `-- types
-    |   |-- api
-    |   |-- contexts
-    |   |   `-- types
-    |   `-- store
-    |-- types
-    |-- utils
-    `-- zod
-        |-- auth-form
-        `-- checkout-form
-
+public/                  # Arquivos estáticos
+src/
+├─ app/                  # Rotas e layouts Next.js
+│  ├─ (auth)/            # Login/Signup
+│  ├─ (main)/            # Páginas principais e subpáginas
+│  ├─ (user)/            # Perfil do usuário
+│  ├─ api/               # Endpoints API Next.js
+│  ├─ contexts/          # Contextos React
+│  └─ hooks/             # Hooks personalizados
+├─ components/           # Componentes reutilizáveis
+├─ store/                # Estado global (Zustand ou Context)
+├─ types/                # Tipos TypeScript
+└─ utils/                # Utilitários e helpers
 ```
 
 ---
 
-## 🧪 Scripts úteis
+## 🧪 Scripts Úteis
 
 ```bash
-npm run dev       # desenvolvedor (hot reload)
-npm run build     # build para produção
-npm run start     # inicia em modo de produção
-npm run lint      # verifica linting
+npm run dev      
+npm run build    
+npm run start     
+npm run lint     
 ```
 
 ---
 
-## 🤝 Contribuição
+## 🤝 Contribuindo
 
-1. Fork este repositório
-2. Crie uma branch (`git checkout -b feature/nome-da-feature`)
-3. Commit suas mudanças (`git commit -m 'feat: descrição'`)
-4. Push para a branch (`git push origin feature/nome-da-feature`)
+1. Fork o repositório
+2. Crie uma branch: `git checkout -b feature/nome-da-feature`
+3. Faça commits: `git commit -m 'feat: descrição da feature'`
+4. Envie para o repositório remoto: `git push origin feature/nome-da-feature`
 5. Abra um Pull Request
 
 ---
 
 ## 📄 Licença
 
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](./LICENSE) para mais detalhes.
+Este projeto está sob a licença **MIT**. Consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
