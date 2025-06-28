@@ -74,18 +74,49 @@ Abra [http://localhost:3000](http://localhost:3000) no navegador.
 ## 📁 Estrutura de pastas
 
 ```
-frontend/
-├── public/             # ativos estáticos
-├── src/
-│   ├── app/            # rotas e layout Next.js
-│   ├── components/     # componentes reutilizáveis
-│   ├── contexts/       # React contexts
-│   ├── hooks/          # custom hooks
-│   ├── styles/         # estilos globais
-│   └── types/          # definições de tipos TypeScript
-├── .env.local          # variáveis de ambiente
-├── next.config.js      # configuração Next.js
-└── package.json
+ public
+`-- src
+    |-- app
+    |   |-- (auth)
+    |   |   |-- components
+    |   |   |-- signin
+    |   |   |-- signup
+    |   |   `-- types
+    |   |-- (main)
+    |   |   |-- (home)
+    |   |   |   |-- components
+    |   |   |   |-- hooks
+    |   |   |   `-- types
+    |   |   |-- (subpages)
+    |   |   |   |-- checkout
+    |   |   |   |   |-- components
+    |   |   |   |   |-- hooks
+    |   |   |   |   `-- types
+    |   |   |   `-- product
+    |   |   |       |-- [sku]
+    |   |   |       |-- components
+    |   |   |       |-- hooks
+    |   |   |       `-- types
+    |   |   |-- hooks
+    |   |   `-- layout
+    |   |       |-- footer
+    |   |       |-- header
+    |   |       |-- pages-navigation
+    |   |       `-- types
+    |   |-- (user)
+    |   |   |-- components
+    |   |   |-- profile
+    |   |   `-- types
+    |   |-- api
+    |   |-- contexts
+    |   |   `-- types
+    |   `-- store
+    |-- types
+    |-- utils
+    `-- zod
+        |-- auth-form
+        `-- checkout-form
+
 ```
 
 ---
