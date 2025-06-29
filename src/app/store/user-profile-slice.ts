@@ -1,9 +1,8 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { RootState } from "./index";
 import { UserProfile, UserRole } from "@/types/user-profile";
 import { VariantStatus } from "@/types/product";
-import axios from "axios";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import api from "../lib/api";
 
 export const mockedUserProfile: UserProfile = {
   name: "João Silvaa",
@@ -52,8 +51,7 @@ export const updateUserProfile = createAsyncThunk(
   "userProfile/updateUserProfile",
   async (userProfile: UserProfile, thunkAPI) => {
     try {
-      const response = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/users/update`,
+      const response = await api.post(`/users/update`,
         userProfile
       );
       return response.data;

@@ -2,9 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { AuthProviderProps, AuthContextType } from "@/app/contexts/types/auth-context";
-import axios from "axios";
 import { setUserProfile } from "../store/user-profile-slice";
 import { useDispatch } from "react-redux";
+import api from "../lib/api";
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export function AuthProvider({ children }: AuthProviderProps) {
@@ -15,9 +15,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     async function checkAuth() {
       try {
-        const response = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/me`, {
-          withCredentials: true,
-        });
+        const response = await api.get(`/auth/me`);
 
         const userProfile = response.data 
         if (response.status === 200) {

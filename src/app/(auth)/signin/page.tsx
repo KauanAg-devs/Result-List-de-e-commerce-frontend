@@ -12,7 +12,6 @@ import { useRouter } from "next/navigation";
 export default function Signin() {
     const router = useRouter();
     const handleSubmit = async (data: AuthSchemaType) => {
-    console.log(data)
     if (!data.email.credentialPrivateEmail || !data.password) {
       alert("Please fill in both email and password.");
       return;
