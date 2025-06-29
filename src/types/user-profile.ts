@@ -32,7 +32,7 @@ export type UserProfile = {
   phone?: string;
   profileImage: string | ArrayBuffer | null;
   memberSince: string;
-  role: UserRole[]
+  roles: UserRole[]
   
   UserAddresses?: UserAddress[];
 

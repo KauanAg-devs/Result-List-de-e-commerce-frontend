@@ -6,15 +6,29 @@ import Footer from "@/app/(auth)/components/footer";
 import { Main } from "@/app/(auth)/components/main";
 import Header from "@/app/(auth)/components/header";
 import { AuthSchemaType } from "@/zod/auth-form/auth-form";
-
+import axios from "axios";
+import { useRouter } from "next/navigation";
 export default function SignUp() {
-  const handleSubmit = (data: AuthSchemaType) => {
-    if (!data.email || !data.password) {
+  const router = useRouter()
+  const handleSubmit = async (data: AuthSchemaType) => {
+    if (!data.email.credentialPrivateEmail || !data.password) {
       alert("Please fill in both email and password.");
       return;
     }
-
-    console.log("Submitting:", data);
+    
+    try {
+      await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/signup`,
+        data,
+        {
+          withCredentials: true,
+        }
+      );
+    
+      router.push('/')
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   return (

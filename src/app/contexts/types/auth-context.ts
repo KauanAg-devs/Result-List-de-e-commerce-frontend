@@ -1,7 +1,7 @@
 export type AuthContextType = {
-  isAuthenticated: boolean;
+  isAuthenticated: boolean | null;
   loading: boolean;
-  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean>>;
+  setIsAuthenticated: React.Dispatch<React.SetStateAction<boolean | null>>;
 };
 
 export type AuthProviderProps = {

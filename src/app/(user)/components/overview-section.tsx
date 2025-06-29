@@ -20,14 +20,16 @@ import { QuickActionCard } from "./quick-action-cart";
 import { OverviewSectionProps } from "../types/overview-section";
 import { ChangeEvent, useState } from "react";
 import { UserAddress, UserRole } from "@/types/user-profile";
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
-import { setUserProfile } from '@/app/store/user-profile-slice';
-  
+import { setUserProfile } from "@/app/store/user-profile-slice";
+
 export default function OverviewSection({
   setPickedMethod,
 }: OverviewSectionProps) {
-  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile!);
+  const userProfile = useSelector(
+    (state: RootState) => state.userProfile.userProfile!
+  );
   const [isEditing, setIsEditing] = useState(false);
   const [editedProfile, setEditedProfile] = useState(userProfile);
 
@@ -81,8 +83,8 @@ export default function OverviewSection({
     const primaryRole = roles.includes(UserRole.Admin)
       ? "admin"
       : roles.includes(UserRole.Seller)
-        ? "seller"
-        : "user";
+      ? "seller"
+      : "user";
     const roleLabels = {
       admin: { label: "ADMIN", color: "bg-red-100 text-red-800" },
       seller: { label: "VENDEDOR", color: "bg-green-100 text-green-800" },
@@ -106,7 +108,7 @@ export default function OverviewSection({
     return URL.createObjectURL(new Blob([userProfile.profileImage]));
   };
 
-  const roleBadge = getRoleBadge(userProfile.role);
+  const roleBadge = getRoleBadge(userProfile.roles);
   const displayEmail =
     userProfile.email.publicEmail || userProfile.email.credentialPrivateEmail;
   const profileImageSrc = getProfileImageSrc();
@@ -179,15 +181,15 @@ export default function OverviewSection({
               )}
 
               <p className="text-xl text-zinc-600 mb-4">
-                {userProfile.role.includes("admin")
+                {userProfile.roles.includes(UserRole.Admin)
                   ? "Administrador"
-                  : userProfile.role.includes("seller")
-                    ? "Vendedor"
-                    : "Usuário"}
+                  : userProfile.roles.includes(UserRole.Seller)
+                  ? "Vendedor"
+                  : "Usuário"}
               </p>
             </div>
 
-            {setUserProfile && (
+            {userProfile && (
               <div className="flex gap-3 mb-4">
                 {!isEditing ? (
                   <button
@@ -260,7 +262,10 @@ export default function OverviewSection({
                   <>
                     <MapPin className="text-zinc-400" size={16} />
                     <span className="text-zinc-700">
-                      {formatAddress(userProfile.UserAddresses![0])}
+                      {userProfile.UserAddresses &&
+                      userProfile.UserAddresses.length > 0
+                        ? formatAddress(userProfile.UserAddresses[0])
+                        : "Endereço não informado"}
                     </span>{" "}
                   </>
                 )}
@@ -269,7 +274,11 @@ export default function OverviewSection({
               <div className="flex items-center gap-3">
                 <Calendar className="text-zinc-400" size={16} />
                 <span className="text-zinc-700">
-                  Membro desde {userProfile.memberSince}
+                  Membro desde {new Date(userProfile.memberSince).toLocaleDateString('pt-BR', {
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric',
+  })}
                 </span>
               </div>
             </div>
@@ -378,17 +387,17 @@ export default function OverviewSection({
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="relative z-10">
             <h3 className="text-2xl md:text-3xl font-bold mb-2">
-              {userProfile.role.includes("seller")
+              {userProfile.roles.includes(UserRole.Seller)
                 ? "Painel do Vendedor"
                 : "Produtos Recomendados"}
             </h3>
             <p className="text-blue-100 mb-6">
-              {userProfile.role.includes("seller")
+              {userProfile.roles.includes(UserRole.Seller)
                 ? "Gerencie suas vendas e produtos"
                 : "Com base no seu histórico de compras"}
             </p>
             <button className="bg-white text-zinc-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 hover:scale-105">
-              {userProfile.role.includes("seller")
+              {userProfile.roles.includes(UserRole.Seller)
                 ? "Acessar Painel"
                 : "Ver Recomendações"}
             </button>

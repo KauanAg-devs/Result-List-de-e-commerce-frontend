@@ -3,13 +3,18 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 const authSchema = z.object({
-  email: z
-    .string()
-    .email("Invalid email format"),
-
+  email: z.object({
+    credentialPrivateEmail: z
+      .string()
+      .email("Invalid email format"),
+    publicEmail: z
+      .string()
+      .email("Invalid public email format")
+      .optional(),
+  }),
   password: z
     .string()
-    .min(6, "Password must be at least 6 characters"),
+    .min(7, "Password must be at least 7 characters"),
 });
 
 export type AuthSchemaType = z.infer<typeof authSchema>;
@@ -18,7 +23,9 @@ export const useAuthForm = () => {
   return useForm<AuthSchemaType>({
     resolver: zodResolver(authSchema),
     defaultValues: {
-      email: "",
+      email: {
+        credentialPrivateEmail: "",
+      },
       password: "",
     },
   });

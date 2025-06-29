@@ -34,9 +34,8 @@ export default function Form({ onSubmit, submitButtonMessage }: FormProps) {
               />
             </div>
             <input
-              {...form.register("email")}
+              {...form.register("email.credentialPrivateEmail")}
               id="email"
-              name="email"
               type="text"
               onFocus={() => setFocusedField("email")}
               onBlur={() => setFocusedField("")}
@@ -45,7 +44,7 @@ export default function Form({ onSubmit, submitButtonMessage }: FormProps) {
               required
             />
           </div>
-          <p className="text-red-400">{form.formState.errors.email?.message}</p>
+          <p className="text-red-400">{form.formState.errors.email?.credentialPrivateEmail?.message}</p>
         </div>
 
         <div className="space-y-2">
@@ -76,7 +75,6 @@ export default function Form({ onSubmit, submitButtonMessage }: FormProps) {
             <input
               {...form.register("password")}
               id="password"
-              name="password"
               type={showPassword ? "text" : "password"}
               onFocus={() => setFocusedField("password")}
               onBlur={() => setFocusedField("")}

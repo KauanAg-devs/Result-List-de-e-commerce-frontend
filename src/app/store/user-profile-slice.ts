@@ -12,7 +12,7 @@ export const mockedUserProfile: UserProfile = {
   id: 1,
   profileImage: null,
   memberSince: "06/25/2025",
-  role: [UserRole.User],
+  roles: [UserRole.User],
   UserAddresses: [
     {
       city: 'São Paulo',

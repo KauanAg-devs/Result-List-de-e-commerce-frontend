@@ -138,7 +138,6 @@ export default function UserProfile() {
   ];
 
   const handleMenuClick = (itemId: string) => {
-    console.log(userProfile)
     if (itemId === "profile" && userProfile) {
       router.push("/profile");
     }

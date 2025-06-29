@@ -10,12 +10,12 @@ export default async function RootLayout({
   children,
 }: Readonly<ChildrenProps>) {
   return (
-    <AuthProvider>
-      <ReduxProvider>
+    <ReduxProvider>
+      <AuthProvider>
         <CartDrawerProvider>
-            <LayoutClient>{children}</LayoutClient>
+          <LayoutClient>{children}</LayoutClient>
         </CartDrawerProvider>
-      </ReduxProvider>
-    </AuthProvider>
+      </AuthProvider>
+    </ReduxProvider>
   );
 }

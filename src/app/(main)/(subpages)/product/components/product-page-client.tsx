@@ -45,7 +45,6 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
 
   const getAvailableImages = () => {
-    console.log(product)
     if (variant && Array.isArray(variant.images) && variant.images.length > 0) {
       return variant.images;
     }
@@ -110,7 +109,6 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
 
   useEffect(() => {
     if (selectedImage !== undefined && selectedImage !== currentImageIndex) {
-      console.log("Syncing with selectedImage:", selectedImage);
       setCurrentImageIndex(selectedImage);
     }
   }, [selectedImage]);
