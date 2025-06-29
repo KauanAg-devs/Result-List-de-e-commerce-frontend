@@ -18,11 +18,19 @@ import { RecentOrder } from "./recent-order";
 import { StatCard } from "./stat-card";
 import { QuickActionCard } from "./quick-action-cart";
 import { OverviewSectionProps } from "../types/overview-section";
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { UserAddress, UserRole } from "@/types/user-profile";
-import { useSelector } from "react-redux";
-import { RootState } from "@/app/store";
-import { setUserProfile } from "@/app/store/user-profile-slice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch, RootState } from "@/app/store";
+import { updateUserProfile } from "@/app/store/user-profile-slice";
+import { useForm, SubmitHandler } from "react-hook-form";
+
+type UserProfileForm = {
+  name: string;
+  phone: string;
+  publicEmail: string;
+  profileImage?: string | null;
+};
 
 export default function OverviewSection({
   setPickedMethod,
@@ -30,70 +38,99 @@ export default function OverviewSection({
   const userProfile = useSelector(
     (state: RootState) => state.userProfile.userProfile!
   );
+  const dispatch = useDispatch<AppDispatch>();
   const [isEditing, setIsEditing] = useState(false);
-  const [editedProfile, setEditedProfile] = useState(userProfile);
+
+  const {
+    register,
+    handleSubmit,
+    watch,
+    reset,
+    setValue,
+    formState: { errors },
+  } = useForm<UserProfileForm>({
+    defaultValues: {
+      name: userProfile.name || "",
+      phone: userProfile.phone || "",
+      publicEmail: userProfile.email?.publicEmail || "",
+      profileImage:
+        typeof userProfile.profileImage === "string"
+          ? userProfile.profileImage
+          : null,
+    },
+  });
+
+  useEffect(() => {
+    reset({
+      name: userProfile.name || "",
+      phone: userProfile.phone || "",
+      publicEmail: userProfile.email?.publicEmail || "",
+      profileImage:
+        typeof userProfile.profileImage === "string"
+          ? userProfile.profileImage
+          : null,
+    });
+  }, [userProfile, reset]);
+
+  const onSubmit: SubmitHandler<UserProfileForm> = (data) => {
+    const updatedProfile = {
+      ...userProfile,
+      name: data.name,
+      phone: data.phone,
+      publicEmail: data.publicEmail,
+      profileImage: data.profileImage || null,
+    };
+
+    dispatch(updateUserProfile(updatedProfile));
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    reset();
+    setIsEditing(false);
+  };
+
+  const hasRole = (roles: UserRole[] | undefined, role: UserRole) => {
+    return Array.isArray(roles) && roles.includes(role);
+  };
 
   const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
-        if (event.target?.result && setUserProfile) {
-          const updatedProfile = {
-            ...userProfile,
-            profileImage: event.target.result,
-          };
-          setUserProfile(updatedProfile);
+        if (event.target?.result) {
+          setValue("profileImage", event.target.result as string, {
+            shouldValidate: true,
+          });
         }
       };
       reader.readAsDataURL(file);
     }
   };
 
-  const handleInputChange = (field: string, value: string) => {
-    if (field === "publicEmail") {
-      setEditedProfile((prev) => ({
-        ...prev,
-        email: {
-          ...prev.email,
-          publicEmail: value,
-        },
-      }));
-    } else {
-      setEditedProfile((prev) => ({
-        ...prev,
-        [field]: value,
-      }));
-    }
-  };
-
-  const handleSave = () => {
-    if (setUserProfile) {
-      setUserProfile(editedProfile);
-    }
-    setIsEditing(false);
-  };
-
-  const handleCancel = () => {
-    setEditedProfile(userProfile);
-    setIsEditing(false);
-  };
-
-  const getRoleBadge = (roles: UserRole[]) => {
-    const primaryRole = roles.includes(UserRole.Admin)
-      ? "admin"
-      : roles.includes(UserRole.Seller)
-      ? "seller"
-      : "user";
-    const roleLabels = {
-      admin: { label: "ADMIN", color: "bg-red-100 text-red-800" },
-      seller: { label: "VENDEDOR", color: "bg-green-100 text-green-800" },
-      user: { label: "USUÁRIO", color: "bg-blue-100 text-blue-800" },
+  const getRoleBadge = (roles?: UserRole[]) => {
+    const roleLabels: Record<UserRole, { label: string; color: string }> = {
+      [UserRole.Admin]: { label: "ADMIN", color: "bg-red-100 text-red-800" },
+      [UserRole.Seller]: {
+        label: "VENDEDOR",
+        color: "bg-green-100 text-green-800",
+      },
+      [UserRole.User]: { label: "USUÁRIO", color: "bg-blue-100 text-blue-800" },
     };
-    return roleLabels[primaryRole];
+
+    if (!roles || !Array.isArray(roles)) {
+      return [roleLabels[UserRole.User]];
+    }
+
+    return roles
+      .filter((role): role is UserRole =>
+        Object.values(UserRole).includes(role)
+      )
+      .map((role) => roleLabels[role]);
   };
 
-  const formatAddress = (addressData?: UserAddress) => {
+  const formatAddress = (addressData?: UserAddress | UserAddress[]) => {
     if (!addressData) return "Endereço não informado";
     if (Array.isArray(addressData)) {
       return `${addressData[0]?.address}, ${addressData[0]?.city} - ${addressData[0]?.state}`;
@@ -105,18 +142,23 @@ export default function OverviewSection({
     if (!userProfile.profileImage) return null;
     if (typeof userProfile.profileImage === "string")
       return userProfile.profileImage;
+    console.log(userProfile.profileImage);
     return URL.createObjectURL(new Blob([userProfile.profileImage]));
   };
 
   const roleBadge = getRoleBadge(userProfile.roles);
   const displayEmail =
-    userProfile.email.publicEmail || userProfile.email.credentialPrivateEmail;
-  const profileImageSrc = getProfileImageSrc();
+    userProfile.email?.publicEmail ?? "Email público não cadastrado";
+
+  const profileImageSrc = watch("profileImage") || getProfileImageSrc();
 
   return (
     <div className="space-y-8">
       <div className="bg-white border border-zinc-200 rounded-2xl p-6 md:p-8 shadow-sm">
-        <div className="flex flex-col md:flex-row items-start gap-6 md:gap-8">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="flex flex-col md:flex-row items-start gap-6 md:gap-8"
+        >
           <div className="flex flex-col items-center gap-4">
             <div className="relative">
               <div className="h-32 w-32 border-2 border-zinc-200 rounded-full flex justify-center items-center overflow-hidden bg-gradient-to-br from-blue-50 to-purple-50">
@@ -136,27 +178,46 @@ export default function OverviewSection({
             </div>
 
             <div className="relative">
-              <button className="flex gap-2 items-center font-semibold px-6 py-3 text-sm bg-zinc-900 text-white rounded-xl transition-all duration-200 hover:scale-105">
+              <button
+                disabled={!isEditing}
+                tabIndex={isEditing ? 0 : -1}
+                className={`flex gap-2 items-center font-semibold px-6 py-3 text-sm rounded-xl transition-all duration-200
+    bg-zinc-900 text-white
+    ${
+      isEditing
+        ? "opacity-100 pointer-events-auto"
+        : "opacity-0 pointer-events-none select-none"
+    }`}
+                type="button"
+              >
                 <Edit3 size={16} />
                 Alterar Foto
               </button>
-              <input
-                type="file"
-                accept="image/*"
-                onChange={handleFileChange}
-                className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-              />
+
+             <input
+  type="file"
+  accept="image/*"
+  onChange={handleFileChange}
+  disabled={!isEditing}
+  className={`${!isEditing && 'pointer-events-none'} absolute inset-0 w-full h-full opacity-0 cursor-pointer`}
+/>
+
             </div>
           </div>
 
           <div className="flex-1 space-y-6">
             <div>
               <div className="flex flex-wrap items-center gap-3 mb-3">
-                <span
-                  className={`text-xs px-3 py-1 rounded-full font-medium ${roleBadge.color}`}
-                >
-                  {roleBadge.label}
-                </span>
+                {roleBadge.map((role) => {
+                  return (
+                    <span
+                      key={role.color}
+                      className={`text-xs px-3 py-1 rounded-full font-medium ${role.color}`}
+                    >
+                      {role.label}
+                    </span>
+                  );
+                })}
                 <div className="flex items-center gap-1">
                   <Star className="text-yellow-500 fill-current" size={16} />
                   <span className="text-sm font-medium text-zinc-700">4.8</span>
@@ -167,13 +228,19 @@ export default function OverviewSection({
               </div>
 
               {isEditing ? (
-                <input
-                  type="text"
-                  value={editedProfile.name || ""}
-                  onChange={(e) => handleInputChange("name", e.target.value)}
-                  className="text-3xl md:text-4xl font-bold text-zinc-900 mb-2 w-full bg-transparent border-b-2 border-blue-500 focus:outline-none"
-                  placeholder="Seu nome"
-                />
+                <>
+                  <input
+                    type="text"
+                    {...register("name")}
+                    className="text-3xl md:text-4xl font-bold text-zinc-900 mb-2 w-full bg-transparent border-b-2 border-blue-500 focus:outline-none"
+                    placeholder="Seu nome"
+                  />
+                  {errors.name && (
+                    <p className="text-red-600 text-sm">
+                      {errors.name.message}
+                    </p>
+                  )}
+                </>
               ) : (
                 <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-2">
                   {userProfile.name || "Nome não informado"}
@@ -181,9 +248,9 @@ export default function OverviewSection({
               )}
 
               <p className="text-xl text-zinc-600 mb-4">
-                {userProfile.roles.includes(UserRole.Admin)
+                {hasRole(userProfile.roles, UserRole.Admin)
                   ? "Administrador"
-                  : userProfile.roles.includes(UserRole.Seller)
+                  : hasRole(userProfile.roles, UserRole.Seller)
                   ? "Vendedor"
                   : "Usuário"}
               </p>
@@ -195,6 +262,7 @@ export default function OverviewSection({
                   <button
                     onClick={() => setIsEditing(true)}
                     className="flex gap-2 items-center font-semibold px-4 py-2 text-sm bg-blue-600 text-white rounded-lg transition-all duration-200 hover:bg-blue-700"
+                    type="button"
                   >
                     <Edit3 size={16} />
                     Editar Perfil
@@ -202,13 +270,14 @@ export default function OverviewSection({
                 ) : (
                   <div className="flex gap-2">
                     <button
-                      onClick={handleSave}
+                      type="submit"
                       className="flex gap-2 items-center font-semibold px-4 py-2 text-sm bg-green-600 text-white rounded-lg transition-all duration-200 hover:bg-green-700"
                     >
                       <Check size={16} />
                       Salvar
                     </button>
                     <button
+                      type="button"
                       onClick={handleCancel}
                       className="flex gap-2 items-center font-semibold px-4 py-2 text-sm bg-gray-600 text-white rounded-lg transition-all duration-200 hover:bg-gray-700"
                     >
@@ -224,15 +293,24 @@ export default function OverviewSection({
               <div className="flex items-center gap-3">
                 <Mail className="text-zinc-400" size={16} />
                 {isEditing ? (
-                  <input
-                    type="email"
-                    value={editedProfile.email.publicEmail || ""}
-                    onChange={(e) =>
-                      handleInputChange("publicEmail", e.target.value)
-                    }
-                    className="text-zinc-700 bg-transparent border-b border-zinc-300 focus:outline-none focus:border-blue-500 flex-1"
-                    placeholder="Email público"
-                  />
+                  <>
+                    <input
+                      type="email"
+                      {...register("publicEmail", {
+                        pattern: {
+                          value: /^\S+@\S+$/i,
+                          message: "Email inválido",
+                        },
+                      })}
+                      className="text-zinc-700 bg-transparent border-b border-zinc-300 focus:outline-none focus:border-blue-500 flex-1"
+                      placeholder="Email público"
+                    />
+                    {errors.publicEmail && (
+                      <p className="text-red-600 text-sm">
+                        {errors.publicEmail.message}
+                      </p>
+                    )}
+                  </>
                 ) : (
                   <span className="text-zinc-700">{displayEmail}</span>
                 )}
@@ -243,8 +321,7 @@ export default function OverviewSection({
                 {isEditing ? (
                   <input
                     type="tel"
-                    value={editedProfile.phone || ""}
-                    onChange={(e) => handleInputChange("phone", e.target.value)}
+                    {...register("phone")}
                     className="text-zinc-700 bg-transparent border-b border-zinc-300 focus:outline-none focus:border-blue-500 flex-1"
                     placeholder="Telefone"
                   />
@@ -256,9 +333,7 @@ export default function OverviewSection({
               </div>
 
               <div className="flex items-center gap-3">
-                {isEditing ? (
-                  ""
-                ) : (
+                {!isEditing && (
                   <>
                     <MapPin className="text-zinc-400" size={16} />
                     <span className="text-zinc-700">
@@ -266,7 +341,7 @@ export default function OverviewSection({
                       userProfile.UserAddresses.length > 0
                         ? formatAddress(userProfile.UserAddresses[0])
                         : "Endereço não informado"}
-                    </span>{" "}
+                    </span>
                   </>
                 )}
               </div>
@@ -274,16 +349,20 @@ export default function OverviewSection({
               <div className="flex items-center gap-3">
                 <Calendar className="text-zinc-400" size={16} />
                 <span className="text-zinc-700">
-                  Membro desde {new Date(userProfile.memberSince).toLocaleDateString('pt-BR', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  })}
+                  Membro desde{" "}
+                  {new Date(userProfile.memberSince).toLocaleDateString(
+                    "pt-BR",
+                    {
+                      day: "2-digit",
+                      month: "long",
+                      year: "numeric",
+                    }
+                  )}
                 </span>
               </div>
             </div>
           </div>
-        </div>
+        </form>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
@@ -365,19 +444,17 @@ export default function OverviewSection({
             </button>
           </div>
           <div className="space-y-4">
-            {userProfile.purchases?.purchasedVariants.map((variant, index) => {
-              return (
-                <RecentOrder
-                  key={index}
-                  id={variant.variant.sku}
-                  date={variant.date}
-                  status={variant.status}
-                  total={variant.price.toString()}
-                  items={variant.quantity.toString()}
-                  product={variant.variant.sku}
-                />
-              );
-            })}
+            {userProfile.purchases?.purchasedVariants.map((variant, index) => (
+              <RecentOrder
+                key={index}
+                id={variant.variant.sku}
+                date={variant.date}
+                status={variant.status}
+                total={variant.price.toString()}
+                items={variant.quantity.toString()}
+                product={variant.variant.sku}
+              />
+            ))}
           </div>
         </div>
       </div>
@@ -387,17 +464,17 @@ export default function OverviewSection({
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="relative z-10">
             <h3 className="text-2xl md:text-3xl font-bold mb-2">
-              {userProfile.roles.includes(UserRole.Seller)
+              {hasRole(userProfile.roles, UserRole.Seller)
                 ? "Painel do Vendedor"
                 : "Produtos Recomendados"}
             </h3>
             <p className="text-blue-100 mb-6">
-              {userProfile.roles.includes(UserRole.Seller)
+              {hasRole(userProfile.roles, UserRole.Seller)
                 ? "Gerencie suas vendas e produtos"
                 : "Com base no seu histórico de compras"}
             </p>
             <button className="bg-white text-zinc-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 hover:scale-105">
-              {userProfile.roles.includes(UserRole.Seller)
+              {hasRole(userProfile.roles, UserRole.Seller)
                 ? "Acessar Painel"
                 : "Ver Recomendações"}
             </button>
