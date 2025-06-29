@@ -1,5 +1,11 @@
 ## Result-list-de-e-commerce-frontend
 
+![Next.js](https://img.shields.io/badge/Next.js-13+-000?style=flat&logo=next.js)
+![React](https://img.shields.io/badge/React-18+-61DAFB?style=flat&logo=react)
+![Tailwind CSS](https://img.shields.io/badge/TailwindCSS-3.x-38B2AC?style=flat&logo=tailwindcss)
+![License](https://img.shields.io/github/license/KauanAg-devs/Result-List-de-e-commerce-frontend)
+![Status](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)
+
 > Projeto de e-commerce com listagem de produtos, filtros e navegação infinita.
 
 ### 🔗 Repositórios
