@@ -44,7 +44,6 @@ export default function Home() {
       setVisibleProducts(nextBatch);
       setHasMore(nextBatch.length < allFilteredProducts.length);
     } else {
-      // ADIÇÃO: Quando não há produtos filtrados, limpa a visualização
       setVisibleProducts([]);
       setHasMore(false);
     }

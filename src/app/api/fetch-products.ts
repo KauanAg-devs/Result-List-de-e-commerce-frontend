@@ -148,7 +148,6 @@ for (let i = 0; i < 40; i++) {
   baseProducts.forEach((product) => {
     const clonedProduct = JSON.parse(JSON.stringify(product)) as ProductGrouped;
 
-    // Atualiza sku e nome da default e das variantes
     clonedProduct.default.sku += `-B${i}`;
     clonedProduct.default.name += ` Batch ${i + 1}`;
 
