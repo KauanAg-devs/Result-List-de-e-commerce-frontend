@@ -10,23 +10,20 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 
 export default function Signin() {
-    const router = useRouter();
-    const handleSubmit = async (data: AuthSchemaType) => {
-    if (!data.email.credentialPrivateEmail || !data.password) {
-      alert("Please fill in both email and password.");
-      return;
-    }
-    const formatedData = {credentialPrivateEmail: data.email.credentialPrivateEmail, password: data.password}
+  const router = useRouter();
+  const handleSubmit = async (data: AuthSchemaType) => {
+    const formatedData = {
+      credentialPrivateEmail: data.email.credentialPrivateEmail.toLowerCase(),
+      password: data.password,
+    };
+
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/signin`,
         formatedData,
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
-    
-      router.push('/')
+      router.push("/");
     } catch (e) {
       console.log(e);
     }

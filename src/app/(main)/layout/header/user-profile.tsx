@@ -2,22 +2,25 @@
 
 import { useState, useRef, useEffect } from "react";
 import { useAuth } from "@/app/contexts/auth-context";
-import Cookies from "js-cookie";
 import { useRouter } from "next/navigation";
-import {clearUserProfile} from '@/app/store/user-profile-slice'
-import { useDispatch } from "react-redux"
+import { clearUserProfile } from "@/app/store/user-profile-slice";
+import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { RootState } from "@/app/store";
+import api from "../../lib/api";
 
 export default function UserProfile() {
-  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile);
-  const dispatch = useDispatch()
+  const userProfile = useSelector(
+    (state: RootState) => state.userProfile.userProfile
+  );
+  const dispatch = useDispatch();
   const [showProfileOptions, setShowProfileOptions] = useState(false);
   const dropdownRef = useRef(null);
   const buttonRef = useRef(null);
   const { setIsAuthenticated } = useAuth();
   const router = useRouter();
-  
+  const [logout, setLogout] = useState(false);
+
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (
@@ -53,6 +56,17 @@ export default function UserProfile() {
       return () => document.removeEventListener("keydown", handleKeyDown);
     }
   }, [showProfileOptions]);
+
+  const handleLogout = async () => {
+    try {
+      await api.post("/auth/logout");
+      dispatch(clearUserProfile());
+      setIsAuthenticated(false);
+      router.push("/");
+    } catch (error) {
+      console.error("Logout falhou", error);
+    }
+  };
 
   const menuItems = [
     {
@@ -151,9 +165,7 @@ export default function UserProfile() {
     }
 
     if (itemId === "logout") {
-      dispatch(clearUserProfile())
-      Cookies.remove("access_token");
-      setIsAuthenticated(false);
+      handleLogout();
     }
 
     setShowProfileOptions(false);

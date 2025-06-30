@@ -8,14 +8,19 @@ import Header from "@/app/(auth)/components/header";
 import { AuthSchemaType } from "@/zod/auth-form/auth-form";
 import axios from "axios";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 export default function SignUp() {
-  const router = useRouter()
+  const router = useRouter();
+  const [log, setLog] = useState("");
+
   const handleSubmit = async (data: AuthSchemaType) => {
+    setLog("Início do handleSubmit");
+
     if (!data.email.credentialPrivateEmail || !data.password) {
-      alert("Please fill in both email and password.");
+      setLog("Email ou senha vazios");
       return;
     }
-    
+
     try {
       await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URI}/auth/signup`,
@@ -24,10 +29,10 @@ export default function SignUp() {
           withCredentials: true,
         }
       );
-    
-      router.push('/')
-    } catch (e) {
-      console.log(e);
+      setLog("Signup feito, redirecionando...");
+      router.push("/");
+    } catch (e: any) {
+      setLog("Erro: " + (e.message || "erro desconhecido"));
     }
   };
 
@@ -47,6 +52,7 @@ export default function SignUp() {
           accountQuestion="Already have an account?"
           idea="Sign in"
         />
+        {log}
       </div>
     </div>
   );

@@ -36,7 +36,7 @@ export default function OverviewSection({
   setPickedMethod,
 }: OverviewSectionProps) {
   const userProfile = useSelector(
-    (state: RootState) => state.userProfile.userProfile!
+    (state: RootState) => state.userProfile?.userProfile
   );
   const dispatch = useDispatch<AppDispatch>();
   const [isEditing, setIsEditing] = useState(false);
@@ -50,31 +50,31 @@ export default function OverviewSection({
     formState: { errors },
   } = useForm<UserProfileForm>({
     defaultValues: {
-      name: userProfile.name || "",
-      phone: userProfile.phone || "",
-      publicEmail: userProfile.email?.publicEmail || "",
+      name: userProfile?.name || "",
+      phone: userProfile?.phone || "",
+      publicEmail: userProfile?.email?.publicEmail || "",
       profileImage:
-        typeof userProfile.profileImage === "string"
-          ? userProfile.profileImage
+        typeof userProfile?.profileImage === "string"
+          ? userProfile?.profileImage
           : null,
     },
   });
 
   useEffect(() => {
     reset({
-      name: userProfile.name || "",
-      phone: userProfile.phone || "",
-      publicEmail: userProfile.email?.publicEmail || "",
+      name: userProfile?.name || "",
+      phone: userProfile?.phone || "",
+      publicEmail: userProfile?.email?.publicEmail || "",
       profileImage:
-        typeof userProfile.profileImage === "string"
-          ? userProfile.profileImage
+        typeof userProfile?.profileImage === "string"
+          ? userProfile?.profileImage
           : null,
     });
   }, [userProfile, reset]);
 
   const onSubmit: SubmitHandler<UserProfileForm> = (data) => {
     const updatedProfile = {
-      ...userProfile,
+      ...userProfile!,
       name: data.name,
       phone: data.phone,
       publicEmail: data.publicEmail,
@@ -139,16 +139,16 @@ export default function OverviewSection({
   };
 
   const getProfileImageSrc = () => {
-    if (!userProfile.profileImage) return null;
-    if (typeof userProfile.profileImage === "string")
-      return userProfile.profileImage;
-    console.log(userProfile.profileImage);
-    return URL.createObjectURL(new Blob([userProfile.profileImage]));
+    if (!userProfile?.profileImage) return null;
+    if (typeof userProfile?.profileImage === "string")
+      return userProfile?.profileImage;
+    console.log(userProfile?.profileImage);
+    return URL.createObjectURL(new Blob([userProfile?.profileImage]));
   };
 
-  const roleBadge = getRoleBadge(userProfile.roles);
+  const roleBadge = getRoleBadge(userProfile?.roles);
   const displayEmail =
-    userProfile.email?.publicEmail ?? "Email público não cadastrado";
+    userProfile?.email?.publicEmail ?? "Email público não cadastrado";
 
   const profileImageSrc = watch("profileImage") || getProfileImageSrc();
 
@@ -194,14 +194,15 @@ export default function OverviewSection({
                 Alterar Foto
               </button>
 
-             <input
-  type="file"
-  accept="image/*"
-  onChange={handleFileChange}
-  disabled={!isEditing}
-  className={`${!isEditing && 'pointer-events-none'} absolute inset-0 w-full h-full opacity-0 cursor-pointer`}
-/>
-
+              <input
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                disabled={!isEditing}
+                className={`${
+                  !isEditing && "pointer-events-none"
+                } absolute inset-0 w-full h-full opacity-0 cursor-pointer`}
+              />
             </div>
           </div>
 
@@ -243,14 +244,14 @@ export default function OverviewSection({
                 </>
               ) : (
                 <h1 className="text-3xl md:text-4xl font-bold text-zinc-900 mb-2">
-                  {userProfile.name || "Nome não informado"}
+                  {userProfile?.name || "Nome não informado"}
                 </h1>
               )}
 
               <p className="text-xl text-zinc-600 mb-4">
-                {hasRole(userProfile.roles, UserRole.Admin)
+                {hasRole(userProfile?.roles, UserRole.Admin)
                   ? "Administrador"
-                  : hasRole(userProfile.roles, UserRole.Seller)
+                  : hasRole(userProfile?.roles, UserRole.Seller)
                   ? "Vendedor"
                   : "Usuário"}
               </p>
@@ -327,7 +328,7 @@ export default function OverviewSection({
                   />
                 ) : (
                   <span className="text-zinc-700">
-                    {userProfile.phone || "Telefone não informado"}
+                    {userProfile?.phone || "Telefone não informado"}
                   </span>
                 )}
               </div>
@@ -337,9 +338,9 @@ export default function OverviewSection({
                   <>
                     <MapPin className="text-zinc-400" size={16} />
                     <span className="text-zinc-700">
-                      {userProfile.UserAddresses &&
-                      userProfile.UserAddresses.length > 0
-                        ? formatAddress(userProfile.UserAddresses[0])
+                      {userProfile?.UserAddresses &&
+                      userProfile?.UserAddresses.length > 0
+                        ? formatAddress(userProfile?.UserAddresses[0])
                         : "Endereço não informado"}
                     </span>
                   </>
@@ -350,7 +351,7 @@ export default function OverviewSection({
                 <Calendar className="text-zinc-400" size={16} />
                 <span className="text-zinc-700">
                   Membro desde{" "}
-                  {new Date(userProfile.memberSince).toLocaleDateString(
+                  {userProfile && new Date(userProfile.memberSince).toLocaleDateString(
                     "pt-BR",
                     {
                       day: "2-digit",
@@ -369,7 +370,7 @@ export default function OverviewSection({
         <StatCard
           title="Total de Compras"
           value={
-            userProfile.purchases?.purchasedVariants.length.toString() || "0"
+            userProfile?.purchases?.purchasedVariants.length.toString() || "0"
           }
           icon={Package}
           color="text-zinc-600"
@@ -377,14 +378,14 @@ export default function OverviewSection({
         />
         <StatCard
           title="Vendas"
-          value={userProfile.sales?.variants.length.toString() || "0"}
+          value={userProfile?.sales?.variants.length.toString() || "0"}
           icon={TrendingUp}
           color="text-green-400"
           trend={23}
         />
         <StatCard
           title="Cartões"
-          value={userProfile.userPaymentMethods?.length.toString() || "0"}
+          value={userProfile?.userPaymentMethods?.length.toString() || "0"}
           icon={CreditCard}
           color="text-blue-400"
           trend={5}
@@ -407,7 +408,7 @@ export default function OverviewSection({
               description="Acompanhe suas compras"
               icon={Package}
               onClick={() => setPickedMethod("orders")}
-              badge={userProfile.purchases?.purchasedVariants.length.toString()}
+              badge={userProfile?.purchases?.purchasedVariants.length.toString()}
             />
             <QuickActionCard
               title="Gerenciar Endereços"
@@ -420,7 +421,7 @@ export default function OverviewSection({
               description="Cartões e formas de pagamento"
               icon={CreditCard}
               onClick={() => setPickedMethod("paymentMethods")}
-              badge={userProfile.userPaymentMethods?.length.toString()}
+              badge={userProfile?.userPaymentMethods?.length.toString()}
             />
             <QuickActionCard
               title="Central de Segurança"
@@ -444,7 +445,7 @@ export default function OverviewSection({
             </button>
           </div>
           <div className="space-y-4">
-            {userProfile.purchases?.purchasedVariants.map((variant, index) => (
+            {userProfile?.purchases?.purchasedVariants.map((variant, index) => (
               <RecentOrder
                 key={index}
                 id={variant.variant.sku}
@@ -464,17 +465,17 @@ export default function OverviewSection({
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="relative z-10">
             <h3 className="text-2xl md:text-3xl font-bold mb-2">
-              {hasRole(userProfile.roles, UserRole.Seller)
+              {hasRole(userProfile?.roles, UserRole.Seller)
                 ? "Painel do Vendedor"
                 : "Produtos Recomendados"}
             </h3>
             <p className="text-blue-100 mb-6">
-              {hasRole(userProfile.roles, UserRole.Seller)
+              {hasRole(userProfile?.roles, UserRole.Seller)
                 ? "Gerencie suas vendas e produtos"
                 : "Com base no seu histórico de compras"}
             </p>
             <button className="bg-white text-zinc-600 px-8 py-3 rounded-xl font-semibold hover:bg-blue-50 transition-all duration-200 hover:scale-105">
-              {hasRole(userProfile.roles, UserRole.Seller)
+              {hasRole(userProfile?.roles, UserRole.Seller)
                 ? "Acessar Painel"
                 : "Ver Recomendações"}
             </button>

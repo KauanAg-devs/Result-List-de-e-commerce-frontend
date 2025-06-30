@@ -2,7 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { UserProfile, UserRole } from "@/types/user-profile";
 import { VariantStatus } from "@/types/product";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../lib/api";
+import api from "../(main)/lib/api";
 
 export const mockedUserProfile: UserProfile = {
   name: "João Silvaa",
@@ -51,9 +51,7 @@ export const updateUserProfile = createAsyncThunk(
   "userProfile/updateUserProfile",
   async (userProfile: UserProfile, thunkAPI) => {
     try {
-      const response = await api.post(`/users/update`,
-        userProfile
-      );
+      const response = await api.post(`/users/update`, userProfile);
       return response.data;
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -77,7 +75,7 @@ const userProfileSlice = createSlice({
   name: "userProfile",
   initialState,
   reducers: {
-    setUserProfile: (state, action: PayloadAction<UserProfile>) => {
+    setUserProfile: (state, action: PayloadAction<UserProfile | null>) => {
       state.userProfile = action.payload;
       state.error = null;
     },
