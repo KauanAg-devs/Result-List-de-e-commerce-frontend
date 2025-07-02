@@ -1,10 +1,12 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
-import { fetchMockedProducts } from "@/app/api/fetch-products";
+import { useState, useEffect, useRef } from "react";
+import { throttle } from "lodash";
+import axios from "axios";
+import { useSearchParams } from "next/navigation";
+
 import ProductsLister from "@/app/(main)/(home)/components/products-lister";
 import { ProductGrouped } from "@/types/product";
-import { useSearchParams } from "next/navigation";
 
 const LOAD_COUNT = 4;
 
@@ -12,96 +14,89 @@ export default function Home() {
   const params = useSearchParams();
   const searchTerm = params.get("search") || "";
 
-  const [visibleProducts, setVisibleProducts] = useState<ProductGrouped[]>([]);
-  const [allFilteredProducts, setAllFilteredProducts] = useState<
-    ProductGrouped[]
-  >([]);
-  const [hasMore, setHasMore] = useState(true);
+  const [products, setProducts] = useState<ProductGrouped[]>([]);
   const [loading, setLoading] = useState(false);
+  const [hasMore, setHasMore] = useState(true);
+  const lastProductIdRef = useRef<string | null>(null);
+  const requestInFlightRef = useRef(false);
+
+  const fetchProducts = async (initial = false) => {
+    if (requestInFlightRef.current) return;
+    requestInFlightRef.current = true;
+    setLoading(true);
+
+    try {
+      const lastProductId = initial ? undefined : products.at(-1)?.id;
+
+      if (!initial && lastProductIdRef.current === lastProductId) return;
+      lastProductIdRef.current = lastProductId || null;
+
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URI}/products/getByPagination`,
+        {
+          lastProductReceived: lastProductId,
+          productsPerPage: LOAD_COUNT,
+          searchTerm,
+        }
+      );
+
+      const newProducts = res.data as ProductGrouped[];
+
+      if (initial) {
+        setProducts(newProducts);
+      } else {
+        setProducts((prev) => [...prev, ...newProducts]);
+      }
+
+      setHasMore(newProducts.length === LOAD_COUNT);
+    } catch (err) {
+      console.error("Erro ao buscar produtos:", err);
+      setHasMore(false);
+    } finally {
+      setLoading(false);
+      requestInFlightRef.current = false;
+    }
+  };
 
   useEffect(() => {
-    const filtered =
-      searchTerm === ""
-        ? fetchMockedProducts
-        : fetchMockedProducts.filter( 
-            (product) =>
-              product.variants[0].name
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase()) ||
-              product.variants[0].sku
-                .toLowerCase()
-                .includes(searchTerm.toLowerCase())
-          );
-
-    setAllFilteredProducts(filtered);
-    setVisibleProducts([]);
+    setProducts([]);
     setHasMore(true);
+    lastProductIdRef.current = null;
+    fetchProducts(true);
   }, [searchTerm]);
 
   useEffect(() => {
-    if (allFilteredProducts.length > 0) {
-      const nextBatch = allFilteredProducts.slice(0, LOAD_COUNT);
-      setVisibleProducts(nextBatch);
-      setHasMore(nextBatch.length < allFilteredProducts.length);
-    } else {
-      setVisibleProducts([]);
-      setHasMore(false);
-    }
-  }, [allFilteredProducts]);
-
-  const loadMoreProducts = useCallback(() => {
-    if (loading || !hasMore) return;
-
-    setLoading(true);
-
-    setVisibleProducts((prevVisible) => {
-      const start = prevVisible.length;
-      const nextBatch = allFilteredProducts.slice(start, start + LOAD_COUNT);
-      if (start + LOAD_COUNT >= allFilteredProducts.length) {
-        setHasMore(false);
-      }
-      setLoading(false);
-      return [...prevVisible, ...nextBatch];
-    });
-  }, [loading, hasMore, allFilteredProducts]);
-
-  useEffect(() => {
-    function handleScroll() {
-      const scrollPosition = window.innerHeight + window.scrollY;
+    const handleScroll = () => {
+      const scrollPos = window.innerHeight + window.scrollY;
       const threshold = document.body.offsetHeight - 200;
 
-      if (scrollPosition >= threshold && hasMore && !loading) {
-        loadMoreProducts();
+      if (scrollPos >= threshold && hasMore && !loading) {
+        fetchProducts(false);
       }
-    }
+    };
 
-    window.addEventListener("scroll", handleScroll);
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, [loadMoreProducts, hasMore, loading]);
+    const throttledScroll = throttle(handleScroll, 300);
+    window.addEventListener("scroll", throttledScroll);
+    return () => window.removeEventListener("scroll", throttledScroll);
+  }, [hasMore, loading]);
 
   return (
     <main className="bg-white flex flex-col pt-5">
-      <ProductsLister
-        productsGrouped={visibleProducts}
-        loading={loading}
-        hasMore={hasMore}
-      />
+      <ProductsLister productsGrouped={products} loading={loading} hasMore={hasMore} />
 
       {loading && (
-        <p className="text-center mt-4 text-gray-500">
-          Loading more products...
-        </p>
+        <p className="text-center mt-4 text-gray-500">Carregando produtos...</p>
       )}
 
-      {!loading && visibleProducts.length === 0 && searchTerm !== "" && (
+      {!loading && products.length === 0 && searchTerm !== "" && (
         <p className="text-center mt-8 text-gray-500">
           Nenhum produto encontrado para "{searchTerm}".
         </p>
       )}
 
-      {!hasMore && visibleProducts.length > 0 && (
+      {!hasMore && products.length > 0 && (
         <p className="text-center mt-4 text-gray-500">
-          You have reached the end of the list.
+          Você chegou ao fim da lista.
         </p>
       )}
     </main>

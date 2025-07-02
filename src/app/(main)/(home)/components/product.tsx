@@ -39,7 +39,7 @@ export default function Product({
 
   const [startIndex, setStartIndex] = useState<Record<string, number>>({});
   const [imageError, setImageError] = useState(false);
-  const VISIBLE_BUTTONS = 2; 
+  const VISIBLE_BUTTONS = 2;
 
   useIntersectionObserver(elementRef, lazy, setIsVisible, setIsLoaded);
 
@@ -79,25 +79,30 @@ export default function Product({
     setIsImageLoading(true);
   }, [selectedVariant?.images?.[0], group.default.images?.[0]]);
 
-  const scrollOptions = (optionLabel: string, direction: 'prev' | 'next') => {
+  const scrollOptions = (optionLabel: string, direction: "prev" | "next") => {
     const currentStart = startIndex[optionLabel] || 0;
-    const totalOptions = group.options.find(opt => opt.label === optionLabel)?.values.length || 0;
-    
+    const totalOptions =
+      group.options.find((opt) => opt.label === optionLabel)?.values.length ||
+      0;
+
     let newStart;
-    if (direction === 'next') {
+    if (direction === "next") {
       newStart = Math.min(currentStart + 1, totalOptions - VISIBLE_BUTTONS);
     } else {
       newStart = Math.max(currentStart - 1, 0);
     }
-    
-    setStartIndex(prev => ({ ...prev, [optionLabel]: newStart }));
+
+    setStartIndex((prev) => ({ ...prev, [optionLabel]: newStart }));
   };
 
-  const canScrollPrev = (optionLabel: string) => (startIndex[optionLabel] || 0) > 0;
-  
+  const canScrollPrev = (optionLabel: string) =>
+    (startIndex[optionLabel] || 0) > 0;
+
   const canScrollNext = (optionLabel: string) => {
     const currentStart = startIndex[optionLabel] || 0;
-    const totalOptions = group.options.find(opt => opt.label === optionLabel)?.values.length || 0;
+    const totalOptions =
+      group.options.find((opt) => opt.label === optionLabel)?.values.length ||
+      0;
     return currentStart < totalOptions - VISIBLE_BUTTONS;
   };
 
@@ -164,31 +169,33 @@ export default function Product({
 
               {imageError && (
                 <div className="absolute inset-0 bg-gray-100 flex flex-col items-center justify-center text-gray-400">
-                  <svg 
-                    className="w-12 h-12 mb-2" 
-                    fill="none" 
-                    stroke="currentColor" 
+                  <svg
+                    className="w-12 h-12 mb-2"
+                    fill="none"
+                    stroke="currentColor"
                     viewBox="0 0 24 24"
                   >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={1.5} 
-                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={1.5}
+                      d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
                     />
                   </svg>
-                  <span className="text-xs font-medium">Imagem não disponível</span>
+                  <span className="text-xs font-medium">
+                    Imagem não disponível
+                  </span>
                 </div>
               )}
 
               {imageToShow && (
                 <Image
-                width={1000} 
-                height={1000}
+                  width={1000}
+                  height={1000}
                   src={imageToShow}
-                  alt={`${variant?.name} - ${Object.values(selectedOptions).join(
-                    ", "
-                  )}`}
+                  alt={`${variant?.name} - ${Object.values(
+                    selectedOptions
+                  ).join(", ")}`}
                   className={`absolute inset-0 w-full h-full object-contain transition-all duration-700 ${
                     isImageLoaded ? "opacity-100" : "opacity-0"
                   } ${!isExpanded ? "group-hover:scale-105" : ""} ${
@@ -234,169 +241,188 @@ export default function Product({
               </div>
             </div>
 
-            {group.options.map((opt) => (
-              <div className="mb-2" key={opt.label}>
-                <p className="text-xs font-medium text-gray-700 mb-1">
-                  {opt.label}:{" "}
-                  <span className="capitalize font-semibold">
-                    {selectedOptions[opt.label]}
-                  </span>
-                </p>
+            {group.options.map((opt) => {
+              
+              return (
+                <div className="mb-2" key={opt.label}>
+                  <p className="text-xs font-medium text-gray-700 mb-1">
+                    {opt.label}:{" "}
+                    <span className="capitalize font-semibold">
+                      {selectedOptions[opt.label]}
+                    </span>
+                  </p>
 
-                <div className="flex items-center justify-between gap-1">
-                  <div className="flex items-center gap-1">
-                    {opt.values.length > VISIBLE_BUTTONS && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          scrollOptions(opt.label, "prev");
-                        }}
-                        disabled={!canScrollPrev(opt.label)}
-                        className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 ${
-                          canScrollPrev(opt.label)
-                            ? "bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-800"
-                            : "bg-gray-50 border border-gray-200 text-gray-300 cursor-not-allowed"
-                        }`}
-                        aria-label="Opções anteriores"
-                      >
-                        <svg
-                          className="w-2 h-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
+                  <div className="flex items-center justify-between gap-1">
+                    <div className="flex items-center gap-1">
+                      {opt.values.length > VISIBLE_BUTTONS && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            scrollOptions(opt.label, "prev");
+                          }}
+                          disabled={!canScrollPrev(opt.label)}
+                          className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 ${
+                            canScrollPrev(opt.label)
+                              ? "bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-800"
+                              : "bg-gray-50 border border-gray-200 text-gray-300 cursor-not-allowed"
+                          }`}
+                          aria-label="Opções anteriores"
                         >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M15 19l-7-7 7-7"
-                          />
-                        </svg>
-                      </button>
-                    )}
+                          <svg
+                            className="w-2 h-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M15 19l-7-7 7-7"
+                            />
+                          </svg>
+                        </button>
+                      )}
 
-                    <div className="flex gap-1">
-                      {opt.values
-                        .slice(
-                          opt.values.length > VISIBLE_BUTTONS ? (startIndex[opt.label] || 0) : 0,
-                          opt.values.length > VISIBLE_BUTTONS ? (startIndex[opt.label] || 0) + VISIBLE_BUTTONS : opt.values.length
-                        )
-                        .map((value, i) => {
-                          const actualIndex = opt.values.length > VISIBLE_BUTTONS ? (startIndex[opt.label] || 0) + i : i;
-                          const valStr = value.label ?? "";
-                          const isSelected = selectedOptions[opt.label] === valStr;
-                          
-                          return (
-                            <div
-                              key={actualIndex}
-                              className="relative"
-                              onMouseEnter={() => setShowTooltip(`${opt.label}-${valStr}`)}
-                              onMouseLeave={() => setShowTooltip(null)}
-                            >
-                              <button
-                                title={valStr}
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  handleOptionChange(opt.label, valStr);
-                                }}
-                                disabled={isAnimating}
-                                className={`relative h-6 min-w-6 px-1 rounded text-xs border transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 ${
-                                  isSelected
-                                    ? "bg-gray-900 text-white border-gray-900 shadow-sm scale-105"
-                                    : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm hover:scale-102"
-                                } ${isAnimating ? "opacity-50 cursor-not-allowed" : ""}`}
-                                style={
-                                  opt.type === "color"
-                                    ? {
-                                        backgroundColor: value.color,
-                                        color: "transparent",
-                                        border:
-                                          valStr.toLowerCase() === "white"
-                                            ? "2px solid #e5e7eb"
-                                            : isSelected
-                                            ? "2px solid #374151"
-                                            : "2px solid transparent",
-                                      }
-                                    : {}
+                      <div className="flex gap-1">
+                        {opt.values
+                          .slice(
+                            opt.values.length > VISIBLE_BUTTONS
+                              ? startIndex[opt.label] || 0
+                              : 0,
+                            opt.values.length > VISIBLE_BUTTONS
+                              ? (startIndex[opt.label] || 0) + VISIBLE_BUTTONS
+                              : opt.values.length
+                          )
+                          .map((value, i) => {
+                            const actualIndex =
+                              opt.values.length > VISIBLE_BUTTONS
+                                ? (startIndex[opt.label] || 0) + i
+                                : i;
+                            const valStr = value.label ?? "";
+                            const isSelected =
+                              selectedOptions[opt.label] === valStr;
+
+                            return (
+                              <div
+                                key={actualIndex}
+                                className="relative"
+                                onMouseEnter={() =>
+                                  setShowTooltip(`${opt.label}-${valStr}`)
                                 }
+                                onMouseLeave={() => setShowTooltip(null)}
                               >
-                                {opt.type !== "color" && valStr}
-                                {isSelected && opt.type === "color" && (
-                                  <div className="absolute inset-0 rounded border-2 border-gray-900"></div>
-                                )}
-                              </button>
+                                <button
+                                  title={valStr}
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    handleOptionChange(opt.label, valStr);
+                                  }}
+                                  disabled={isAnimating}
+                                  className={`relative h-6 min-w-6 px-1 rounded text-xs border transition-all duration-200 focus:outline-none focus:ring-1 focus:ring-blue-500 focus:ring-offset-1 ${
+                                    isSelected
+                                      ? "bg-gray-900 text-white border-gray-900 shadow-sm scale-105"
+                                      : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-sm hover:scale-102"
+                                  } ${
+                                    isAnimating
+                                      ? "opacity-50 cursor-not-allowed"
+                                      : ""
+                                  }`}
+                                  style={
+                                    opt.type === "color"
+                                      ? {
+                                          backgroundColor: value.color,
+                                          color: "transparent",
+                                          border:
+                                            valStr.toLowerCase() === "white"
+                                              ? "2px solid #e5e7eb"
+                                              : isSelected
+                                              ? "2px solid #374151"
+                                              : "2px solid transparent",
+                                        }
+                                      : {}
+                                  }
+                                >
+                                  {opt.type !== "color" && valStr}
+                                  {isSelected && opt.type === "color" && (
+                                    <div className="absolute inset-0 rounded border-2 border-gray-900"></div>
+                                  )}
+                                </button>
 
-                              {showTooltip === `${opt.label}-${valStr}` && (
-                                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap z-30 pointer-events-none">
-                                  {valStr}
-                                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-2 border-transparent border-t-gray-900"></div>
-                                </div>
-                              )}
-                            </div>
-                          );
-                        })}
+                                {showTooltip === `${opt.label}-${valStr}` && (
+                                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-1 px-2 py-1 bg-gray-900 text-white text-xs rounded whitespace-nowrap z-30 pointer-events-none">
+                                    {valStr}
+                                    <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-2 border-transparent border-t-gray-900"></div>
+                                  </div>
+                                )}
+                              </div>
+                            );
+                          })}
+                      </div>
+
+                      {opt.values.length > VISIBLE_BUTTONS && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            scrollOptions(opt.label, "next");
+                          }}
+                          disabled={!canScrollNext(opt.label)}
+                          className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 ${
+                            canScrollNext(opt.label)
+                              ? "bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-800"
+                              : "bg-gray-50 border border-gray-200 text-gray-300 cursor-not-allowed"
+                          }`}
+                          aria-label="Próximas opções"
+                        >
+                          <svg
+                            className="w-2 h-2"
+                            fill="none"
+                            stroke="currentColor"
+                            viewBox="0 0 24 24"
+                          >
+                            <path
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                              strokeWidth={2}
+                              d="M9 5l7 7-7 7"
+                            />
+                          </svg>
+                        </button>
+                      )}
                     </div>
 
-                    {opt.values.length > VISIBLE_BUTTONS && (
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          scrollOptions(opt.label, "next");
-                        }}
-                        disabled={!canScrollNext(opt.label)}
-                        className={`flex-shrink-0 w-5 h-5 rounded-full flex items-center justify-center transition-all duration-200 ${
-                          canScrollNext(opt.label)
-                            ? "bg-gray-100 hover:bg-gray-200 border border-gray-300 hover:border-gray-400 text-gray-600 hover:text-gray-800"
-                            : "bg-gray-50 border border-gray-200 text-gray-300 cursor-not-allowed"
-                        }`}
-                        aria-label="Próximas opções"
-                      >
-                        <svg
-                          className="w-2 h-2"
-                          fill="none"
-                          stroke="currentColor"
-                          viewBox="0 0 24 24"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            strokeWidth={2}
-                            d="M9 5l7 7-7 7"
-                          />
-                        </svg>
-                      </button>
-                    )}
-                  </div>
-
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    <p className="whitespace-nowrap text-xs mr-2]">{owner?.name}</p>
-                    {owner?.profileImage &&
-                    owner.profileImage !== null &&
-                    owner.profileImage !== "null" &&
-                    owner.profileImage !== "" ? (
-                      <Image
-                        className="rounded-full h-6 w-6 border border-black p-0.5 flex-shrink-0"
-                        src={
-                          typeof owner.profileImage === "string"
-                            ? owner.profileImage
-                            : `data:image/jpeg;base64,${arrayBufferToBase64(
-                                owner.profileImage
-                              )}`
-                        }
-                        width={8}
-                        height={8}
-                        alt="Profile"
-                      />
-                    ) : (
-                      <User
-                        className="text-zinc-400 rounded-full border border-black p-0.5 flex-shrink-0"
-                        size={24}
-                      />
-                    )}
+                    <div className="flex items-center gap-1 flex-shrink-0">
+                      <p className="whitespace-nowrap text-xs mr-2]">
+                        {owner?.name}
+                      </p>
+                      {owner?.profileImage &&
+                      owner.profileImage !== null &&
+                      owner.profileImage !== "null" &&
+                      owner.profileImage !== "" ? (
+                        <Image
+                          className="rounded-full h-6 w-6 border border-black p-0.5 flex-shrink-0"
+                          src={
+                            typeof owner.profileImage === "string"
+                              ? owner.profileImage
+                              : `data:image/jpeg;base64,${arrayBufferToBase64(
+                                  owner.profileImage
+                                )}`
+                          }
+                          width={8}
+                          height={8}
+                          alt="Profile"
+                        />
+                      ) : (
+                        <User
+                          className="text-zinc-400 rounded-full border border-black p-0.5 flex-shrink-0"
+                          size={24}
+                        />
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
 
             {(group.specs ?? []).length > 0 && (
               <div className="mt-2 p-2 bg-gray-50 rounded">

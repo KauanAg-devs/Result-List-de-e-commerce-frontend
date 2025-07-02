@@ -18,9 +18,10 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import { PageProps } from "@product/types/page";
-import { fetchMockedUsers } from "@/app/api/fetch-users";
 import { arrayBufferToBase64 } from "@/utils/image-utils";
 import { useState, useEffect } from "react";
+import { UserProfile } from "@/types/user-profile";
+import axios from "axios";
 
 export default function ProductPageClient({ sku }: PageProps["params"]) {
   const {
@@ -43,6 +44,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
   const [isFavorite, setIsFavorite] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isFullscreenOpen, setIsFullscreenOpen] = useState(false);
+  const [owner, setOwner] = useState<UserProfile | null>(null);
 
   const getAvailableImages = () => {
     if (variant && Array.isArray(variant.images) && variant.images.length > 0) {
@@ -60,7 +62,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
 
     return [];
   };
-
+  
   const getCurrentDisplayImage = () => {
     const availableImages = getAvailableImages();
     if (availableImages!.length === 0) return null;
@@ -132,6 +134,25 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
     return () => window.removeEventListener("keydown", handleKeyDown);
   }, [isFullscreenOpen]);
 
+  useEffect(() => {
+    if (product?.ownerId) {
+      const fetchOwner = async () => {
+        try {
+          const response = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URI}/users/findById/`,
+            { id: product.ownerId }
+          );
+          setOwner(response.data);
+        } catch (error) {
+          console.error("Erro ao carregar dono do produto:", error);
+          setOwner(null);
+        }
+      };
+
+      fetchOwner();
+    }
+  }, [product?.ownerId]);
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gray-50 px-4">
@@ -163,10 +184,6 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
       </div>
     );
   }
-
-  const owner = fetchMockedUsers.filter(
-    (user) => user.id === product.ownerId
-  )[0];
 
   const openFullscreen = () => {
     setIsFullscreenOpen(true);
@@ -432,7 +449,9 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     }`}
                   >
                     <Heart
-                      className={`w-4 h-4 sm:w-5 sm:h-5 ${isFavorite ? "fill-current" : ""}`}
+                      className={`w-4 h-4 sm:w-5 sm:h-5 ${
+                        isFavorite ? "fill-current" : ""
+                      }`}
                     />
                   </button>
                   <button className="p-2 sm:p-3 rounded-full border bg-white border-gray-200 text-gray-600 hover:border-gray-300 transition-all">
@@ -469,8 +488,8 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     isOutOfStock
                       ? "bg-red-500"
                       : isLowStock
-                        ? "bg-orange-500"
-                        : "bg-green-500"
+                      ? "bg-orange-500"
+                      : "bg-green-500"
                   }`}
                 />
                 <span
@@ -478,15 +497,15 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                     isOutOfStock
                       ? "text-red-700"
                       : isLowStock
-                        ? "text-orange-700"
-                        : "text-green-700"
+                      ? "text-orange-700"
+                      : "text-green-700"
                   }`}
                 >
                   {isOutOfStock
                     ? "Produto esgotado"
                     : isLowStock
-                      ? `Apenas ${stock} unidades restantes`
-                      : "Em estoque"}
+                    ? `Apenas ${stock} unidades restantes`
+                    : "Em estoque"}
                 </span>
               </div>
               {isLowStock && !isOutOfStock && (
@@ -552,8 +571,8 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                               ? "border-gray-900 shadow-lg"
                               : "bg-gray-900 text-white border-gray-900"
                             : opt.type === "color"
-                              ? "border-gray-300 hover:border-gray-500"
-                              : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-md"
+                            ? "border-gray-300 hover:border-gray-500"
+                            : "bg-white border-gray-300 text-gray-700 hover:border-gray-900 hover:shadow-md"
                         }`}
                         style={
                           opt.type === "color" && colorValue
@@ -627,7 +646,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
               </button>
 
               <button
-                onClick={() => handleBuyNow(variant)}
+                onClick={handleBuyNow}
                 disabled={
                   isOutOfStock ||
                   Object.keys(selectedOptions).length <
@@ -651,7 +670,9 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                       src={
                         typeof owner.profileImage === "string"
                           ? owner.profileImage
-                          : `data:image/jpeg;base64,${arrayBufferToBase64(owner.profileImage)}`
+                          : `data:image/jpeg;base64,${arrayBufferToBase64(
+                              owner.profileImage
+                            )}`
                       }
                       width={48}
                       height={48}

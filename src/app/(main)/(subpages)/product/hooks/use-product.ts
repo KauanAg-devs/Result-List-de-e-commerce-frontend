@@ -1,31 +1,16 @@
-import { RootState, useAppDispatch } from "@/app/store";
-import { CartItem, addToCartWithValidation } from "@/app/store/cart-slice";
-import {useRouter} from "next/navigation";
-import { setBuyNowProduct } from "@/app/store/checkout-slice";
+"use client";
+
 import { useState, useEffect } from "react";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
-import { fetchMockedProducts } from "@/app/api/fetch-products";
-import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
-import { ProductGrouped, productVariant, } from "@/types/product";
 import { useSelector } from "react-redux";
+import { RootState, useAppDispatch } from "@/app/store";
+import { addToCartWithValidation, CartItem } from "@/app/store/cart-slice";
+import { setBuyNowProduct } from "@/app/store/checkout-slice";
 import { useAuth } from "@/app/contexts/auth-context";
-
-function findProductBySku(productSku: string) {
-  return (
-    fetchMockedProducts.find((product) => product.default.sku === productSku) ||
-    null
-  );
-}
-
-function findProductAndVariantBySku(variantSku: string) {
-  for (const product of fetchMockedProducts) {
-    const variant = product.variants.find((v) => v.sku === variantSku);
-    if (variant) {
-      return { product, variant };
-    }
-  }
-  return null;
-}
+import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
+import { ProductGrouped } from "@/types/product";
 
 function findVariant(
   product: ProductGrouped,
@@ -39,58 +24,51 @@ function findVariant(
 }
 
 export function useProductPage(sku: string) {
-  const {isAuthenticated} = useAuth();
-  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile)
-  const router = useRouter()
-  const [product, setProduct] = useState<ProductGrouped | null>(null);
-  const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState<
-    Record<string, string>
-  >({});
-  const [quantity, setQuantity] = useState(1);
-  const [isLoading, setIsLoading] = useState(true);
+  const { isAuthenticated } = useAuth();
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile);
+  const router = useRouter();
   const dispatch = useAppDispatch();
   const { openCart } = useCartDrawer();
 
-  const variant = product && findVariant(product, selectedOptions);
-  const stock = variant?.stock ?? 0;
-  const price = variant?.price ?? 0;
-  const isOutOfStock = stock === 0;
-  const isLowStock = stock > 0 && stock <= 5;
+  const [product, setProduct] = useState<ProductGrouped | null>(null);
+  const [selectedImage, setSelectedImage] = useState(0);
+  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [quantity, setQuantity] = useState(1);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    if (!sku) return;
+
     const loadProduct = async () => {
       setIsLoading(true);
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      setProduct(null);
+      setSelectedOptions({});
+      setSelectedImage(0);
+      setQuantity(1);
 
-      let foundProduct = findProductBySku(sku);
-      let specificVariant = null;
+      try {
+        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URI}/products/findVariantBySKU`, {
+          sku
+        });
+        const productData: ProductGrouped = res.data.product;
 
-      if (!foundProduct) {
-        const result = findProductAndVariantBySku(sku);
-        if (result) {
-          foundProduct = result.product;
-          specificVariant = result.variant;
-        }
-      }
+        setProduct(productData);
 
-      if (foundProduct) {
-        setProduct(foundProduct);
+        const variant = productData.variants.find((v) => v.sku === sku) || productData.variants[0];
 
-        const variantToUse = specificVariant || foundProduct.variants[0];
-        if (variantToUse) {
-          const initialOptions: Record<string, string> = {};
-          Object.entries(variantToUse.options).forEach(([key, value]) => {
-            initialOptions[key] = value;
-          });
-          setSelectedOptions(initialOptions);
+        const initialOptions: Record<string, string> = {};
+        Object.entries(variant.options).forEach(([key, value]) => {
+          initialOptions[key] = value;
+        });
+        setSelectedOptions(initialOptions);
 
-          const imgIndex = foundProduct.default.images.findIndex(
-            (img) => img === variantToUse.images[0]
-          );
-          setSelectedImage(imgIndex !== -1 ? imgIndex : 0);
-        }
-      } else {
+        const imgIndex = productData.default.images.findIndex(
+          (img) => img === variant.images[0]
+        );
+        setSelectedImage(imgIndex !== -1 ? imgIndex : 0);
+
+      } catch (error) {
+        console.error("Erro ao carregar produto:", error);
         setProduct(null);
       }
 
@@ -100,14 +78,20 @@ export function useProductPage(sku: string) {
     loadProduct();
   }, [sku]);
 
+  const variant = product ? findVariant(product, selectedOptions) : null;
+  const stock = variant?.stock ?? 0;
+  const price = variant?.price ?? 0;
+  const isOutOfStock = stock === 0;
+  const isLowStock = stock > 0 && stock <= 5;
+
   const handleOptionChange = (label: string, value: string) => {
     setSelectedOptions((prev) => {
       const updated = { ...prev, [label]: value };
 
       if (product) {
-        const variant = findVariant(product, updated);
-        if (variant && variant.images.length > 0) {
-          setSelectedImage(0); 
+        const foundVariant = findVariant(product, updated);
+        if (foundVariant && foundVariant.images.length > 0) {
+          setSelectedImage(0);
         }
       }
 
@@ -117,8 +101,7 @@ export function useProductPage(sku: string) {
 
   const handleAddToCart = async () => {
     if (!product) return;
-    
-    const variant = findVariant(product, selectedOptions);
+
     if (!variant || variant.stock === 0) {
       toast.error("Produto fora de estoque ou variante inválida");
       return;
@@ -145,22 +128,24 @@ export function useProductPage(sku: string) {
     }
   };
 
-  const handleBuyNow = (product: ProductVariant) => {
+  const handleBuyNow = () => {
     if (isAuthenticated && userProfile) {
-      dispatch(setBuyNowProduct({...product, quantity}));
-      router.push('/checkout')
+      if (!variant || !product) {
+        toast.error("Variante inválida para compra");
+        return;
+      }
+      dispatch(setBuyNowProduct({ ...variant, quantity, image: variant.images[0], group: product }));
+      router.push("/checkout");
     } else {
-      router.push('/signin');
+      router.push("/signin");
     }
   };
-  
+
   return {
-    handleBuyNow,
-    isLoading,
     product,
+    isLoading,
     selectedImage,
     selectedOptions,
-    handleOptionChange,
     quantity,
     setQuantity,
     variant,
@@ -168,6 +153,9 @@ export function useProductPage(sku: string) {
     price,
     isOutOfStock,
     isLowStock,
+    handleOptionChange,
     handleAddToCart,
+    handleBuyNow,
+    setSelectedImage,
   };
 }

@@ -22,6 +22,7 @@ export interface Option {
 }
 
 export interface ProductVariant {  
+  id: string
   name: string;
   sku: string;
   price: number;
@@ -33,6 +34,7 @@ export interface ProductVariant {
 }
 
 export interface ProductGrouped {
+  id: string
   ownerId: UserProfile['id'];
   options: Option[];
   default: ProductVariant;
