@@ -6,7 +6,6 @@ import SectionButton from "./section-button";
 export const DesktopNavigation = ({ pickedMethod = 'overview', setPickedMethod = () => {} }: NavigationProps) => {
   const sections = [
     { message: "Visão Geral", option: "overview", icon: User },
-    { message: "Meus Pedidos", option: "orders", icon: Package },
     { message: "Endereços", option: "addresses", icon: MapPin },
     { message: "Pagamento", option: "paymentMethods", icon: CreditCard },
     { message: "Notificações", option: "notifications", icon: Bell },

@@ -144,7 +144,7 @@ export default function Menu() {
           </svg>
         </button>
 
-        {isAuthenticated ? (
+        {isAuthenticated || process.env.NEXT_PUBLIC_MOCK_MODE === "true" ? (
           <UserProfile />
         ) : (
           <Link

@@ -25,10 +25,10 @@ export default function Page() {
     comeFrom,
   } = useCheckout();
 
-  const { loading } = useRequireAuth();
-
-  if (loading) return <LoaderCircle className="animate-spin mx-auto mt-8" />;
-
+  const { loading, isAuthenticated } = useRequireAuth();
+  
+  if (loading || !isAuthenticated) return <LoaderCircle className="animate-spin mx-auto mt-8" />;
+ 
   if (checkoutItems.length === 0) return <EmptyCart />;
 
   return (

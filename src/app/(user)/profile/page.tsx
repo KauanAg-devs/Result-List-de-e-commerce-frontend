@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { MobileNavigation } from "../components/mobile-navigation";
-import { OrdersSection } from "../components/orders-section";
 import { AddressesSection } from "../components/addresses-section";
 import { PaymentMethodsSection } from "../components/payment-methods-section";
 import { DesktopNavigation } from "../components/desktop-navigation";
@@ -10,10 +9,16 @@ import OverviewSection from "../components/overview-section";
 import Header from "@/app/(main)/layout/header/header";
 import ShoppingCart from "@/app/(main)/layout/header/shopping-cart";
 import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
+import { useRequireAuth } from "@/app/(main)/hooks/use-require-auth";
+import { LoaderCircle } from "lucide-react";
 
 export default function Page() {
   const { isOpen } = useCartDrawer();
   const [pickedMethod, setPickedMethod] = useState("overview");
+  const { loading, isAuthenticated } = useRequireAuth();
+
+  
+  if ((loading || !isAuthenticated) && process.env.NEXT_PUBLIC_MOCK_MODE === 'false') return <LoaderCircle className="animate-spin mx-auto mt-8" />;
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-zinc-50 to-blue-50">
@@ -30,8 +35,9 @@ export default function Page() {
           setPickedMethod={setPickedMethod}
         />
 
-        {pickedMethod === "overview" && <OverviewSection setPickedMethod={setPickedMethod}/>}
-        {pickedMethod === "orders" && <OrdersSection />}
+        {pickedMethod === "overview" && (
+          <OverviewSection setPickedMethod={setPickedMethod} />
+        )}
         {pickedMethod === "addresses" && <AddressesSection />}
         {pickedMethod === "paymentMethods" && <PaymentMethodsSection />}
 

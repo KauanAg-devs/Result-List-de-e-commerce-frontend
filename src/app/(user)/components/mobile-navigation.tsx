@@ -4,7 +4,6 @@ import {
   CreditCard,
   MapPin,
   MessageSquare,
-  Package,
   Settings,
   User,
 } from "lucide-react";
@@ -20,7 +19,6 @@ export function MobileNavigation({
 
   const sections = [
     { key: "overview", label: "Visão Geral", icon: User },
-    { key: "orders", label: "Pedidos", icon: Package },
     { key: "addresses", label: "Endereços", icon: MapPin },
     { key: "paymentMethods", label: "Pagamento", icon: CreditCard },
     { key: "notifications", label: "Notificações", icon: Bell },

@@ -4,9 +4,9 @@ import { useState, useEffect, useRef } from "react";
 import { throttle } from "lodash";
 import axios from "axios";
 import { useSearchParams } from "next/navigation";
-
 import ProductsLister from "@/app/(main)/(home)/components/products-lister";
 import { ProductGrouped } from "@/types/product";
+import { mockGroupedProducts } from "@/app/mock-api/fetch-products";
 
 const LOAD_COUNT = 4;
 
@@ -27,28 +27,51 @@ export default function Home() {
 
     try {
       const lastProductId = initial ? undefined : products.at(-1)?.id;
-
       if (!initial && lastProductIdRef.current === lastProductId) return;
       lastProductIdRef.current = lastProductId || null;
 
-      const res = await axios.post(
-        `${process.env.NEXT_PUBLIC_BACKEND_URI}/products/getByPagination`,
-        {
-          lastProductReceived: lastProductId,
-          productsPerPage: LOAD_COUNT,
-          searchTerm,
+      if (process.env.NEXT_PUBLIC_MOCK_MODE === "true") {
+        const startIndex = lastProductId
+          ? mockGroupedProducts.findIndex((p) => p.id === lastProductId) + 1
+          : 0;
+
+        const newProducts = mockGroupedProducts.slice(
+          startIndex,
+          startIndex + LOAD_COUNT
+        );
+
+        if (initial) {
+          setProducts(newProducts);
+        } else {
+          setProducts((prev) => {
+            const filteredNew = newProducts.filter(
+              (p) => !prev.some((existing) => existing.id === p.id)
+            );
+            return [...prev, ...filteredNew];
+          });
         }
-      );
 
-      const newProducts = res.data as ProductGrouped[];
-
-      if (initial) {
-        setProducts(newProducts);
+        setHasMore(startIndex + LOAD_COUNT < mockGroupedProducts.length);
       } else {
-        setProducts((prev) => [...prev, ...newProducts]);
-      }
+        const res = await axios.post(
+          `${process.env.NEXT_PUBLIC_BACKEND_URI}/products/getByPagination`,
+          {
+            lastProductReceived: lastProductId,
+            productsPerPage: LOAD_COUNT,
+            searchTerm,
+          }
+        );
 
-      setHasMore(newProducts.length === LOAD_COUNT);
+        const newProducts = res.data as ProductGrouped[];
+
+        if (initial) {
+          setProducts(newProducts);
+        } else {
+          setProducts((prev) => [...prev, ...newProducts]);
+        }
+
+        setHasMore(newProducts.length === LOAD_COUNT);
+      }
     } catch (err) {
       console.error("Erro ao buscar produtos:", err);
       setHasMore(false);
@@ -82,7 +105,11 @@ export default function Home() {
 
   return (
     <main className="bg-white flex flex-col pt-5">
-      <ProductsLister productsGrouped={products} loading={loading} hasMore={hasMore} />
+      <ProductsLister
+        productsGrouped={products}
+        loading={loading}
+        hasMore={hasMore}
+      />
 
       {loading && (
         <p className="text-center mt-4 text-gray-500">Carregando produtos...</p>

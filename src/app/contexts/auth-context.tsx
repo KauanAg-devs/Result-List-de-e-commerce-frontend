@@ -1,4 +1,4 @@
-'use client'
+"use client";
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
@@ -17,9 +17,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     async function checkAuth() {
       try {
         const response = await api.get(`/auth/me`);
-        const userProfile = response.data;
         if (response.status === 200) {
-          dispatch(setUserProfile(userProfile));
+          dispatch(setUserProfile(response.data));
           setIsAuthenticated(true);
         } else {
           setIsAuthenticated(false);
@@ -33,9 +32,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
     checkAuth();
 
+    let isLoggingOut = false;
+
     const onLogout = () => {
+      if (isLoggingOut) return;
+      isLoggingOut = true;
+
+      api.post("/auth/logout").catch(console.error);
       setIsAuthenticated(false);
-      dispatch(setUserProfile(null)); 
+      dispatch(setUserProfile(null));
     };
 
     window.addEventListener("logout", onLogout);

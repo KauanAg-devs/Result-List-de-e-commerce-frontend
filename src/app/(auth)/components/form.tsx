@@ -125,6 +125,8 @@ export default function Form({ onSubmit, submitButtonMessage }: FormProps) {
             <ArrowRight className="ml-2 h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5" />
           </span>
         </button>
+        <button type="submit" style={{ display: "none" }} aria-hidden="true" />
+
       </form>
     </FormProvider>
   );

@@ -11,6 +11,7 @@ import { setBuyNowProduct } from "@/app/store/checkout-slice";
 import { useAuth } from "@/app/contexts/auth-context";
 import { useCartDrawer } from "@/app/contexts/cart-drawer-context";
 import { ProductGrouped } from "@/types/product";
+import { mockGroupedProducts } from "@/app/mock-api/fetch-products";
 
 function findVariant(
   product: ProductGrouped,
@@ -25,14 +26,18 @@ function findVariant(
 
 export function useProductPage(sku: string) {
   const { isAuthenticated } = useAuth();
-  const userProfile = useSelector((state: RootState) => state.userProfile.userProfile);
+  const userProfile = useSelector(
+    (state: RootState) => state.userProfile.userProfile
+  );
   const router = useRouter();
   const dispatch = useAppDispatch();
   const { openCart } = useCartDrawer();
 
   const [product, setProduct] = useState<ProductGrouped | null>(null);
   const [selectedImage, setSelectedImage] = useState(0);
-  const [selectedOptions, setSelectedOptions] = useState<Record<string, string>>({});
+  const [selectedOptions, setSelectedOptions] = useState<
+    Record<string, string>
+  >({});
   const [quantity, setQuantity] = useState(1);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -47,14 +52,27 @@ export function useProductPage(sku: string) {
       setQuantity(1);
 
       try {
-        const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_URI}/products/findVariantBySKU`, {
-          sku
-        });
-        const productData: ProductGrouped = res.data.product;
+        let productData: ProductGrouped;
+
+        if (process.env.NEXT_PUBLIC_MOCK_MODE === "true") {
+          productData = mockGroupedProducts.find((product) =>
+            product.variants.some((variant) => variant.sku === sku)
+          )!;
+
+          if (!productData) throw new Error("Produto mockado não encontrado");
+        } else {
+          const res = await axios.post(
+            `${process.env.NEXT_PUBLIC_BACKEND_URI}/products/findVariantBySKU`,
+            { sku }
+          );
+          productData = res.data.product;
+        }
 
         setProduct(productData);
 
-        const variant = productData.variants.find((v) => v.sku === sku) || productData.variants[0];
+        const variant =
+          productData.variants.find((v) => v.sku === sku) ||
+          productData.variants[0];
 
         const initialOptions: Record<string, string> = {};
         Object.entries(variant.options).forEach(([key, value]) => {
@@ -66,7 +84,6 @@ export function useProductPage(sku: string) {
           (img) => img === variant.images[0]
         );
         setSelectedImage(imgIndex !== -1 ? imgIndex : 0);
-
       } catch (error) {
         console.error("Erro ao carregar produto:", error);
         setProduct(null);
@@ -124,17 +141,29 @@ export function useProductPage(sku: string) {
       openCart();
       toast.success("Produto adicionado ao carrinho!");
     } catch (error) {
-      toast.error(typeof error === "string" ? error : "Erro ao adicionar ao carrinho");
+      toast.error(
+        typeof error === "string" ? error : "Erro ao adicionar ao carrinho"
+      );
     }
   };
 
   const handleBuyNow = () => {
-    if (isAuthenticated && userProfile) {
+    if (
+      (isAuthenticated && userProfile) ||
+      process.env.NEXT_PUBLIC_MOCK_MODE === "true"
+    ) {
       if (!variant || !product) {
         toast.error("Variante inválida para compra");
         return;
       }
-      dispatch(setBuyNowProduct({ ...variant, quantity, image: variant.images[0], group: product }));
+      dispatch(
+        setBuyNowProduct({
+          ...variant,
+          quantity,
+          image: variant.images[0],
+          group: product,
+        })
+      );
       router.push("/checkout");
     } else {
       router.push("/signin");

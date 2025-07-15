@@ -34,6 +34,7 @@ export const mockedUserProfile: UserProfile = {
         quantity: 1,
         status: VariantStatus.Delivered,
         variant: {
+          id: '1',
           name: "Product 1",
           sku: "123456",
           price: 100,

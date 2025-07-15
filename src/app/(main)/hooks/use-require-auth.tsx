@@ -7,15 +7,24 @@ export function useRequireAuth() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    if (isAuthenticated === null) {
-      setLoading(true);
-    } else if (!isAuthenticated) {
-      router.push("/signin");
-    } else {
-      setLoading(false);
-    }
-  }, [isAuthenticated, router]);
+ useEffect(() => {
+  if (process.env.NEXT_PUBLIC_MOCK_MODE === "true") {
+    setLoading(false);
+    return;
+  }
 
-  return { loading };
+  if (isAuthenticated === null) { 
+    setLoading(true);
+    return;
+  } 
+
+  if (!isAuthenticated) {
+    router.push("/signin");
+  }
+
+  setLoading(false);
+}, [isAuthenticated, router]);
+
+
+  return { loading, isAuthenticated };
 }

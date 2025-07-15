@@ -3,7 +3,7 @@ import { User } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
 import Link from "next/link";
 import { ProductProps } from "@/app/(main)/(home)/types/product";
-import { fetchMockedUsers } from "@/app/api/fetch-users";
+import { fetchMockedUsers } from "@/app/mock-api/fetch-users";
 import Image from "next/image";
 import { useProductState } from "../hooks/use-product-state";
 import { useIntersectionObserver } from "../hooks/use-intersection-observer";

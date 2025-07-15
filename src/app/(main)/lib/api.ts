@@ -14,25 +14,29 @@ api.interceptors.response.use(
 
     if (
       error.response?.status === 401 &&
-      !originalRequest._retry
+      !originalRequest._retry &&
+      !originalRequest.url?.includes("/auth/refresh") &&
+      !originalRequest.url?.includes("/auth/me")
     ) {
-      if (!refreshTokenPromise) {
-        originalRequest._retry = true;
+      originalRequest._retry = true;
 
-        refreshTokenPromise = api.post("/auth/refresh")
-          .then(() => {
-            refreshTokenPromise = null; 
+      if (!refreshTokenPromise) {
+        refreshTokenPromise = api
+          .post("/auth/refresh")
+          .then((res) => {
+            refreshTokenPromise = null;
+            return res;
           })
           .catch((refreshError) => {
-            refreshTokenPromise = null; 
+            refreshTokenPromise = null;
             window.dispatchEvent(new Event("logout"));
             throw refreshError;
           });
       }
 
       try {
-        await refreshTokenPromise; 
-        return api(originalRequest); 
+        await refreshTokenPromise;
+        return api(originalRequest);
       } catch (err) {
         return Promise.reject(err);
       }
