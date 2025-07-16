@@ -22,6 +22,7 @@ import { arrayBufferToBase64 } from "@/utils/image-utils";
 import { useState, useEffect } from "react";
 import { UserProfile } from "@/types/user-profile";
 import axios from "axios";
+import { fetchMockedUsers } from "@/app/mock-api/fetch-users";
 
 export default function ProductPageClient({ sku }: PageProps["params"]) {
   const {
@@ -135,7 +136,12 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
   }, [isFullscreenOpen]);
 
   useEffect(() => {
-    if (product?.ownerId) {
+    if(!product?.ownerId) return;
+
+    if(process.env.NEXT_PUBLIC_MOCK_MODE === 'true') {
+      const user = fetchMockedUsers.filter(user => user.id === product?.ownerId)[0]
+      setOwner(user);
+    } else {
       const fetchOwner = async () => {
         try {
           const response = await axios.post(
@@ -553,7 +559,7 @@ export default function ProductPageClient({ sku }: PageProps["params"]) {
                 </h3>
                 <div className="flex gap-2 sm:gap-3 flex-wrap">
                   {opt.values.map((val, idx) => {
-                    const value = "color" in val ? val.label : String(val);
+                    const value = val.label;
                     const colorValue = "color" in val ? val.color : undefined;
                     const isSelected = selectedOptions[opt.label] === value;
 
